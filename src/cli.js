@@ -1,8 +1,8 @@
-import { readFileSync, writeFileSync } from 'node:fs';
-import { relative } from 'node:path';
+import { existsSync, readFileSync, statSync, writeFileSync } from 'node:fs';
+import { relative, resolve, sep } from 'node:path';
 import { findConfig, loadConfig } from './config.js';
-import { ConfigError, fixText, lintText, listRules, resolveSettings } from './engine.js';
-import { collectFiles, readText } from './files.js';
+import { applyRuleOverrides, ConfigError, fixText, lintText, listRules, resolveSettings } from './engine.js';
+import { collectFiles, readSource, writeSource } from './files.js';
 import { formatters } from './formatters/index.js';
 
 const pkg = JSON.parse(readFileSync(new URL('../package.json', import.meta.url), 'utf8'));
@@ -54,7 +54,10 @@ function parseArgs(argv) {
       case '--fix-dry-run': opts.fix = true; opts.dryRun = true; break;
       case '-f': case '--format': opts.format = value; break;
       case '-o': case '--output-file': opts.output = value; break;
-      case '--max-warnings': opts.maxWarnings = Number(value); break;
+      case '--max-warnings':
+        if (!/^\d+$/.test(value)) throw new ConfigError(`--max-warnings expects a whole number, got "${value}"`);
+        opts.maxWarnings = Number(value);
+        break;
       case '--quiet': opts.quiet = true; break;
       case '--rule': {
         const at = value.lastIndexOf('=');
@@ -117,44 +120,52 @@ export async function run(argv, io = {}) {
     if (opts.listRules) { stdout.write(listRulesText() + '\n'); return 0; }
 
     const found = opts.noConfig ? { config: {}, dir: cwd } : opts.config ? loadConfig(opts.config) : findConfig(cwd);
-    const config = {
-      ...found.config,
-      rules: { ...found.config.rules, ...opts.rules },
-      ...(opts.persian !== undefined ? { persian: opts.persian } : {}),
+    const config = found.config;
+    // CLI flags are applied after the config and its overrides, so they always win.
+    const settingsFor = (filePath) => {
+      const settings = applyRuleOverrides(resolveSettings(config, filePath), opts.rules);
+      if (opts.persian !== undefined) settings.persian = opts.persian;
+      return settings;
     };
-    resolveSettings(config, ''); // validate early so a typo fails before any file is touched
-    const relToConfig = (abs) => relative(found.dir, abs).split('\\').join('/');
+    settingsFor(''); // validate early so a typo fails before any file is touched
+    const relToConfig = (abs) => relative(found.dir, abs).split(sep).join('/');
 
     const results = [];
     if (opts.stdin) {
-      const text = await readStdin(io.stdin ?? process.stdin);
+      const input = await readStdin(io.stdin ?? process.stdin);
+      const bom = input.charCodeAt(0) === 0xfeff ? input[0] : '';
+      const text = bom ? input.slice(1) : input;
       const filePath = opts.stdinFilename ?? 'stdin.txt';
-      const options = { filePath, settings: resolveSettings(config, filePath) };
+      const options = { filePath, settings: settingsFor(filePath) };
       if (opts.fix) {
         const r = fixText(text, options);
-        stdout.write(r.output);
+        stdout.write(bom + r.output);
         return r.errorCount ? 1 : 0;
       }
       results.push(lintText(text, options));
     } else {
       const files = collectFiles(opts.paths.length ? opts.paths : ['.'], {
         cwd,
-        ignore: [...(config.ignore ?? []), ...opts.ignore],
+        ignore: [...opts.ignore, ...(config.ignore ? [{ patterns: config.ignore, base: found.dir }] : [])],
       });
+      if (!files.length) {
+        stderr.write(`rtlint: no files to lint${opts.paths.length ? ` matched ${opts.paths.join(' ')}` : ''}.\n`);
+        // A glob or file that matched nothing is a mistake; an empty folder is not.
+        const onlyFolders = opts.paths.every((p) => existsSync(resolve(cwd, p)) && statSync(resolve(cwd, p)).isDirectory());
+        return onlyFolders ? 0 : 2;
+      }
       for (const abs of files) {
-        const raw = readText(abs);
-        if (raw === null) continue;
-        // Editors do not count a BOM as a column; lint without it and keep it on write.
-        const bom = raw.charCodeAt(0) === 0xfeff ? raw[0] : '';
-        const text = bom ? raw.slice(1) : raw;
+        const source = readSource(abs);
+        if (source === null) continue;
         const rel = relToConfig(abs);
-        const options = { filePath: rel, settings: resolveSettings(config, rel) };
+        const options = { filePath: rel, settings: settingsFor(rel) };
         if (opts.fix) {
-          const r = fixText(text, options);
-          if (r.fixed && !opts.dryRun) writeFileSync(abs, bom + r.output);
-          results.push({ ...r, filePath: abs, output: undefined });
+          const r = fixText(source.text, options);
+          if (r.fixed && !opts.dryRun) writeSource(abs, r.output, source);
+          // --fix-dry-run shows what would change, like ESLint does in its json format.
+          results.push({ ...r, filePath: abs, output: opts.dryRun && r.fixed ? r.output : undefined });
         } else {
-          results.push({ ...lintText(text, options), filePath: abs });
+          results.push({ ...lintText(source.text, options), filePath: abs });
         }
       }
     }

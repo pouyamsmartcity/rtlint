@@ -1,3 +1,4 @@
+import { proseText } from './prose.js';
 import { blank, classRegions, cssRegions, maskHtml, maskJs } from './scan.js';
 import { HAS_ARABIC_SCRIPT, NOT_PERSIAN, PERSIAN_SIGNAL, PERSIAN_STRONG } from './unicode.js';
 
@@ -51,6 +52,7 @@ export function createFile(text, path = 'input.txt', settings = {}) {
   lazy(file, 'css', () => cssRegions(file));
   lazy(file, 'cssView', () => file.css.view);
   lazy(file, 'classRegions', () => classRegions(file));
+  lazy(file, 'prose', () => proseText(file));
   lazy(file, 'persianLines', () => persianLines(file));
   return file;
 }
@@ -109,12 +111,26 @@ function persianLines(file) {
   }
   const out = [];
   const starts = file.lineStarts;
+  const prose = file.prose;
   for (let i = 0; i < starts.length; i++) {
     const start = starts[i];
     const end = i + 1 < starts.length ? starts[i + 1] - 1 : text.length;
-    const line = text.slice(start, end).replace(/\r$/, '');
+    const line = prose.slice(start, end).replace(/\r$/, '');
     if (!HAS_ARABIC_SCRIPT.test(line) || NOT_PERSIAN.test(line)) continue;
-    if (PERSIAN_SIGNAL.test(line) || filePersian) out.push({ start, text: line });
+    if (PERSIAN_SIGNAL.test(line) || (filePersian && !arabicLooking(line))) out.push({ start, text: line });
   }
   return out;
+}
+
+const AR_WORD = /[\u0621-\u064A\u0671-\u06D3]+/g;
+const HARAKAT = /[\u064B-\u0652]/g;
+
+/**
+ * A line with no Persian-only letter that reads as Arabic: many words with
+ * the article «ال», or full vocalisation (Quran, hadith, poetry).
+ */
+function arabicLooking(line) {
+  const words = line.match(AR_WORD) ?? [];
+  if (words.length >= 2 && words.filter((w) => w.startsWith('\u0627\u0644')).length / words.length >= 0.3) return true;
+  return (line.match(HARAKAT)?.length ?? 0) >= 4;
 }

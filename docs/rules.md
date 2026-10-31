@@ -45,8 +45,13 @@ keeps its spacing on the wrong side. Logical properties flip automatically.
 Found in stylesheets (`.css .scss .sass .less .styl`), `<style>` blocks, `style=""` attributes
 and styled-components / emotion templates.
 
-Not reported:
+Not reported, because converting them would be wrong:
 
+- **Code that already targets a direction.** Declarations inside `[dir="rtl"] …`, `:dir(rtl)`, `.rtl &`,
+  `@include rtl`, `:lang(…)` or after an RTLCSS `/* rtl:ignore */` (or between `rtl:begin:ignore` and
+  `rtl:end:ignore`) keep their physical sides. They already are the RTL version.
+- **`@page` margins** (they have no logical form) and **`@supports not (…)` fallbacks**.
+- **Sass maps and nested properties**: `(left: 10px)` and `margin: { left: 4px }`.
 - **Safe-area insets.** `padding-left: env(safe-area-inset-left)` follows the physical notch and must stay physical.
 - **The centering trick.** `left: 50%` with `transform: translate(-50%)` is reported *without a fix*:
   turning only `left` into `inset-inline-start` would push the element off-center in RTL.
@@ -71,8 +76,9 @@ border-end-end-radius: 0; border-end-start-radius: 8px;   /* after */
 ```
 
 Covers `margin`, `padding`, `inset`, `scroll-margin`, `scroll-padding`, `border-width`,
-`border-style`, `border-color` and `border-radius` (not the `/` elliptical form). In `.sass` and
-`.styl` it reports without fixing, because the fix needs semicolons.
+`border-style`, `border-color` and `border-radius` (not the `/` elliptical form). It reports without
+fixing in `.sass`/`.styl` files and `<style lang="sass">` blocks (the fix needs semicolons) and when a
+comment sits inside the value. Values with Sass/Less interpolation (`#{$x}`, `@{x}`) are skipped.
 
 ## css/directional-value
 
@@ -97,9 +103,12 @@ Utility classes in `class`, `className`, `:class`, `class:list`, `[ngClass]`, in
 | `scroll-ml-2` | `scroll-ms-2` |
 | Bootstrap 4: `ml-md-3` `border-left` `rounded-right` `dropdown-menu-right` `dropleft` | Bootstrap 5: `ms-md-3` `border-start` `rounded-end` `dropdown-menu-end` `dropstart` |
 
-Variants, `!important`, negative values, arbitrary values and fractions are kept:
-`md:hover:!-ml-[3px]` → `md:hover:!-ms-[3px]`. Classes with an `rtl:` or `ltr:` variant are
-intentional and left alone. Names that only look like utilities (`left-panel`) are ignored.
+Variants (including arbitrary ones such as `[&>svg]:`), `!important`, negative values, arbitrary
+values, Tailwind v4 `ml-(--gap)` and fractions are kept: `md:hover:!-ml-[3px]` → `md:hover:!-ms-[3px]`.
+Svelte `class:ml-2={x}` and expressions inside attributes (`class="a {x ? "pl-2" : ""}"`) are covered.
+Classes with an `rtl:` or `ltr:` variant are intentional and left alone, and so are classes chosen
+by a direction check (`isRtl ? 'mr-2' : 'ml-2'`, `{ 'ml-2': !isRtl }`). CSS Modules lookups
+(`styles["text-left"]`) are not class lists. Names that only look like utilities (`left-panel`) are ignored.
 `left-1/2` next to a `translate-x` is a centering pair and is reported without a fix.
 
 Requires Tailwind CSS 3.3+ (`float-start` / `clear-start`: 3.4+) or Bootstrap 5.
@@ -125,7 +134,11 @@ Inline style objects in `.jsx` / `.tsx` and in `.js` / `.ts` files that use Reac
 ```
 
 In files that import `react-native` it uses React Native's own vocabulary
-(`marginStart`, `paddingEnd`, `borderTopStartRadius` …).
+(`marginStart`, `paddingEnd`, `borderTopStartRadius` …). Vue `:style="{ … }"` bindings are checked too.
+
+Left alone: TypeScript interface/type members (`marginLeft: number`), destructuring
+(`const { marginLeft: ml } = props`), and values that already depend on direction
+(`marginLeft: isRTL ? 0 : 8`, `I18nManager.isRTL ? {…} : {…}`).
 
 ## html/dir-attribute
 
@@ -164,6 +177,13 @@ Pashto or Uyghur. Lines without a decisive letter follow the file: a path like `
 or `fa-IR/` is Persian, `ar.json` or `/ur/` is not, otherwise the file's own letters decide.
 Force it with `"persian": true | false` globally or in an override.
 
+**What counts as text.** In JS/TS and other code, the Persian rules read comments, JSX text and
+string literals that contain a space; single-token strings such as `'ي'` or `'٠١٢٣٤٥٦٧٨٩'` (character
+tables in normalisers, keys) and regex literals are skipped. URLs and Markdown code spans/fences are
+never touched. Quoted Arabic inside a Persian line (`«إن الله على كل شيء قدير»`, `﴿…﴾` Quran spans) and
+Arabic-looking lines in a Persian file (`بسم الله الرحمن الرحيم`) keep their spelling. Pashto text with
+none of its distinctive letters cannot be told apart from Persian; mark such files with an override.
+
 ## fa/arabic-digits
 
 Arabic-Indic digits `٠١٢٣٤٥٦٧٨٩` in Persian text → Persian digits `۰۱۲۳۴۵۶۷۸۹` (4, 5 and 6 have different shapes).
@@ -188,7 +208,9 @@ the adjective "field" (راهنمای میدانی).
 
 `کتاب ها` → `کتاب‌ها`, `بزرگ تر` → `بزرگ‌تر`, and after a final ه: `خانه ای` → `خانه‌ای`,
 `رفته اند` → `رفته‌اند`, and the ezafe `خانه ی من` → `خانه‌ی من`. Two-letter words (`که`, `چه`, `نه`, `به`) are never joined.
-Option `{ "comparatives": false }` skips `تر` / `ترین` (for texts where تر means "wet").
+`ترین` is always joined. `تر` also means "wet" (میوه تر، لباس تر), so by default it is only joined after
+common adjectives (`بزرگ تر`, `کم تر`, `سریع تر` …). Option `{ "comparatives": "all" }` joins it after any
+word; `false` skips both.
 
 ## fa/zwnj-invalid
 
@@ -197,8 +219,10 @@ Doubled ZWNJ, a ZWNJ next to a space or outside a word (it does nothing there), 
 
 ## fa/punctuation
 
-Latin `,` `;` `?` between Persian words → `،` `؛` `؟`. Only when Persian is on both sides, so
-`words like سلام, which` and code such as `t('سلام', …)` are left alone.
+Latin `,` `;` `?` between Persian words → `،` `؛` `؟` (a stray space before them is removed too). Only
+when Persian is on both sides, so `words like سلام, which` and code such as `t('سلام', …)` are left
+alone. Commas are never touched in CSV/TSV files or in YAML/TOML flow lists (`tags: [کتاب, رمان]`,
+also in Markdown front matter).
 
 ## fa/punctuation-spacing
 
@@ -216,7 +240,9 @@ glyph codes (U+FB50–U+FDFF, U+FE70–U+FEFC) such as `ﻣﻘﺪﻭﻧﯿﻪ`. 
 spell-checkers and screen readers see different characters. Fixed with Unicode NFKC normalisation
 (`ﻣﻘﺪﻭﻧﯿﻪ` → `مقدونیه`, `ﻻ` → `لا`). Applies to Persian, Arabic, Urdu and every other Arabic-script text.
 
-The word ligatures U+FDF2–U+FDFD (ﷲ, the rial sign ﷼, honorifics) are left alone. Code files are skipped
+The word ligatures U+FDF2–U+FDFF (ﷲ, the rial sign ﷼, salawat), the ornate Quran brackets ﴾﴿ and the
+honorifics U+FD40–U+FD4F are left alone. Isolated harakat forms become the bare mark (no stray
+space or tatweel). Code files are skipped
 by default, because canvas and game code sometimes pre-shapes text on purpose; enable with
 `["error", { "code": true }]`.
 
@@ -227,6 +253,7 @@ display differently from how it runs: the
 [Trojan Source](https://trojansource.codes/) attack, CVE-2021-42574.
 
 - In code and stylesheets every such character is reported.
+- `<script>` and `<style>` blocks of `.vue`, `.svelte` and `.html` files count as code.
 - In text, markup and translation files, where RTL text may use them on purpose, only the risky
   ones are: overrides (U+202D, U+202E) and embeddings/isolates left unclosed on their line,
   whose direction leaks into whatever is rendered next.
@@ -251,4 +278,6 @@ Works in any comment syntax (`//`, `/* */`, `<!-- -->`, `{/* */}`, `#`):
 ```
 
 `rtlint-disable-line`, `rtlint-disable-next-line`, `rtlint-disable` … `rtlint-enable`,
-`rtlint-disable-file`. Without rule ids they apply to every rule.
+`rtlint-disable-file`. Without rule ids they apply to every rule. A directive must start a comment,
+so mentioning one in prose or in a string does nothing. Inside a block comment that spans several
+lines, `disable-next-line` targets the line after the comment ends.

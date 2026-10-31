@@ -92,6 +92,8 @@ export function lintText(text: string, options?: LintOptions): LintResult;
 export function fixText(text: string, options?: FixOptions): FixResult;
 export function applyFixes(text: string, messages: Message[]): string;
 export function resolveSettings(config?: Config, filePath?: string): Settings;
+/** Applies rule levels on top of resolved settings; they win over the config and its overrides. */
+export function applyRuleOverrides(settings: Settings, rules: Record<string, RuleEntry>): Settings;
 export function listRules(): RuleInfo[];
 export function getRule(id: string): unknown;
 export function isRtlLanguage(tag: string): boolean;

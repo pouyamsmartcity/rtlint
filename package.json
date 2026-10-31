@@ -1,11 +1,32 @@
 {
   "name": "rtlint",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Find and fix right-to-left (RTL) layout bugs and Persian typography mistakes in CSS, Tailwind, React, HTML and text. Zero dependencies.",
   "keywords": [
-    "rtl", "right-to-left", "bidi", "i18n", "l10n", "persian", "farsi", "arabic", "hebrew", "urdu",
-    "lint", "linter", "css", "logical-properties", "tailwind", "bootstrap", "react-native",
-    "zwnj", "typography", "trojan-source", "sarif"
+    "rtl",
+    "right-to-left",
+    "bidi",
+    "i18n",
+    "l10n",
+    "persian",
+    "farsi",
+    "arabic",
+    "hebrew",
+    "urdu",
+    "lint",
+    "linter",
+    "css",
+    "logical-properties",
+    "tailwind",
+    "bootstrap",
+    "react-native",
+    "zwnj",
+    "typography",
+    "trojan-source",
+    "sarif",
+    "eslint-plugin",
+    "eslintplugin",
+    "stylelint-plugin"
   ],
   "homepage": "https://github.com/pouyamsmartcity/rtlint#readme",
   "bugs": "https://github.com/pouyamsmartcity/rtlint/issues",
@@ -19,23 +40,62 @@
   "bin": {
     "rtlint": "bin/rtlint.js"
   },
+  "types": "./types/index.d.ts",
   "exports": {
-    ".": "./src/index.js",
-    "./core": "./src/core.js",
+    ".": {
+      "types": "./types/index.d.ts",
+      "default": "./src/index.js"
+    },
+    "./core": {
+      "types": "./types/core.d.ts",
+      "default": "./src/core.js"
+    },
+    "./eslint": {
+      "types": "./types/eslint.d.ts",
+      "default": "./src/eslint.js"
+    },
+    "./stylelint": {
+      "types": "./types/stylelint.d.ts",
+      "default": "./src/stylelint.js"
+    },
+    "./schema.json": "./schema/config.json",
     "./package.json": "./package.json"
   },
   "files": [
     "bin",
     "src",
+    "types",
+    "schema",
     "README.md",
     "README.fa.md",
-    "LICENSE"
+    "LICENSE",
+    "CHANGELOG.md"
   ],
   "engines": {
-    "node": ">=20"
+    "node": ">=20.10"
   },
   "scripts": {
     "test": "node --test",
+    "typecheck": "tsc -p test/types",
+    "schema": "node scripts/build-schema.js",
     "lint:self": "node bin/rtlint.js README.md README.fa.md docs src bin"
+  },
+  "peerDependencies": {
+    "eslint": ">=9",
+    "stylelint": ">=16"
+  },
+  "peerDependenciesMeta": {
+    "eslint": {
+      "optional": true
+    },
+    "stylelint": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@types/node": "^22.20.5",
+    "eslint": "^10.14.0",
+    "stylelint": "^17.16.0",
+    "typescript": "^5.9.3"
   }
 }

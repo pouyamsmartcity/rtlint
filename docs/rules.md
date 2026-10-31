@@ -1,4 +1,4 @@
-<!-- rtlint-disable-file fa/* -->
+<!-- rtlint-disable-file fa/* text/* -->
 # Rules
 
 Every rule can be set to `"off"`, `"warn"` or `"error"`, alone or as `["warn", { …options }]`.
@@ -9,20 +9,24 @@ Wildcards work: `"fa/*": "off"`. ✎ means `rtlint --fix` can repair it.
 | [`css/physical-property`](#cssphysical-property) | warn | ✎ |
 | [`css/physical-value`](#cssphysical-value) | warn | ✎ |
 | [`css/asymmetric-shorthand`](#cssasymmetric-shorthand) | warn | ✎ |
+| [`css/directional-value`](#cssdirectional-value) | off (opt-in) | |
 | [`class/physical-utility`](#classphysical-utility) | warn | ✎ |
 | [`class/directional-utility`](#classdirectional-utility) | warn | |
 | [`jsx/physical-style`](#jsxphysical-style) | warn | ✎ |
 | [`html/dir-attribute`](#htmldir-attribute) | error | ✎ |
 | [`html/ltr-input`](#htmlltr-input) | warn | ✎ |
+| [`icon/directional`](#icondirectional) | warn | |
 | [`fa/arabic-letters`](#faarabic-letters) | error | ✎ |
 | [`fa/arabic-digits`](#faarabic-digits) | warn | ✎ |
 | [`fa/mixed-digits`](#famixed-digits) | warn | ✎ |
 | [`fa/zwnj-prefix`](#fazwnj-prefix) | warn | ✎ |
+| [`fa/zwnj-joined`](#fazwnj-joined) | warn | ✎ |
 | [`fa/zwnj-suffix`](#fazwnj-suffix) | warn | ✎ |
 | [`fa/zwnj-invalid`](#fazwnj-invalid) | warn | ✎ |
 | [`fa/punctuation`](#fapunctuation) | warn | ✎ |
 | [`fa/punctuation-spacing`](#fapunctuation-spacing) | warn | ✎ |
 | [`fa/kashida`](#fakashida) | warn | ✎ |
+| [`text/presentation-forms`](#textpresentation-forms) | error | ✎ |
 | [`security/bidi-control`](#securitybidi-control) | error | |
 
 ---
@@ -69,6 +73,13 @@ border-end-end-radius: 0; border-end-start-radius: 8px;   /* after */
 Covers `margin`, `padding`, `inset`, `scroll-margin`, `scroll-padding`, `border-width`,
 `border-style`, `border-color` and `border-radius` (not the `/` elliptical form). In `.sass` and
 `.styl` it reports without fixing, because the fix needs semicolons.
+
+## css/directional-value
+
+Opt-in (`"css/directional-value": "warn"`). Reports `transform: translateX(20px)`, `translate: 1rem`,
+`background-position: left …` and `transform-origin: right` outside a `[dir]` selector: slide-ins and
+anchors that point one way on screen. Report-only, because the right counterpart depends on intent.
+`translate(-50%)` is skipped (it belongs to the centering trick).
 
 ## class/physical-utility
 
@@ -127,6 +138,20 @@ Next.js and SvelteKit layouts). Knows RTL languages and script subtags (`ku-Arab
 `<input type="email|url|tel">` inherits `dir="rtl"`: `user@example.com` and `+98 912 …` render
 with their punctuation moved to the wrong end. Adds `dir="ltr"` (or keep your own `dir="auto"`).
 
+## icon/directional
+
+Back/next icons point one way on screen; in RTL "next" must point left. Reports:
+
+- components such as `<ChevronRight>`, `<ArrowLeftIcon>`, `<FiChevronRight>`, `<MdArrowForward>`, `<IoChevronBack>`,
+- classes such as `fa-chevron-right`, `bi-arrow-left`, `i-lucide-chevron-right`,
+- `icon="lucide:arrow-right"` / `name="chevron-left"` attributes (Iconify, Ionicons…),
+- Material ligatures such as `arrow_forward` and `chevron_right`.
+
+Up/down and diagonal arrows (the external-link ↗) are not reported, and neither is an icon whose tag
+already mentions `rtl`, `flip`, `mirror`, `scale-x`, `rotate-180` or `dir`, or that is chosen by a
+direction ternary (`isRtl ? <ChevronLeft/> : <ChevronRight/>`). Mirror with `class="rtl:-scale-x-100"`
+or `[dir="rtl"] .icon { transform: scaleX(-1) }`.
+
 ## fa/arabic-letters
 
 Persian typed on an Arabic keyboard layout uses `ي` (U+064A), `ك` (U+0643) and `ى` (U+0649)
@@ -152,10 +177,17 @@ A single number written with two digit systems, e.g. `۱۲3`. Converted to Persi
 The prefixes `می` / `نمی` attach to the verb with a zero-width non-joiner (نیم‌فاصله, U+200C):
 `می روم` → `می‌روم`. Skipped before function words (`و`, `که`, `را`, `از` …).
 
+## fa/zwnj-joined
+
+The same prefix written glued to the verb: `میخواهم` → `می‌خواهم`, `نمیتوانم` → `نمی‌توانم`, `میرفت` → `می‌رفت`.
+Only reported when the rest of the word is a known verb stem plus a personal ending, so nouns that
+start with می (میز، میدان، میوه، میلیون، میهمانی) are never touched. `میدانی` is skipped because it is also
+the adjective "field" (راهنمای میدانی).
+
 ## fa/zwnj-suffix
 
 `کتاب ها` → `کتاب‌ها`, `بزرگ تر` → `بزرگ‌تر`, and after a final ه: `خانه ای` → `خانه‌ای`,
-`رفته اند` → `رفته‌اند`. Two-letter words (`که`, `چه`, `نه`, `به`) are never joined.
+`رفته اند` → `رفته‌اند`, and the ezafe `خانه ی من` → `خانه‌ی من`. Two-letter words (`که`, `چه`, `نه`, `به`) are never joined.
 Option `{ "comparatives": false }` skips `تر` / `ترین` (for texts where تر means "wet").
 
 ## fa/zwnj-invalid
@@ -176,6 +208,17 @@ No space before `، ؛ ؟ ! .` and none just inside `« »`.
 
 Tatweel (ـ, U+0640) stretches words on screen but breaks search and copy-paste.
 Use `text-align: justify` for justification.
+
+## text/presentation-forms
+
+Text copied from PDFs and old software often arrives as Arabic *presentation forms*: pre-shaped
+glyph codes (U+FB50–U+FDFF, U+FE70–U+FEFC) such as `ﻣﻘﺪﻭﻧﯿﻪ`. It looks right, but search, sorting,
+spell-checkers and screen readers see different characters. Fixed with Unicode NFKC normalisation
+(`ﻣﻘﺪﻭﻧﯿﻪ` → `مقدونیه`, `ﻻ` → `لا`). Applies to Persian, Arabic, Urdu and every other Arabic-script text.
+
+The word ligatures U+FDF2–U+FDFD (ﷲ, the rial sign ﷼, honorifics) are left alone. Code files are skipped
+by default, because canvas and game code sometimes pre-shapes text on purpose; enable with
+`["error", { "code": true }]`.
 
 ## security/bidi-control
 

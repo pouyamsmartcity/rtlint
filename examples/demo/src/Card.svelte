@@ -1,10 +1,11 @@
 <script>
+  import { ChevronRight } from 'lucide-svelte';
   export let user;
 </script>
 
 <div class="card flex items-center gap-2 pl-4 text-left">
   <img class="rounded-l-lg" src={user.avatar} alt="" />
-  <span class="ml-auto group-hover:translate-x-1">→</span>
+  <ChevronRight class="ml-auto group-hover:translate-x-1" />
   <input type="email" bind:value={user.email} />
 </div>
 

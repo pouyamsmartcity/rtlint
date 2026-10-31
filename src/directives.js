@@ -32,11 +32,10 @@ export function ruleMatches(pattern, id) {
  * mention in prose or in a string does nothing.
  */
 export function parseDirectives(text, starts) {
-  const file = [];
-  const lines = new Map();
-  const blocks = [];
+  // Every rule pattern of every directive is one entry, so unused ones can be reported.
+  const entries = [];
   const open = [];
-  if (!text.includes('rtlint-')) return { suppressed: () => false };
+  if (!text.includes('rtlint-')) return { suppressed: () => false, unused: () => [] };
   for (const m of text.matchAll(DIRECTIVE)) {
     const { line } = position(starts, m.index);
     const prefix = text.slice(starts[line - 1], m.index);
@@ -44,32 +43,46 @@ export function parseDirectives(text, starts) {
     const blockComment = /\/\*|<!--|^\s*\*/.test(prefix);
     const kind = m[1];
     const rules = ruleList(m[2]);
-    if (kind === 'disable-file') file.push(...rules);
-    else if (kind === 'disable-line') {
-      lines.set(line, [...(lines.get(line) ?? []), ...rules]);
-    } else if (kind === 'disable-next-line') {
+    const add = (from, to) => {
+      for (const rule of rules) entries.push({ rule, from, to, index: m.index, length: m[0].trimEnd().length, kind, used: false });
+    };
+    if (kind === 'disable-file') add(1, Infinity);
+    else if (kind === 'disable-line') add(line, line);
+    else if (kind === 'disable-next-line') {
       // In a block comment that spans lines, "next line" is the one after it ends.
       let target = line + 1;
       const end = blockComment ? text.slice(m.index).search(/\*\/|-->/) : -1;
       if (end >= 0) target = position(starts, m.index + end).line + 1;
-      lines.set(target, [...(lines.get(target) ?? []), ...rules]);
+      add(target, target);
     } else if (kind === 'disable') {
-      for (const r of rules) open.push({ rule: r, from: line });
+      for (const rule of rules) {
+        const entry = { rule, from: line, to: Infinity, index: m.index, length: m[0].trimEnd().length, kind, used: false };
+        entries.push(entry);
+        open.push(entry);
+      }
     } else {
       for (let i = open.length - 1; i >= 0; i--) {
         if (rules.includes('*') || rules.includes(open[i].rule)) {
-          blocks.push({ ...open[i], to: line });
+          open[i].to = line;
           open.splice(i, 1);
         }
       }
     }
   }
-  for (const o of open) blocks.push({ ...o, to: Infinity });
   return {
     suppressed(id, line) {
-      if (file.some((p) => ruleMatches(p, id))) return true;
-      if ((lines.get(line) ?? []).some((p) => ruleMatches(p, id))) return true;
-      return blocks.some((b) => line >= b.from && line <= b.to && ruleMatches(b.rule, id));
+      let hit = false;
+      for (const e of entries) {
+        if (line >= e.from && line <= e.to && ruleMatches(e.rule, id)) {
+          e.used = true;
+          hit = true;
+        }
+      }
+      return hit;
+    },
+    /** Directives that suppressed nothing, as { index, length, rule, kind }. */
+    unused() {
+      return entries.filter((e) => !e.used);
     },
   };
 }

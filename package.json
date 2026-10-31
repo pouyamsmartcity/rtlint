@@ -69,7 +69,9 @@
     "README.md",
     "README.fa.md",
     "LICENSE",
-    "CHANGELOG.md"
+    "CHANGELOG.md",
+    "docs/rules.md",
+    "docs/rules.fa.md"
   ],
   "engines": {
     "node": ">=20.10"

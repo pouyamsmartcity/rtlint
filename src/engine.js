@@ -73,7 +73,7 @@ export function applyRuleOverrides(settings, entries) {
  * Lints a string. `filePath` decides the file kind (by extension) and is
  * matched against config overrides.
  */
-export function lintText(text, { filePath = 'input.txt', config = {}, settings } = {}) {
+export function lintText(text, { filePath = 'input.txt', config = {}, settings, reportUnusedDirectives = false } = {}) {
   const resolved = settings ?? resolveSettings(config, filePath);
   const file = createFile(text, filePath, resolved);
   const directives = parseDirectives(text, file.lineStarts);
@@ -123,6 +123,25 @@ export function lintText(text, { filePath = 'input.txt', config = {}, settings }
         messages.push(message);
       },
     );
+  }
+  if (reportUnusedDirectives) {
+    for (const d of directives.unused()) {
+      const start = position(file.lineStarts, d.index);
+      const end = position(file.lineStarts, d.index + d.length);
+      const target = d.rule === '*' ? '' : ` for ${d.rule}`;
+      messages.push({
+        ruleId: 'unused-disable-directive',
+        severity: 1,
+        message: `Unused rtlint-${d.kind}${target}: nothing was reported here. Remove it.`,
+        line: start.line,
+        column: start.column,
+        endLine: end.line,
+        endColumn: end.column,
+      });
+      if (resolved.lang === 'fa') {
+        messages[messages.length - 1].message = `دستور rtlint-${d.kind}${d.rule === '*' ? '' : ` برای ${d.rule}`} بی‌استفاده است: این‌جا مشکلی گزارش نشده؛ حذفش کنید.`;
+      }
+    }
   }
   messages.sort((a, b) => a.line - b.line || a.column - b.column || a.ruleId.localeCompare(b.ruleId));
   return summarize(filePath, messages);

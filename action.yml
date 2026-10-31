@@ -1,0 +1,32 @@
+name: rtlint
+description: Find right-to-left (RTL) layout bugs and Persian typography mistakes, with annotations on the pull request.
+author: Pouyam
+branding:
+  icon: align-right
+  color: purple
+inputs:
+  paths:
+    description: Files, directories or globs to lint (space separated).
+    default: .
+  args:
+    description: Extra rtlint options, e.g. "--max-warnings 0 --rule fa/*=off".
+    default: ''
+  sarif:
+    description: Also write a SARIF report to this path (for github/codeql-action/upload-sarif).
+    default: ''
+runs:
+  using: composite
+  steps:
+    - name: Run rtlint
+      shell: bash
+      env:
+        RTLINT_PATHS: ${{ inputs.paths }}
+        RTLINT_ARGS: ${{ inputs.args }}
+        RTLINT_SARIF: ${{ inputs.sarif }}
+      run: |
+        set -o pipefail
+        bin="$GITHUB_ACTION_PATH/bin/rtlint.js"
+        if [ -n "$RTLINT_SARIF" ]; then
+          node "$bin" $RTLINT_PATHS $RTLINT_ARGS --format sarif --output-file "$RTLINT_SARIF" || true
+        fi
+        node "$bin" $RTLINT_PATHS $RTLINT_ARGS --format github

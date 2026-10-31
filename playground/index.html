@@ -1,0 +1,298 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>rtlint playground</title>
+<meta name="description" content="Paste CSS, Tailwind, JSX, HTML or Persian text and see the right-to-left bugs rtlint finds and fixes. Runs entirely in your browser.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;600;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f6f5fb; --panel: #ffffff; --ink: #1b1830; --muted: #6b6785; --line: #e4e1f0;
+    --accent: #6d4aff; --accent-ink: #ffffff; --error: #d92d5b; --warn: #b7791f; --ok: #12805c;
+    --code-bg: #faf9ff; --mark: #ffe8a3;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0f0d1a; --panel: #18152a; --ink: #ecebf5; --muted: #9a96b8; --line: #2b2745;
+      --accent: #8b6dff; --accent-ink: #0f0d1a; --error: #ff6b93; --warn: #f2b84b; --ok: #4fd1a1;
+      --code-bg: #120f22; --mark: #5a4710;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #0f0d1a; --panel: #18152a; --ink: #ecebf5; --muted: #9a96b8; --line: #2b2745;
+    --accent: #8b6dff; --accent-ink: #0f0d1a; --error: #ff6b93; --warn: #f2b84b; --ok: #4fd1a1;
+    --code-bg: #120f22; --mark: #5a4710;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--ink);
+    font: 15px/1.55 "Vazirmatn", system-ui, -apple-system, "Segoe UI", sans-serif;
+  }
+  header { max-width: 1240px; margin: 0 auto; padding: 28px 16px 8px; display: flex; flex-wrap: wrap; gap: 12px 24px; align-items: end; justify-content: space-between; }
+  h1 { margin: 0; font-size: 28px; font-weight: 800; letter-spacing: -0.02em; }
+  h1 span { color: var(--accent); }
+  .tag { margin: 4px 0 0; color: var(--muted); max-width: 640px; }
+  .tag [lang="fa"] { display: block; direction: rtl; text-align: start; }
+  nav { display: flex; gap: 16px; font-weight: 600; }
+  nav a { color: var(--ink); text-decoration: none; border-bottom: 2px solid var(--accent); }
+  main { max-width: 1240px; margin: 0 auto; padding: 12px 16px 40px; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 16px; }
+  @media (max-width: 860px) { main { grid-template-columns: minmax(0, 1fr); } }
+  section { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; display: flex; flex-direction: column; min-height: 0; }
+  .bar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; padding: 10px 12px; border-bottom: 1px solid var(--line); }
+  .bar h2 { margin: 0; font-size: 14px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); margin-inline-end: auto; }
+  select, button, input[type="text"] {
+    font: inherit; font-size: 14px; color: var(--ink); background: var(--bg);
+    border: 1px solid var(--line); border-radius: 8px; padding: 6px 10px;
+  }
+  input[type="text"] { width: 130px; font-family: "JetBrains Mono", ui-monospace, monospace; }
+  button { cursor: pointer; font-weight: 600; }
+  button.primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+  button:focus-visible, select:focus-visible, textarea:focus-visible, input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  textarea, pre {
+    margin: 0; width: 100%; border: 0; resize: vertical; min-height: 380px; padding: 14px;
+    font: 13.5px/1.6 "JetBrains Mono", ui-monospace, monospace; color: var(--ink); background: var(--code-bg);
+    unicode-bidi: plaintext; white-space: pre-wrap; overflow-wrap: anywhere; tab-size: 2;
+  }
+  pre { min-height: 0; flex: 1; overflow: auto; }
+  pre mark { background: var(--mark); color: inherit; border-radius: 3px; }
+  .summary { padding: 10px 14px; font-weight: 600; border-bottom: 1px solid var(--line); }
+  .summary.clean { color: var(--ok); }
+  ol { list-style: none; margin: 0; padding: 0; max-height: 380px; overflow: auto; }
+  li { display: grid; grid-template-columns: auto auto minmax(0, 1fr); gap: 4px 10px; padding: 9px 14px; border-bottom: 1px solid var(--line); cursor: pointer; }
+  li:hover { background: var(--code-bg); }
+  .pos { font: 12px/1.9 "JetBrains Mono", monospace; color: var(--muted); }
+  .sev { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; padding: 2px 7px; border-radius: 999px; align-self: start; margin-top: 2px; }
+  .sev.error { color: var(--error); border: 1px solid var(--error); }
+  .sev.warning { color: var(--warn); border: 1px solid var(--warn); }
+  .msg { unicode-bidi: plaintext; }
+  .rule { grid-column: 3; font: 12px "JetBrains Mono", monospace; color: var(--muted); }
+  .rule a { color: inherit; }
+  .output-head { display: flex; align-items: center; gap: 8px; padding: 10px 14px; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); font-weight: 600; }
+  .output-head span { margin-inline-end: auto; }
+  footer { max-width: 1240px; margin: 0 auto; padding: 0 16px 32px; color: var(--muted); font-size: 14px; }
+  footer a { color: var(--accent); }
+</style>
+</head>
+<body>
+<header>
+  <div>
+    <h1><span>rtlint</span> playground</h1>
+    <p class="tag">
+      Paste CSS, Tailwind, JSX, HTML or Persian text. Everything runs in your browser; nothing is uploaded.
+      <span lang="fa">باگ&zwnj;های راست&zwnj;به&zwnj;چپ و نگارش فارسی را همین&zwnj;جا پیدا و درست کنید.</span>
+    </p>
+  </div>
+  <nav>
+    <a href="https://github.com/pouyamsmartcity/rtlint">GitHub</a>
+    <a href="https://github.com/pouyamsmartcity/rtlint/blob/main/docs/rules.md">Rules</a>
+    <button id="theme" type="button" aria-label="Toggle dark mode">◐</button>
+  </nav>
+</header>
+
+<main>
+  <section aria-labelledby="input-title">
+    <div class="bar">
+      <h2 id="input-title">Input</h2>
+      <label>Sample
+        <select id="sample">
+          <option value="svelte">Svelte + Tailwind</option>
+          <option value="css">CSS</option>
+          <option value="jsx">React (JSX)</option>
+          <option value="native">React Native</option>
+          <option value="fa">Persian text</option>
+          <option value="trojan">Trojan Source</option>
+        </select>
+      </label>
+      <label>File name <input id="filename" type="text" spellcheck="false"></label>
+    </div>
+    <textarea id="input" spellcheck="false" aria-label="Source to lint"></textarea>
+  </section>
+
+  <section aria-labelledby="problems-title">
+    <div class="bar">
+      <h2 id="problems-title">Problems</h2>
+      <button id="apply" class="primary" type="button">Apply fixes to input</button>
+    </div>
+    <div id="summary" class="summary" role="status"></div>
+    <ol id="problems"></ol>
+    <div class="output-head"><span>Fixed output <small>(changed text highlighted)</small></span><button id="copy" type="button">Copy</button></div>
+    <pre id="output" aria-label="Fixed output"></pre>
+  </section>
+</main>
+
+<footer>
+  Made by <a href="https://www.pouyam.com">Pouyam</a> · MIT ·
+  Install: <code>npx github:pouyamsmartcity/rtlint --fix</code>
+</footer>
+
+<script type="module">
+import { fixText, lintText } from '../src/core.js';
+
+const SAMPLES = {
+  svelte: ['Card.svelte', `<div class="flex items-center pl-4 text-left md:mr-2">
+  <img class="rounded-l-lg" src={avatar} alt="" />
+  <span class="ml-auto group-hover:translate-x-1">→</span>
+  <input type="email" bind:value={email} />
+  <div class="absolute left-1/2 -translate-x-1/2">centered</div>
+</div>
+
+<style>
+  .card { margin-left: 8px; padding: 0 26px 0 20px; text-align: right; }
+  .notch { padding-left: env(safe-area-inset-left); }
+</style>
+`],
+  css: ['styles.scss', `.toast {
+  position: fixed;
+  right: 16px;
+  border-left: 4px solid gold;
+  border-radius: 8px 0 0 8px;
+  margin: 0 24px 0 8px;
+  float: left;
+}
+/* rtlint-disable-next-line css/physical-property -- charts always run LTR */
+.chart-axis { margin-left: 40px; }
+.title { @apply ml-2 text-right; }
+`],
+  jsx: ['Header.tsx', `export default function Header({ locale }) {
+  return (
+    <html lang={locale}>
+      <nav className={cn('flex pr-6', open && 'border-r-2 rounded-tr-xl')}>
+        <a style={{ marginLeft: 12, textAlign: 'left' }}>Home</a>
+        <input type="tel" placeholder="+98 912 000 0000" />
+      </nav>
+    </html>
+  );
+}
+`],
+  native: ['Profile.js', `import { StyleSheet } from 'react-native';
+
+export const styles = StyleSheet.create({
+  avatar: { marginRight: 12, borderTopLeftRadius: 20 },
+  name: { paddingLeft: 8, borderLeftWidth: 2 },
+});
+`],
+  fa: ['post.fa.md', `# آموزش نوشتن درست فارسي
+
+من مي خواهم كتاب ها را بخوانم, ولی وقت ندارم?
+این خانه ای است که در سال ١٤٠٣ ساخته اند .
+قیمت : ۱۲3 هزار تومان و «  تخفیف ویژه »
+تـــهران زیباست.
+`],
+  trojan: ['access.js', `function isAdmin(user) {
+  // Looks like a comment that ends before the return, but runs differently:
+  if (user.role !== "admin\u202E \u2066// check later\u2069 \u2066") {
+    return false;
+  }
+  return true;
+}
+`],
+};
+
+const $ = (id) => document.getElementById(id);
+const input = $('input');
+const filename = $('filename');
+const DOCS = 'https://github.com/pouyamsmartcity/rtlint/blob/main/docs/rules.md#';
+
+function escapeHtml(s) {
+  return s.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
+}
+
+/** Highlights the spans of `after` that differ from `before` (common prefix/suffix per line). */
+function highlight(before, after) {
+  const a = before.split('\n');
+  return after.split('\n').map((line, i) => {
+    const old = a[i] ?? '';
+    if (old === line) return escapeHtml(line);
+    let s = 0;
+    while (s < line.length && s < old.length && line[s] === old[s]) s++;
+    let e = 0;
+    while (e < line.length - s && e < old.length - s && line[line.length - 1 - e] === old[old.length - 1 - e]) e++;
+    return escapeHtml(line.slice(0, s)) + '<mark>' + escapeHtml(line.slice(s, line.length - e)) + '</mark>' + escapeHtml(line.slice(line.length - e));
+  }).join('\n');
+}
+
+function offsetOf(text, line, column) {
+  let idx = 0;
+  for (let l = 1; l < line; l++) idx = text.indexOf('\n', idx) + 1;
+  return idx + column - 1;
+}
+
+let last = null;
+function update() {
+  const text = input.value;
+  const filePath = filename.value.trim() || 'input.txt';
+  let result, fixed;
+  try {
+    result = lintText(text, { filePath });
+    fixed = fixText(text, { filePath });
+  } catch (err) {
+    $('summary').textContent = String(err.message ?? err);
+    return;
+  }
+  last = { text, fixed };
+  const list = $('problems');
+  list.replaceChildren();
+  for (const m of result.messages) {
+    const li = document.createElement('li');
+    li.tabIndex = 0;
+    li.innerHTML =
+      `<span class="pos">${m.line}:${m.column}</span>` +
+      `<span class="sev ${m.severity === 2 ? 'error' : 'warning'}">${m.severity === 2 ? 'error' : 'warn'}</span>` +
+      `<span class="msg">${escapeHtml(m.message)}</span>` +
+      `<span class="rule"><a href="${DOCS}${m.ruleId.replace('/', '')}" target="_blank" rel="noopener">${m.ruleId}</a>${m.fix ? ' · fixable' : ''}</span>`;
+    const select = () => {
+      const start = offsetOf(text, m.line, m.column);
+      const end = offsetOf(text, m.endLine, m.endColumn);
+      input.focus();
+      input.setSelectionRange(start, Math.max(end, start + 1));
+    };
+    li.addEventListener('click', (e) => { if (e.target.tagName !== 'A') select(); });
+    li.addEventListener('keydown', (e) => { if (e.key === 'Enter') select(); });
+    list.append(li);
+  }
+  const n = result.messages.length;
+  const fixable = result.fixableErrorCount + result.fixableWarningCount;
+  const summary = $('summary');
+  summary.classList.toggle('clean', n === 0);
+  summary.textContent = n === 0
+    ? '✓ No RTL problems found.'
+    : `${n} problem${n === 1 ? '' : 's'} (${result.errorCount} error${result.errorCount === 1 ? '' : 's'}, ${result.warningCount} warning${result.warningCount === 1 ? '' : 's'}), ${fixable} fixable`;
+  $('output').innerHTML = highlight(text, fixed.output);
+  $('apply').disabled = !fixed.fixed;
+}
+
+function loadSample(key) {
+  const [name, code] = SAMPLES[key];
+  filename.value = name;
+  input.value = code;
+  update();
+}
+
+let timer;
+input.addEventListener('input', () => { clearTimeout(timer); timer = setTimeout(update, 120); });
+filename.addEventListener('input', update);
+$('sample').addEventListener('change', (e) => loadSample(e.target.value));
+$('apply').addEventListener('click', () => { if (last) { input.value = last.fixed.output; update(); } });
+$('copy').addEventListener('click', async () => {
+  if (!last) return;
+  try {
+    await navigator.clipboard.writeText(last.fixed.output);
+    $('copy').textContent = 'Copied';
+  } catch {
+    $('copy').textContent = 'Copy failed';
+  }
+  setTimeout(() => ($('copy').textContent = 'Copy'), 1200);
+});
+$('theme').addEventListener('click', () => {
+  const root = document.documentElement;
+  const dark = root.dataset.theme ? root.dataset.theme === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
+  root.dataset.theme = dark ? 'light' : 'dark';
+});
+
+loadSample('svelte');
+</script>
+</body>
+</html>

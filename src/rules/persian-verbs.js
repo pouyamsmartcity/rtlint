@@ -42,7 +42,7 @@ export const zwnjJoined = {
   meta: {
     description:
       // rtlint-disable-next-line fa/* -- example or regex, not prose
-      'The verb prefixes می/نمی written glued to the verb («میخواهم») need a zero-width non-joiner: «می‌خواهم». Only known verb forms are touched.',
+      'The verb prefixes می/نمی written glued to the verb («میخواهم») need a zero-width non-joiner: «می\u200Cخواهم». Only known verb forms are touched.',
     fixable: true,
     level: 'warn',
   },
@@ -55,6 +55,7 @@ export const zwnjJoined = {
         index,
         length: m[0].length,
         message: `"${m[0]}" glues the verb prefix "${prefix}" to the verb; use "${prefix}${ZWNJ}${rest}".`,
+        fa: `در «${m[0]}» پیشوند «${prefix}» به فعل چسبیده؛ «${prefix}${ZWNJ}${rest}» بنویسید.`,
         fix: { range: [index + prefix.length, index + prefix.length], text: ZWNJ },
       });
     });

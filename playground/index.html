@@ -1,142 +1,275 @@
 <!doctype html>
-<html lang="en" dir="ltr">
+<html lang="fa" dir="rtl">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>rtlint playground</title>
-<meta name="description" content="Paste CSS, Tailwind, JSX, HTML or Persian text and see the right-to-left bugs rtlint finds and fixes. Runs entirely in your browser.">
+<title>rtlint | باگ‌یاب راست‌به‌چپ و فارسی</title>
+<meta name="description" content="کدتان را بچسبانید و باگ‌های راست‌به‌چپ و اشتباه‌های نگارش فارسی را ببینید و خودکار درست کنید. همه‌چیز در مرورگر خودتان اجرا می‌شود.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;600;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #f6f5fb; --panel: #ffffff; --ink: #1b1830; --muted: #6b6785; --line: #e4e1f0;
-    --accent: #6d4aff; --accent-ink: #ffffff; --error: #d92d5b; --warn: #b7791f; --ok: #12805c;
-    --code-bg: #faf9ff; --mark: #ffe8a3;
+    --bg: #f6f5fb; --panel: #ffffff; --ink: #1b1830; --muted: #625e7c; --line: #e4e1f0;
+    --accent: #6d4aff; --accent-soft: #efeaff; --accent-ink: #ffffff; --error: #c81e4f; --warn: #a1620b;
+    --ok: #0f7a56; --ok-soft: #e3f6ee; --bad-soft: #fde8ee; --code-bg: #faf9ff; --mark: #ffe8a3;
   }
   @media (prefers-color-scheme: dark) {
     :root:not([data-theme="light"]) {
-      --bg: #0f0d1a; --panel: #18152a; --ink: #ecebf5; --muted: #9a96b8; --line: #2b2745;
-      --accent: #8b6dff; --accent-ink: #0f0d1a; --error: #ff6b93; --warn: #f2b84b; --ok: #4fd1a1;
-      --code-bg: #120f22; --mark: #5a4710;
+      --bg: #0f0d1a; --panel: #18152a; --ink: #ecebf5; --muted: #a29ec0; --line: #2b2745;
+      --accent: #8b6dff; --accent-soft: #241d45; --accent-ink: #0f0d1a; --error: #ff6b93; --warn: #f2b84b;
+      --ok: #4fd1a1; --ok-soft: #10291f; --bad-soft: #2d1520; --code-bg: #120f22; --mark: #5a4710;
     }
   }
   :root[data-theme="dark"] {
-    --bg: #0f0d1a; --panel: #18152a; --ink: #ecebf5; --muted: #9a96b8; --line: #2b2745;
-    --accent: #8b6dff; --accent-ink: #0f0d1a; --error: #ff6b93; --warn: #f2b84b; --ok: #4fd1a1;
-    --code-bg: #120f22; --mark: #5a4710;
+    --bg: #0f0d1a; --panel: #18152a; --ink: #ecebf5; --muted: #a29ec0; --line: #2b2745;
+    --accent: #8b6dff; --accent-soft: #241d45; --accent-ink: #0f0d1a; --error: #ff6b93; --warn: #f2b84b;
+    --ok: #4fd1a1; --ok-soft: #10291f; --bad-soft: #2d1520; --code-bg: #120f22; --mark: #5a4710;
   }
   * { box-sizing: border-box; }
   body {
     margin: 0; background: var(--bg); color: var(--ink);
-    font: 15px/1.55 "Vazirmatn", system-ui, -apple-system, "Segoe UI", sans-serif;
+    font: 16px/1.8 "Vazirmatn", system-ui, -apple-system, "Segoe UI", Tahoma, sans-serif;
   }
-  header { max-width: 1240px; margin: 0 auto; padding: 28px 16px 8px; display: flex; flex-wrap: wrap; gap: 12px 24px; align-items: end; justify-content: space-between; }
-  h1 { margin: 0; font-size: 28px; font-weight: 800; letter-spacing: -0.02em; }
-  h1 span { color: var(--accent); }
-  .tag { margin: 4px 0 0; color: var(--muted); max-width: 640px; }
-  .tag [lang="fa"] { display: block; direction: rtl; text-align: start; }
-  nav { display: flex; gap: 16px; font-weight: 600; }
-  nav a { color: var(--ink); text-decoration: none; border-bottom: 2px solid var(--accent); }
-  main { max-width: 1240px; margin: 0 auto; padding: 12px 16px 40px; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 16px; }
-  @media (max-width: 860px) { main { grid-template-columns: minmax(0, 1fr); } }
-  section { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; display: flex; flex-direction: column; min-height: 0; }
-  .bar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; padding: 10px 12px; border-bottom: 1px solid var(--line); }
-  .bar h2 { margin: 0; font-size: 14px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); margin-inline-end: auto; }
+  :lang(en) body, html[lang="en"] body { line-height: 1.6; }
+  a { color: var(--accent); }
+  code, kbd { font-family: "JetBrains Mono", ui-monospace, monospace; font-size: 0.88em; direction: ltr; unicode-bidi: isolate; }
+  .wrap { max-width: 1180px; margin: 0 auto; padding-inline: 16px; }
+
+  header.top { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; padding-block: 18px 0; }
+  .brand { font-weight: 800; font-size: 20px; text-decoration: none; color: var(--ink); }
+  .brand span { color: var(--accent); }
+  nav.links { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; font-weight: 500; }
+  nav.links a { color: var(--ink); text-decoration: none; border-block-end: 2px solid var(--accent); }
+  .pill { font: inherit; font-size: 14px; color: var(--ink); background: var(--panel); border: 1px solid var(--line); border-radius: 999px; padding: 4px 12px; cursor: pointer; }
+
+  .hero { padding-block: 32px 8px; }
+  .hero h1 { margin: 0 0 8px; font-size: clamp(26px, 4.6vw, 42px); line-height: 1.35; font-weight: 800; letter-spacing: -0.01em; }
+  .hero h1 em { font-style: normal; color: var(--accent); }
+  .hero p { margin: 0; max-width: 760px; color: var(--muted); font-size: 18px; }
+
+  .cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-block: 24px; }
+  @media (max-width: 860px) { .cards { grid-template-columns: minmax(0, 1fr); } }
+  .card { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 16px 18px; }
+  .card h3 { margin: 0 0 6px; font-size: 17px; }
+  .card p { margin: 0; color: var(--muted); font-size: 15px; }
+
+  .demo { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 18px; margin-block-end: 24px; }
+  .demo h2 { margin: 0 0 4px; font-size: 19px; }
+  .demo > p { margin: 0 0 14px; color: var(--muted); font-size: 15px; }
+  .compare { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+  @media (max-width: 700px) { .compare { grid-template-columns: minmax(0, 1fr); } }
+  .side { border-radius: 12px; padding: 12px; }
+  .side.bad { background: var(--bad-soft); }
+  .side.good { background: var(--ok-soft); }
+  .side h4 { margin: 0 0 10px; font-size: 15px; }
+  .side.bad h4 { color: var(--error); }
+  .side.good h4 { color: var(--ok); }
+  .mock { direction: rtl; display: flex; align-items: center; background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 10px; }
+  .mock .avatar { inline-size: 36px; block-size: 36px; border-radius: 50%; background: linear-gradient(135deg, #8b6dff, #ff7ab6); flex: none; }
+  .mock .name { font-weight: 700; }
+  .mock .sub { color: var(--muted); font-size: 13px; }
+  .mock .arrow { inline-size: 18px; block-size: 18px; flex: none; color: var(--accent); }
+  .bad .mock .avatar { margin-right: 12px; }     /* rtlint-disable-line css/physical-property -- the broken example on purpose */
+  .bad .mock .arrow { margin-left: auto; }       /* rtlint-disable-line css/physical-property -- the broken example on purpose */
+  .good .mock .avatar { margin-inline-end: 12px; }
+  .good .mock .arrow { margin-inline-start: auto; transform: scaleX(-1); }
+  .side code.why { display: block; margin-block-start: 10px; font-size: 12.5px; white-space: pre-wrap; text-align: left; }
+  .side .note { margin: 8px 0 0; font-size: 13px; color: var(--muted); }
+
+  .steps { counter-reset: step; display: flex; flex-wrap: wrap; gap: 8px 22px; margin: 0 0 14px; padding: 0; list-style: none; color: var(--muted); }
+  .steps li::before { counter-increment: step; content: counter(step, persian) "."; color: var(--accent); font-weight: 700; margin-inline-end: 6px; }
+  html[lang="en"] .steps li::before { content: counter(step) "."; }
+
+  main.tool { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 16px; }
+  @media (max-width: 860px) { main.tool { grid-template-columns: minmax(0, 1fr); } }
+  section.pane { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; display: flex; flex-direction: column; min-height: 0; }
+  .bar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; padding: 10px 12px; border-block-end: 1px solid var(--line); }
+  .bar h2 { margin: 0; font-size: 15px; font-weight: 700; margin-inline-end: auto; }
   select, button, input[type="text"] {
     font: inherit; font-size: 14px; color: var(--ink); background: var(--bg);
-    border: 1px solid var(--line); border-radius: 8px; padding: 6px 10px;
+    border: 1px solid var(--line); border-radius: 8px; padding: 5px 10px;
   }
-  input[type="text"] { width: 130px; font-family: "JetBrains Mono", ui-monospace, monospace; }
+  input[type="text"] { inline-size: 140px; font-family: "JetBrains Mono", ui-monospace, monospace; direction: ltr; }
   button { cursor: pointer; font-weight: 600; }
   button.primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
-  button:focus-visible, select:focus-visible, textarea:focus-visible, input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  button:disabled { opacity: 0.5; cursor: default; }
+  button:focus-visible, select:focus-visible, textarea:focus-visible, input:focus-visible, li:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
   textarea, pre {
-    margin: 0; width: 100%; border: 0; resize: vertical; min-height: 380px; padding: 14px;
-    font: 13.5px/1.6 "JetBrains Mono", ui-monospace, monospace; color: var(--ink); background: var(--code-bg);
-    unicode-bidi: plaintext; white-space: pre-wrap; overflow-wrap: anywhere; tab-size: 2;
+    margin: 0; inline-size: 100%; border: 0; resize: vertical; min-block-size: 360px; padding: 14px;
+    font: 13.5px/1.9 "JetBrains Mono", "Vazirmatn", ui-monospace, monospace; color: var(--ink); background: var(--code-bg);
+    direction: ltr; text-align: start; unicode-bidi: plaintext; white-space: pre-wrap; overflow-wrap: anywhere; tab-size: 2;
   }
-  pre { min-height: 0; flex: 1; overflow: auto; }
+  pre { min-block-size: 0; flex: 1; overflow: auto; }
   pre mark { background: var(--mark); color: inherit; border-radius: 3px; }
-  .summary { padding: 10px 14px; font-weight: 600; border-bottom: 1px solid var(--line); }
+  .summary { padding: 10px 14px; font-weight: 700; border-block-end: 1px solid var(--line); }
   .summary.clean { color: var(--ok); }
-  ol { list-style: none; margin: 0; padding: 0; max-height: 380px; overflow: auto; }
-  li { display: grid; grid-template-columns: auto auto minmax(0, 1fr); gap: 4px 10px; padding: 9px 14px; border-bottom: 1px solid var(--line); cursor: pointer; }
-  li:hover { background: var(--code-bg); }
-  .pos { font: 12px/1.9 "JetBrains Mono", monospace; color: var(--muted); }
-  .sev { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; padding: 2px 7px; border-radius: 999px; align-self: start; margin-top: 2px; }
+  ol.problems { list-style: none; margin: 0; padding: 0; max-block-size: 380px; overflow: auto; }
+  ol.problems li { display: grid; grid-template-columns: auto auto minmax(0, 1fr); gap: 2px 10px; padding: 10px 14px; border-block-end: 1px solid var(--line); cursor: pointer; }
+  ol.problems li:hover { background: var(--code-bg); }
+  .pos { font: 12px/2 "JetBrains Mono", monospace; color: var(--muted); direction: ltr; }
+  .sev { font-size: 12px; font-weight: 800; padding: 1px 8px; border-radius: 999px; align-self: start; margin-block-start: 3px; white-space: nowrap; }
   .sev.error { color: var(--error); border: 1px solid var(--error); }
   .sev.warning { color: var(--warn); border: 1px solid var(--warn); }
-  .msg { unicode-bidi: plaintext; }
-  .rule { grid-column: 3; font: 12px "JetBrains Mono", monospace; color: var(--muted); }
-  .rule a { color: inherit; }
-  .output-head { display: flex; align-items: center; gap: 8px; padding: 10px 14px; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); font-weight: 600; }
+  .msg { unicode-bidi: plaintext; font-size: 15px; }
+  .rule { grid-column: 3; font-size: 13px; color: var(--muted); }
+  .rule code { font-size: 12px; }
+  .output-head { display: flex; align-items: center; gap: 8px; padding: 10px 14px; border-block: 1px solid var(--line); font-weight: 700; }
   .output-head span { margin-inline-end: auto; }
-  footer { max-width: 1240px; margin: 0 auto; padding: 0 16px 32px; color: var(--muted); font-size: 14px; }
-  footer a { color: var(--accent); }
+  .output-head small { font-weight: 400; color: var(--muted); }
+
+  .install, .rules { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 18px; margin-block-start: 24px; }
+  .install h2, .rules h2 { margin: 0 0 8px; font-size: 19px; }
+  .install pre { min-block-size: 0; border-radius: 10px; padding: 12px 14px; margin-block: 6px 12px; }
+  .install p { margin: 0 0 6px; color: var(--muted); }
+  details.rules summary { cursor: pointer; font-weight: 700; font-size: 18px; }
+  .rules dl { margin: 12px 0 0; display: grid; gap: 10px; }
+  .rules dt { font-weight: 700; }
+  .rules dt code { font-size: 13px; }
+  .rules dd { margin: 0; color: var(--muted); font-size: 15px; }
+  .badge { font-size: 12px; border: 1px solid var(--line); border-radius: 999px; padding: 0 8px; margin-inline-start: 6px; color: var(--muted); font-weight: 500; }
+
+  footer { padding-block: 28px 36px; color: var(--muted); font-size: 14px; }
 </style>
 </head>
 <body>
-<header>
-  <div>
-    <h1><span>rtlint</span> playground</h1>
-    <p class="tag">
-      Paste CSS, Tailwind, JSX, HTML or Persian text. Everything runs in your browser; nothing is uploaded.
-      <span lang="fa">باگ&zwnj;های راست&zwnj;به&zwnj;چپ و نگارش فارسی را همین&zwnj;جا پیدا و درست کنید.</span>
-    </p>
-  </div>
-  <nav>
-    <a href="https://github.com/pouyamsmartcity/rtlint">GitHub</a>
-    <a href="https://github.com/pouyamsmartcity/rtlint/blob/main/docs/rules.md">Rules</a>
-    <button id="theme" type="button" aria-label="Toggle dark mode">◐</button>
-  </nav>
-</header>
+<div class="wrap">
+  <header class="top">
+    <a class="brand" href="https://github.com/pouyamsmartcity/rtlint">rt<span>lint</span></a>
+    <nav class="links">
+      <a href="https://github.com/pouyamsmartcity/rtlint" data-i18n="github">گیت‌هاب</a>
+      <a href="https://github.com/pouyamsmartcity/rtlint/blob/main/README.fa.md" data-i18n="guide">راهنمای کامل</a>
+      <button id="lang" class="pill" type="button" lang="en">English</button>
+      <button id="theme" class="pill" type="button" aria-label="Dark mode">◐</button>
+    </nav>
+  </header>
 
-<main>
-  <section aria-labelledby="input-title">
-    <div class="bar">
-      <h2 id="input-title">Input</h2>
-      <label>Sample
-        <select id="sample">
-          <option value="svelte">Svelte + Tailwind</option>
-          <option value="css">CSS</option>
-          <option value="jsx">React (JSX)</option>
-          <option value="native">React Native</option>
-          <option value="fa">Persian text</option>
-          <option value="icons">Icons</option>
-          <option value="pdf">Text copied from a PDF</option>
-          <option value="trojan">Trojan Source</option>
-        </select>
-      </label>
-      <label>File name <input id="filename" type="text" spellcheck="false"></label>
-    </div>
-    <textarea id="input" spellcheck="false" aria-label="Source to lint"></textarea>
+  <section class="hero">
+    <h1 data-i18n-html="title">باگ‌های <em>راست‌به‌چپ</em> و <em>نگارش فارسی</em> را قبل از کاربرانتان پیدا کنید.</h1>
+    <p data-i18n="lead">بیشتر سایت‌ها و اپ‌ها برای فارسی‌زبان‌ها به همان شکل‌های کوچک خراب می‌شوند: فاصله‌ای که سمت اشتباه افتاده، فلشی که برعکس است، ایمیلی که به‌هم می‌ریزد، یا کلمه‌ای که با «ي» عربی تایپ شده و جست‌وجو پیدایش نمی‌کند. rtlint این‌ها را در کد پیدا می‌کند و بیشترشان را خودش درست می‌کند.</p>
   </section>
 
-  <section aria-labelledby="problems-title">
+  <div class="cards">
+    <div class="card">
+      <h3 data-i18n="c1t">چیدمانی که آینه نمی‌شود</h3>
+      <p data-i18n="c1">margin-left، کلاس‌های ml-4 و text-left در Tailwind، استایل‌های React، و آیکون‌های جلو و عقب.</p>
+    </div>
+    <div class="card">
+      <h3 data-i18n="c2t">نگارش فارسی</h3>
+      <p data-i18n="c2">«ي» و «ك» عربی، نیم‌فاصله در «می‌خواهم» و «کتاب‌ها»، رقم عربی، «،» و «؟» فارسی، و حروف کپی‌شده از PDF.</p>
+    </div>
+    <div class="card">
+      <h3 data-i18n="c3t">جهت و امنیت</h3>
+      <p data-i18n="c3">&rlm;&lt;html&gt; بدون dir="rtl"، فیلدهای ایمیل و تلفن، و نویسه‌های نامرئی حمله‌ی Trojan Source.</p>
+    </div>
+  </div>
+
+  <section class="demo" aria-labelledby="demo-title">
+    <h2 id="demo-title" data-i18n="dt">مشکل دقیقاً چه شکلی است؟</h2>
+    <p data-i18n="dp">هر دو کارت زیر در یک صفحه‌ی فارسی (راست‌به‌چپ) هستند و فقط CSS آن‌ها فرق دارد:</p>
+    <div class="compare">
+      <div class="side bad">
+        <h4 data-i18n="bad">✗ قبل از rtlint</h4>
+        <div class="mock">
+          <div class="avatar" aria-hidden="true"></div>
+          <div><div class="name">مریم رضایی</div><div class="sub">۳ پیام تازه</div></div>
+          <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+        </div>
+        <p class="note" data-i18n="badn">عکس به متن چسبیده، فلش کنار متن مانده و «بعدی» به عقب اشاره می‌کند.</p>
+        <code class="why">.avatar { margin-right: 12px }
+.arrow  { margin-left: auto }</code>
+      </div>
+      <div class="side good">
+        <h4 data-i18n="good">✓ بعد از اصلاح با rtlint</h4>
+        <div class="mock">
+          <div class="avatar" aria-hidden="true"></div>
+          <div><div class="name">مریم رضایی</div><div class="sub">۳ پیام تازه</div></div>
+          <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+        </div>
+        <p class="note" data-i18n="goodn">فاصله سمت درست است و فلش به جلو اشاره می‌کند؛ همین CSS در انگلیسی هم درست کار می‌کند.</p>
+        <code class="why">.avatar { margin-inline-end: 12px }
+.arrow  { margin-inline-start: auto }
+[dir="rtl"] .arrow { transform: scaleX(-1) }</code>
+      </div>
+    </div>
+  </section>
+
+  <ol class="steps">
+    <li data-i18n="s1">یک نمونه انتخاب کنید یا کد خودتان را بچسبانید</li>
+    <li data-i18n="s2">مشکل‌ها را به فارسی ببینید؛ روی هر کدام بزنید تا جایش در کد مشخص شود</li>
+    <li data-i18n="s3">«اصلاح خودکار» را بزنید</li>
+  </ol>
+</div>
+
+<main class="wrap tool">
+  <section class="pane" aria-labelledby="input-title">
     <div class="bar">
-      <h2 id="problems-title">Problems</h2>
-      <button id="apply" class="primary" type="button">Apply fixes to input</button>
+      <h2 id="input-title" data-i18n="input">کد شما</h2>
+      <label><span data-i18n="sample">نمونه:</span>
+        <select id="sample">
+          <option value="fa" data-i18n="o_fa">متن فارسی</option>
+          <option value="svelte" data-i18n="o_svelte">Svelte و Tailwind</option>
+          <option value="css" data-i18n="o_css">CSS</option>
+          <option value="jsx" data-i18n="o_jsx">React</option>
+          <option value="native" data-i18n="o_native">React Native</option>
+          <option value="icons" data-i18n="o_icons">آیکون‌ها</option>
+          <option value="pdf" data-i18n="o_pdf">متن کپی‌شده از PDF</option>
+          <option value="trojan" data-i18n="o_trojan">حمله‌ی Trojan Source</option>
+        </select>
+      </label>
+      <label><span data-i18n="file">نام فایل:</span> <input id="filename" type="text" spellcheck="false" aria-describedby="file-hint"></label>
+    </div>
+    <textarea id="input" spellcheck="false" aria-label="Source"></textarea>
+  </section>
+
+  <section class="pane" aria-labelledby="problems-title">
+    <div class="bar">
+      <h2 id="problems-title" data-i18n="problems">مشکل‌ها</h2>
+      <button id="apply" class="primary" type="button" data-i18n="apply">اصلاح خودکار</button>
     </div>
     <div id="summary" class="summary" role="status"></div>
-    <ol id="problems"></ol>
-    <div class="output-head"><span>Fixed output <small>(changed text highlighted)</small></span><button id="copy" type="button">Copy</button></div>
+    <ol id="problems" class="problems"></ol>
+    <div class="output-head"><span><span data-i18n="fixed">کد اصلاح‌شده</span> <small data-i18n="fixedHint">(تغییرها پررنگ شده‌اند)</small></span><button id="copy" type="button" data-i18n="copy">کپی</button></div>
     <pre id="output" aria-label="Fixed output"></pre>
   </section>
 </main>
 
-<footer>
-  Made by <a href="https://www.pouyam.com">Pouyam</a> · MIT ·
-  Install: <code>npx github:pouyamsmartcity/rtlint --fix</code>
-</footer>
+<div class="wrap">
+  <section class="install">
+    <h2 data-i18n="it">روی پروژه‌ی خودتان</h2>
+    <p data-i18n="i1">فقط Node.js نسخه‌ی ۲۰ یا بالاتر لازم است. در پوشه‌ی پروژه اجرا کنید:</p>
+    <pre>npx github:pouyamsmartcity/rtlint --lang fa
+npx github:pouyamsmartcity/rtlint --lang fa --fix</pre>
+    <p data-i18n="i2">دستور اول فقط گزارش می‌دهد؛ دومی اصلاح‌های امن را روی فایل‌ها اعمال می‌کند. افزونه‌ی ESLint و Stylelint و GitHub Action هم دارد.</p>
+  </section>
+
+  <details class="rules" id="rules">
+    <summary data-i18n="rt">همه‌ی قانون‌ها و توضیحشان</summary>
+    <dl id="rule-list"></dl>
+  </details>
+
+  <footer>
+    <span data-i18n-html="footer">ساخته‌ی تیم <a href="https://www.pouyam.com">پویام</a> · متن‌باز با مجوز MIT · همه‌چیز در مرورگر خودتان اجرا می‌شود و کدی به جایی فرستاده نمی‌شود.</span>
+  </footer>
+</div>
 
 <script type="module">
-import { fixText, lintText } from '../src/core.js';
+import { fixText, lintText, listRules } from '../src/core.js';
+
+const ch = (...codes) => String.fromCharCode(...codes);
 
 const SAMPLES = {
+  fa: ['post.fa.md', `# آموزش نوشتن درست فارسي
+
+من مي خواهم كتاب ها را بخوانم, ولی وقت ندارم?
+میخواهم به خانه ی دوستم بروم ولی نمیتوانم.
+این خانه ای است که در سال ١٤٠٣ ساخته اند .
+قیمت ۱۲3 هزار تومان و «  تخفیف ویژه »
+تـــهران زیباست.
+`],
   svelte: ['Card.svelte', `<div class="flex items-center pl-4 text-left md:mr-2">
   <img class="rounded-l-lg" src={avatar} alt="" />
-  <span class="ml-auto group-hover:translate-x-1">→</span>
+  <ChevronRight class="ml-auto group-hover:translate-x-1" />
   <input type="email" bind:value={email} />
   <div class="absolute left-1/2 -translate-x-1/2">centered</div>
 </div>
@@ -144,6 +277,7 @@ const SAMPLES = {
 <style>
   .card { margin-left: 8px; padding: 0 26px 0 20px; text-align: right; }
   .notch { padding-left: env(safe-area-inset-left); }
+  [dir="rtl"] .legacy { margin-right: 4px; }
 </style>
 `],
   css: ['styles.scss', `.toast {
@@ -162,7 +296,7 @@ const SAMPLES = {
   return (
     <html lang={locale}>
       <nav className={cn('flex pr-6', open && 'border-r-2 rounded-tr-xl')}>
-        <a style={{ marginLeft: 12, textAlign: 'left' }}>Home</a>
+        <a style={{ marginLeft: 12, textAlign: 'left' }}>خانه</a>
         <input type="tel" placeholder="+98 912 000 0000" />
       </nav>
     </html>
@@ -176,22 +310,14 @@ export const styles = StyleSheet.create({
   name: { paddingLeft: 8, borderLeftWidth: 2 },
 });
 `],
-  fa: ['post.fa.md', `# آموزش نوشتن درست فارسي
-
-من مي خواهم كتاب ها را بخوانم, ولی وقت ندارم?
-میخواهم به خانه ی دوستم بروم ولی نمیتوانم.
-این خانه ای است که در سال ١٤٠٣ ساخته اند .
-قیمت : ۱۲3 هزار تومان و «  تخفیف ویژه »
-تـــهران زیباست.
-`],
   icons: ['Pager.tsx', `import { ChevronLeft, ChevronRight, ArrowUpRight } from 'lucide-react';
 
-export function Pager({ isRtl }) {
+export function Pager() {
   return (
     <nav className="flex gap-2">
-      <button><ChevronLeft className="size-4" /> Previous</button>
-      <button>Next <ChevronRight className="size-4 rtl:-scale-x-100" /></button>
-      <a href="/docs">Docs <ArrowUpRight /></a>
+      <button><ChevronLeft className="size-4" /> قبلی</button>
+      <button>بعدی <ChevronRight className="size-4 rtl:-scale-x-100" /></button>
+      <a href="/docs">مستندات <ArrowUpRight /></a>
       <i className="fa fa-arrow-right" />
       <span className="material-icons">arrow_forward</span>
     </nav>
@@ -205,8 +331,8 @@ export function Pager({ isRtl }) {
 }
 `],
   trojan: ['access.js', `function isAdmin(user) {
-  // Looks like a comment that ends before the return, but runs differently:
-  if (user.role !== "admin\u202E \u2066// check later\u2069 \u2066") {
+  // Looks like a comment that ends before the check, but runs differently:
+  if (user.role !== "admin${ch(0x202e)} ${ch(0x2066)}// check later${ch(0x2069)} ${ch(0x2066)}") {
     return false;
   }
   return true;
@@ -214,10 +340,49 @@ export function Pager({ isRtl }) {
 `],
 };
 
+const T = {
+  fa: {},
+  en: {
+    github: 'GitHub', guide: 'Full guide', title: 'Catch <em>right-to-left</em> and <em>Persian typography</em> bugs before your users do.',
+    lead: 'Most sites and apps break for Persian, Arabic, Hebrew and Urdu readers in the same small ways: a margin on the wrong side, an arrow pointing backwards, an email address that scrambles, a word typed with Arabic letters that search cannot find. rtlint finds them in your code and fixes most of them.',
+    c1t: 'Layout that does not mirror', c1: 'margin-left, Tailwind ml-4 and text-left, React styles, back/next icons.',
+    c2t: 'Persian typography', c2: 'Arabic ي/ك, half-spaces (می‌خواهم, کتاب‌ها), Arabic digits, ، and ؟, glyphs copied from PDFs.',
+    c3t: 'Direction and security', c3: '<html> without dir="rtl", email and phone inputs, invisible Trojan Source characters.',
+    dt: 'What does the bug look like?', dp: 'Both cards below sit on a right-to-left page. Only their CSS differs:',
+    bad: '✗ Before rtlint', badn: 'The photo touches the text, the arrow hugs the text and "next" points back.',
+    good: '✓ After fixing with rtlint', goodn: 'Spacing is on the right side and the arrow points forward. The same CSS still works in English.',
+    s1: 'Pick a sample or paste your code', s2: 'Read the problems; click one to select it in the code', s3: 'Press "Fix"',
+    input: 'Your code', sample: 'Sample:', file: 'File name:',
+    o_fa: 'Persian text', o_svelte: 'Svelte + Tailwind', o_css: 'CSS', o_jsx: 'React', o_native: 'React Native',
+    o_icons: 'Icons', o_pdf: 'Text copied from a PDF', o_trojan: 'Trojan Source attack',
+    problems: 'Problems', apply: 'Fix', fixed: 'Fixed code', fixedHint: '(changes highlighted)', copy: 'Copy',
+    it: 'On your own project', i1: 'Needs Node.js 20 or newer. In your project folder run:',
+    i2: 'The first command only reports; the second applies the safe fixes. ESLint and Stylelint plugins and a GitHub Action are included.',
+    rt: 'Every rule, explained',
+    footer: 'Made by the <a href="https://www.pouyam.com">Pouyam</a> team · open source, MIT · everything runs in your browser; no code is sent anywhere.',
+  },
+};
+// Persian strings are the ones already in the page.
+for (const el of document.querySelectorAll('[data-i18n]')) T.fa[el.dataset.i18n] = el.textContent;
+for (const el of document.querySelectorAll('[data-i18n-html]')) T.fa[el.dataset.i18nHtml] = el.innerHTML;
+
+const UI = {
+  fa: { error: 'خطا', warning: 'هشدار', fixable: 'قابل اصلاح خودکار', clean: '✓ مشکلی پیدا نشد.', copied: 'کپی شد', copyFailed: 'کپی نشد',
+    summary: (n, e, w, f) => `${toFa(n)} مشکل (${toFa(e)} خطا، ${toFa(w)} هشدار)؛ ${toFa(f)} مورد خودکار درست می‌شود`,
+    switchTo: 'English', fixWord: 'خودکار' },
+  en: { error: 'error', warning: 'warning', fixable: 'fixable', clean: '✓ No RTL problems found.', copied: 'Copied', copyFailed: 'Copy failed',
+    summary: (n, e, w, f) => `${n} problem${n === 1 ? '' : 's'} (${e} error${e === 1 ? '' : 's'}, ${w} warning${w === 1 ? '' : 's'}), ${f} fixable`,
+    switchTo: 'فارسی', fixWord: 'fix' },
+};
+const toFa = (n) => String(n).replace(/[0-9]/g, (d) => '۰۱۲۳۴۵۶۷۸۹'[d]);
+
 const $ = (id) => document.getElementById(id);
 const input = $('input');
 const filename = $('filename');
 const DOCS = 'https://github.com/pouyamsmartcity/rtlint/blob/main/docs/rules.md#';
+let lang = 'fa';
+// Persian first: this page is mainly for Persian speakers.
+try { lang = localStorage.getItem('rtlint-lang') ?? 'fa'; } catch {}
 
 function escapeHtml(s) {
   return s.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
@@ -247,10 +412,12 @@ let last = null;
 function update() {
   const text = input.value;
   const filePath = filename.value.trim() || 'input.txt';
+  const config = { lang };
+  const ui = UI[lang];
   let result, fixed;
   try {
-    result = lintText(text, { filePath });
-    fixed = fixText(text, { filePath });
+    result = lintText(text, { filePath, config });
+    fixed = fixText(text, { filePath, config });
   } catch (err) {
     $('summary').textContent = String(err.message ?? err);
     return;
@@ -261,18 +428,19 @@ function update() {
   for (const m of result.messages) {
     const li = document.createElement('li');
     li.tabIndex = 0;
+    const pos = lang === 'fa' ? `${toFa(m.line)}:${toFa(m.column)}` : `${m.line}:${m.column}`;
     li.innerHTML =
-      `<span class="pos">${m.line}:${m.column}</span>` +
-      `<span class="sev ${m.severity === 2 ? 'error' : 'warning'}">${m.severity === 2 ? 'error' : 'warn'}</span>` +
+      `<span class="pos">${pos}</span>` +
+      `<span class="sev ${m.severity === 2 ? 'error' : 'warning'}">${m.severity === 2 ? ui.error : ui.warning}</span>` +
       `<span class="msg">${escapeHtml(m.message)}</span>` +
-      `<span class="rule"><a href="${DOCS}${m.ruleId.replace('/', '')}" target="_blank" rel="noopener">${m.ruleId}</a>${m.fix ? ' · fixable' : ''}</span>`;
+      `<span class="rule"><a href="${DOCS}${m.ruleId.replace('/', '')}" target="_blank" rel="noopener"><code>${m.ruleId}</code></a>${m.fix ? ` · ${ui.fixable}` : ''}</span>`;
     const select = () => {
       const start = offsetOf(text, m.line, m.column);
       const end = offsetOf(text, m.endLine, m.endColumn);
       input.focus();
       input.setSelectionRange(start, Math.max(end, start + 1));
     };
-    li.addEventListener('click', (e) => { if (e.target.tagName !== 'A') select(); });
+    li.addEventListener('click', (e) => { if (!e.target.closest('a')) select(); });
     li.addEventListener('keydown', (e) => { if (e.key === 'Enter') select(); });
     list.append(li);
   }
@@ -280,11 +448,37 @@ function update() {
   const fixable = result.fixableErrorCount + result.fixableWarningCount;
   const summary = $('summary');
   summary.classList.toggle('clean', n === 0);
-  summary.textContent = n === 0
-    ? '✓ No RTL problems found.'
-    : `${n} problem${n === 1 ? '' : 's'} (${result.errorCount} error${result.errorCount === 1 ? '' : 's'}, ${result.warningCount} warning${result.warningCount === 1 ? '' : 's'}), ${fixable} fixable`;
+  summary.textContent = n === 0 ? ui.clean : ui.summary(n, result.errorCount, result.warningCount, fixable);
   $('output').innerHTML = highlight(text, fixed.output);
   $('apply').disabled = !fixed.fixed;
+}
+
+function renderRules() {
+  const dl = $('rule-list');
+  dl.replaceChildren();
+  for (const r of listRules()) {
+    const dt = document.createElement('dt');
+    dt.innerHTML = `<a href="${DOCS}${r.id.replace('/', '')}" target="_blank" rel="noopener"><code>${r.id}</code></a>` +
+      (r.fixable ? `<span class="badge">${UI[lang].fixWord}</span>` : '') +
+      (r.level === 'off' ? `<span class="badge">${lang === 'fa' ? 'اختیاری' : 'opt-in'}</span>` : '');
+    const dd = document.createElement('dd');
+    dd.textContent = lang === 'fa' ? r.descriptionFa : r.description;
+    dl.append(dt, dd);
+  }
+}
+
+function applyLang() {
+  const root = document.documentElement;
+  root.lang = lang;
+  root.dir = lang === 'fa' ? 'rtl' : 'ltr';
+  document.title = lang === 'fa' ? 'rtlint | باگ‌یاب راست‌به‌چپ و فارسی' : 'rtlint playground';
+  for (const el of document.querySelectorAll('[data-i18n]')) el.textContent = T[lang][el.dataset.i18n] ?? el.textContent;
+  for (const el of document.querySelectorAll('[data-i18n-html]')) el.innerHTML = T[lang][el.dataset.i18nHtml] ?? el.innerHTML;
+  const btn = $('lang');
+  btn.textContent = UI[lang].switchTo;
+  btn.lang = lang === 'fa' ? 'en' : 'fa';
+  renderRules();
+  update();
 }
 
 function loadSample(key) {
@@ -301,13 +495,19 @@ $('sample').addEventListener('change', (e) => loadSample(e.target.value));
 $('apply').addEventListener('click', () => { if (last) { input.value = last.fixed.output; update(); } });
 $('copy').addEventListener('click', async () => {
   if (!last) return;
+  const btn = $('copy');
   try {
     await navigator.clipboard.writeText(last.fixed.output);
-    $('copy').textContent = 'Copied';
+    btn.textContent = UI[lang].copied;
   } catch {
-    $('copy').textContent = 'Copy failed';
+    btn.textContent = UI[lang].copyFailed;
   }
-  setTimeout(() => ($('copy').textContent = 'Copy'), 1200);
+  setTimeout(() => (btn.textContent = T[lang].copy), 1200);
+});
+$('lang').addEventListener('click', () => {
+  lang = lang === 'fa' ? 'en' : 'fa';
+  try { localStorage.setItem('rtlint-lang', lang); } catch {}
+  applyLang();
 });
 $('theme').addEventListener('click', () => {
   const root = document.documentElement;
@@ -315,7 +515,8 @@ $('theme').addEventListener('click', () => {
   root.dataset.theme = dark ? 'light' : 'dark';
 });
 
-loadSample('svelte');
+loadSample('fa');
+applyLang();
 </script>
 </body>
 </html>

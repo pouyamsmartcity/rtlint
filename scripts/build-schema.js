@@ -36,6 +36,7 @@ export function buildSchema() {
     persian: { enum: ['auto', true, false], description: 'Persian text detection. Default "auto".' },
     classes: { type: 'boolean', description: 'Check utility classes (Tailwind/UnoCSS/Bootstrap). Default true.' },
     classPrefix: { type: 'string', description: 'Tailwind prefix, e.g. "tw-".' },
+    lang: { enum: ['en', 'fa'], description: 'Language of messages: en (default) or fa (Persian).' },
   };
   const ruleMap = { type: 'object', properties: rules, additionalProperties: false };
   return {

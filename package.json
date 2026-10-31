@@ -38,7 +38,8 @@
   "author": "Pouyam (https://www.pouyam.com)",
   "type": "module",
   "bin": {
-    "rtlint": "bin/rtlint.js"
+    "rtlint": "bin/rtlint.js",
+    "rtlint-mcp": "bin/rtlint-mcp.js"
   },
   "types": "./types/index.d.ts",
   "exports": {
@@ -59,7 +60,10 @@
       "default": "./src/stylelint.js"
     },
     "./schema.json": "./schema/config.json",
-    "./package.json": "./package.json"
+    "./package.json": "./package.json",
+    "./mcp": {
+      "default": "./src/mcp.js"
+    }
   },
   "files": [
     "bin",

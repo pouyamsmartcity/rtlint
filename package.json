@@ -1,0 +1,41 @@
+{
+  "name": "rtlint",
+  "version": "0.1.0",
+  "description": "Find and fix right-to-left (RTL) layout bugs and Persian typography mistakes in CSS, Tailwind, React, HTML and text. Zero dependencies.",
+  "keywords": [
+    "rtl", "right-to-left", "bidi", "i18n", "l10n", "persian", "farsi", "arabic", "hebrew", "urdu",
+    "lint", "linter", "css", "logical-properties", "tailwind", "bootstrap", "react-native",
+    "zwnj", "typography", "trojan-source", "sarif"
+  ],
+  "homepage": "https://github.com/pouyamsmartcity/rtlint#readme",
+  "bugs": "https://github.com/pouyamsmartcity/rtlint/issues",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pouyamsmartcity/rtlint.git"
+  },
+  "license": "MIT",
+  "author": "Pouyam (https://www.pouyam.com)",
+  "type": "module",
+  "bin": {
+    "rtlint": "bin/rtlint.js"
+  },
+  "exports": {
+    ".": "./src/index.js",
+    "./core": "./src/core.js",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "bin",
+    "src",
+    "README.md",
+    "README.fa.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "test": "node --test",
+    "lint:self": "node bin/rtlint.js README.md README.fa.md docs src bin"
+  }
+}

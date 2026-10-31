@@ -97,7 +97,8 @@ function maskCode(text, ext, js) {
       const end = stringEnd(text, i, triple);
       if (end < 0) { i++; continue; }
       const body = text.slice(i + (triple ? 3 : 1), end - (triple ? 3 : 1));
-      if (!/\s/.test(body.replace(/\$\{[^}]*\}/g, ''))) hide(out, i, end);
+      // A real space makes it prose; \s alone would also count a BOM (U+FEFF) in a character table.
+      if (!/[^\S\uFEFF]/.test(body.replace(/\$\{[^}]*\}/g, ''))) hide(out, i, end);
       i = end;
       continue;
     }

@@ -1,19 +1,20 @@
 <!-- rtlint-disable-file fa/* text/* -->
 <div align="center">
 
-# rtlint
+# rtlint — the RTL linter by Pouyam
 
 **Find and fix right-to-left (RTL) bugs before your Persian, Arabic, Hebrew and Urdu users do.**
 
-A zero-dependency linter for logical CSS, Tailwind/Bootstrap utilities, React styles, HTML direction,
-Persian typography and Trojan Source bidi attacks, with safe `--fix`.
+A zero-dependency linter for logical CSS, Tailwind/Bootstrap utilities, React and React Native styles,
+HTML direction, back/next icons, Persian typography and Trojan Source bidi attacks, with safe `--fix`.
+CLI, ESLint, Stylelint, Vite, GitHub Action, pre-commit and an MCP server for AI assistants.
 
 [![CI](https://github.com/pouyamsmartcity/rtlint/actions/workflows/ci.yml/badge.svg)](https://github.com/pouyamsmartcity/rtlint/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 ![Dependencies: 0](https://img.shields.io/badge/dependencies-0-brightgreen.svg)
 [![Made by Pouyam](https://img.shields.io/badge/made%20by-Pouyam-7c3aed.svg)](https://www.pouyam.com)
 
-[Playground](https://pouyamsmartcity.github.io/rtlint/playground/) · [Rules](docs/rules.md) · **[راهنمای کامل فارسی](README.fa.md)**
+[Playground](https://pouyamsmartcity.github.io/rtlint/playground/) · [Rules](docs/rules.md) · [Guides](docs/guides) · [AI assistants](docs/ai.md) · **[راهنمای کامل فارسی](README.fa.md)**
 
 </div>
 
@@ -46,7 +47,8 @@ Tools for this already exist, but each one covers a single layer. A real RTL bug
 | PDF copy-paste glyphs (Arabic presentation forms) | ✅ | | | |
 | Trojan Source bidi controls (CVE-2021-42574) | ✅ | | | |
 | Knows the centering trick and safe-area insets are *not* bugs | ✅ | | | |
-| CLI, ESLint plugin, Stylelint plugin, GitHub Action, SARIF | ✅ | Stylelint | build step | ESLint |
+| CLI, ESLint, Stylelint, Vite, GitHub Action, pre-commit, MCP for AI | ✅ | Stylelint | build step | ESLint |
+| Messages and docs in Persian | ✅ | | | |
 | One command, no config, no runtime dependencies | ✅ | | | |
 
 <sub>Based on each project's own documentation when this was written. If we got yours wrong, please open an issue.</sub>
@@ -60,6 +62,24 @@ npx github:pouyamsmartcity/rtlint src --fix  # apply safe fixes
 
 Node.js 20 or newer. No install, no config and no runtime dependencies: the whole package
 is plain JavaScript you can read in an afternoon.
+
+```bash
+npx github:pouyamsmartcity/rtlint init        # detect the project and write rtlint.config.json
+npx github:pouyamsmartcity/rtlint --changed   # only files changed since the last commit
+npx github:pouyamsmartcity/rtlint explain fa/zwnj-suffix   # what a rule does, with examples
+```
+
+### Adopting it in a large codebase
+
+```bash
+npx rtlint --update-baseline        # record today's problems in rtlint-baseline.json
+npx rtlint --baseline rtlint-baseline.json   # from now on, only new problems fail CI
+npx rtlint --cache --staged         # fast pre-commit check of staged files
+npx rtlint --fix-only fa/*          # fix one family of rules at a time
+```
+
+Baselines match problems by rule and line content, not line number, so editing other parts of a
+file does not bring old problems back.
 
 ### ESLint
 
@@ -76,6 +96,36 @@ export default [
 Every rule is available as `rtlint/<category>-<name>`. Add `settings: { rtlint: { lang: 'fa' } }` for Persian messages. Fixes work with `eslint --fix`, and the
 plugin reads the raw source, so it also covers `.vue`, `.svelte` and `.astro` files your
 ESLint setup parses.
+
+### Vite
+
+```js
+// vite.config.js
+import rtlint from 'rtlint/vite';
+export default { plugins: [rtlint({ lang: 'fa', failOnError: true })] };
+```
+
+Problems appear in the dev-server terminal as you save; with `failOnError`, `vite build` fails on errors.
+
+### AI assistants (MCP)
+
+```bash
+claude mcp add rtlint -- npx -y github:pouyamsmartcity/rtlint mcp
+```
+
+Claude, Cursor, VS Code and other MCP clients can then lint and fix RTL code themselves.
+[docs/ai.md](docs/ai.md) has the config for each client, plus an AGENTS.md snippet, a Cursor rule
+and a Claude Code skill.
+
+### pre-commit
+
+```yaml
+# .pre-commit-config.yaml
+- repo: https://github.com/pouyamsmartcity/rtlint
+  rev: main
+  hooks:
+    - id: rtlint        # or rtlint-fix
+```
 
 ### Stylelint
 
@@ -100,13 +150,16 @@ Add `"$schema": "https://raw.githubusercontent.com/pouyamsmartcity/rtlint/main/s
 
 ### GitHub Actions
 
-Problems show up as annotations on the pull request diff:
+Problems show up as annotations on the pull request diff, with a summary table on the run page:
 
 ```yaml
 - uses: actions/checkout@v4
+  with: { fetch-depth: 0 }
 - uses: pouyamsmartcity/rtlint@main
   with:
     paths: src
+    changed-only: true   # only files changed in the pull request
+    lang: fa             # Persian messages
     args: --max-warnings 0
 ```
 
@@ -122,19 +175,23 @@ For GitHub code scanning, add `sarif: rtlint.sarif` and upload it with
 - In Tailwind, UnoCSS and Bootstrap, `ml-4 md:pr-2 -left-1 text-right border-l-2 rounded-tr-lg` → `ms-4 md:pe-2 -start-1 text-end border-s-2 rounded-se-lg`. Variants, `!important`, negative and arbitrary values are kept. Bootstrap 4 → 5 names too.
 - `translate-x-1` / `origin-left` without an `rtl:` counterpart.
 - Back/next icons that keep pointing the same way: `<ChevronRight>`, `<ArrowLeftIcon>`, `fa-chevron-right`, `icon="lucide:arrow-right"`, Material `arrow_forward`.
+- `transition: margin-left` that stops animating once the property becomes logical, `letter-spacing` that pulls Persian letters apart, and (opt-in) Tailwind 3 `space-x-*`.
 - In React styles, `marginLeft` → `marginInlineStart`. In React Native it uses `marginStart`, `borderTopStartRadius` and the rest of its own names.
 
 **Direction.**
 
 - `<html lang="fa">` without `dir="rtl"`, a mismatched `dir`, and `lang={locale}` with no `dir` at all.
-- `<input type="email|url|tel">` without `dir="ltr"`.
+- `<input type="email|url|tel">` without `dir="ltr"`, `<html>` without `lang`, and (opt-in) text inputs and textareas without `dir="auto"`.
 
 **Persian typography.** These mistakes come from Arabic keyboard layouts and copy-paste:
 
 - `ي ك ى` → `ی ک`. Arabic lines and files are detected and left alone.
 - Arabic-Indic and mixed digits → Persian digits.
 - Half-space (ZWNJ): `می روم` and `میروم` → `می‌روم`, `کتاب ها` → `کتاب‌ها`, `خانه ای` → `خانه‌ای`, `خانه ی من` → `خانه‌ی من`. Doubled, misplaced, ZWJ and ZWSP half-spaces are fixed too. Glued prefixes are only touched for known verbs, so `میز` and `میدان` stay as they are.
-- `,` `;` `?` → `،` `؛` `؟`, no space before punctuation or inside `« »`, no kashida.
+- `,` `;` `?` → `،` `؛` `؟`, no space before punctuation or inside `« »`, one space after it, no double spaces, no kashida.
+- `→` in Persian text points backwards (Persian reads right to left), so it becomes `←`.
+- Opt-in: `٪`, the Persian decimal and thousands separators, Persian digits in sentences, «guillemets» and `…`.
+- Invisible characters (zero-width spaces, word joiners, stray BOMs) that break search and comparison.
 - PDF copy-paste glyphs: `ﻣﻘﺪﻭﻧﯿﻪ` → `مقدونیه`. These presentation forms look right but search can't find them. This rule helps Arabic and Urdu text too.
 
 **Security.**
@@ -193,7 +250,15 @@ They work in any comment syntax.
 ```text
 rtlint [paths/globs...] [options]
   --fix / --fix-dry-run      apply (or just compute) safe fixes
-  -f, --format <name>        stylish | compact | json | github | sarif
+  --fix-only <rules>         fix only these rules, e.g. fa/*,css/physical-property
+  --changed [ref] / --staged only files changed since a git ref / staged for commit
+  --watch                    re-lint files as they change
+  --cache                    skip unchanged files (.rtlintcache)
+  --baseline <file> / --update-baseline   adopt in a large codebase
+  -f, --format <name>        stylish | compact | json | github | sarif | html | markdown | junit | checkstyle | gitlab | summary
+  --stats                    per-rule summary after the report
+  --report-unused-disable-directives
+  --print-config <file>      the settings that apply to a file
   -o, --output-file <path>   write the report to a file
   --max-warnings <n>         fail when there are more than n warnings
   --quiet                    errors only
@@ -204,7 +269,12 @@ rtlint [paths/globs...] [options]
   --lang <en|fa>             language of messages (fa = Persian)
   --stdin [--stdin-filename a.css]   editor integrations; with --fix prints the fixed text
   --list-rules
+rtlint init | explain <rule> | mcp
 ```
+
+`-f html` writes a self-contained report (right-to-left with `--lang fa`) you can attach to a CI run;
+`-f markdown` is made for pull request comments; `junit`, `checkstyle` and `gitlab` plug into
+Jenkins, GitLab and most CI dashboards.
 
 Exit codes: `0` clean, `1` problems found, `2` usage or config error.
 
@@ -217,11 +287,37 @@ const { messages } = lintText('.a { margin-left: 4px }', { filePath: 'a.css' });
 const { output } = fixText('این يك كتاب است', { filePath: 'post.md' }); // "این یک کتاب است"
 ```
 
-`rtlint/core` has no Node.js imports and runs in the browser. The [playground](https://pouyamsmartcity.github.io/rtlint/playground/) uses it.
+`rtlint/core` has no Node.js imports and runs in the browser (`import { fixText } from
+'https://cdn.jsdelivr.net/gh/pouyamsmartcity/rtlint@main/src/core.js'`). The
+[playground](https://pouyamsmartcity.github.io/rtlint/playground/) uses it. For files on disk,
+`lintFiles(['src'], { fix: true, lang: 'fa' })` does what the CLI does.
+
+## FAQ
+
+**How do I support RTL in Tailwind CSS?** Use logical utilities (`ms-4`, `pe-2`, `start-0`,
+`text-end`, `rounded-s-lg`) and `rtl:` variants for things that move. `npx rtlint --fix` converts
+an existing codebase. See the [Tailwind RTL guide](docs/guides/rtl-tailwind.md).
+
+**How do I convert `margin-left` to logical CSS?** `margin-left` → `margin-inline-start`, `left` →
+`inset-inline-start`, `text-align: left` → `start`. The [cheat sheet](docs/guides/logical-css-cheatsheet.md)
+lists all of them, and rtlint rewrites them for you, shorthands included.
+
+**How do I fix Persian half-spaces (ZWNJ, نیم‌فاصله) and Arabic ي/ك in my app?** Run
+`npx rtlint messages --lang fa --fix` on your translations. See
+[Persian typography in code](docs/guides/persian-typography-in-code.md).
+
+**Does it work with React Native?** Yes: `marginLeft` becomes `marginStart`, and so on. See the
+[React Native guide](docs/guides/rtl-react-native.md).
+
+**Will it break my English (LTR) layout?** No. Logical properties behave exactly like the physical
+ones in left-to-right pages, and fixes are designed to keep LTR output identical.
+
+**Can my AI assistant use it?** Yes, through the MCP server or the AGENTS.md / Cursor / Claude
+templates in [docs/ai.md](docs/ai.md).
 
 ## Roadmap
 
-- VS Code extension built on the same core.
+- VS Code extension built on the same core (the ESLint plugin already shows problems in the editor).
 - Arabic, Hebrew and Urdu typography rule packs. Contributions from native speakers are very welcome.
 
 ## Contributing

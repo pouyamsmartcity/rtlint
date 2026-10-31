@@ -173,6 +173,111 @@
           ],
           "description": "Opt-in: horizontal translate, background-position and transform-origin values point one way on screen and usually need an RTL counterpart. Default: off."
         },
+        "css/physical-transition": {
+          "oneOf": [
+            {
+              "enum": [
+                "off",
+                "warn",
+                "error",
+                0,
+                1,
+                2
+              ]
+            },
+            {
+              "type": "array",
+              "prefixItems": [
+                {
+                  "enum": [
+                    "off",
+                    "warn",
+                    "error",
+                    0,
+                    1,
+                    2
+                  ]
+                },
+                {
+                  "type": "object"
+                }
+              ],
+              "minItems": 1,
+              "maxItems": 2
+            }
+          ],
+          "description": "transition and will-change lists that name physical properties (margin-left, left …) stop animating once those properties become logical. Default: warn."
+        },
+        "css/arabic-letter-spacing": {
+          "oneOf": [
+            {
+              "enum": [
+                "off",
+                "warn",
+                "error",
+                0,
+                1,
+                2
+              ]
+            },
+            {
+              "type": "array",
+              "prefixItems": [
+                {
+                  "enum": [
+                    "off",
+                    "warn",
+                    "error",
+                    0,
+                    1,
+                    2
+                  ]
+                },
+                {
+                  "type": "object"
+                }
+              ],
+              "minItems": 1,
+              "maxItems": 2
+            }
+          ],
+          "description": "letter-spacing on Persian/Arabic text pulls joined letters apart; it is never right for Arabic script. Default: error."
+        },
+        "css/direction-property": {
+          "oneOf": [
+            {
+              "enum": [
+                "off",
+                "warn",
+                "error",
+                0,
+                1,
+                2
+              ]
+            },
+            {
+              "type": "array",
+              "prefixItems": [
+                {
+                  "enum": [
+                    "off",
+                    "warn",
+                    "error",
+                    0,
+                    1,
+                    2
+                  ]
+                },
+                {
+                  "type": "object"
+                }
+              ],
+              "minItems": 1,
+              "maxItems": 2
+            }
+          ],
+          "description": "Opt-in: the CSS direction property hard-codes a direction; the HTML dir attribute (or dir=\"auto\") is the reliable way to set it. Default: off."
+        },
         "class/physical-utility": {
           "oneOf": [
             {
@@ -250,6 +355,41 @@
           ],
           "description": "translate-x and left/right transform origins (and, with { gradients: true }, horizontal gradients) need an rtl: counterpart to mirror. Default: warn."
         },
+        "class/space-reverse": {
+          "oneOf": [
+            {
+              "enum": [
+                "off",
+                "warn",
+                "error",
+                0,
+                1,
+                2
+              ]
+            },
+            {
+              "type": "array",
+              "prefixItems": [
+                {
+                  "enum": [
+                    "off",
+                    "warn",
+                    "error",
+                    0,
+                    1,
+                    2
+                  ]
+                },
+                {
+                  "type": "object"
+                }
+              ],
+              "minItems": 1,
+              "maxItems": 2
+            }
+          ],
+          "description": "Opt-in (Tailwind 3 and earlier): space-x-* and divide-x-* use physical margins/borders and need rtl:space-x-reverse / rtl:divide-x-reverse. Default: off."
+        },
         "jsx/physical-style": {
           "oneOf": [
             {
@@ -320,6 +460,41 @@
           ],
           "description": "<html> with an RTL lang needs dir=\"rtl\"; a dynamic lang needs a dynamic dir. Default: error."
         },
+        "html/missing-lang": {
+          "oneOf": [
+            {
+              "enum": [
+                "off",
+                "warn",
+                "error",
+                0,
+                1,
+                2
+              ]
+            },
+            {
+              "type": "array",
+              "prefixItems": [
+                {
+                  "enum": [
+                    "off",
+                    "warn",
+                    "error",
+                    0,
+                    1,
+                    2
+                  ]
+                },
+                {
+                  "type": "object"
+                }
+              ],
+              "minItems": 1,
+              "maxItems": 2
+            }
+          ],
+          "description": "<html> without lang: browsers, screen readers and fonts cannot tell the page is Persian, Arabic or Hebrew (and dir cannot be checked). Default: warn."
+        },
         "html/ltr-input": {
           "oneOf": [
             {
@@ -354,6 +529,41 @@
             }
           ],
           "description": "Email, URL and phone inputs inherit dir=\"rtl\" and scramble their punctuation; give them dir=\"ltr\". Default: warn."
+        },
+        "html/user-content-dir": {
+          "oneOf": [
+            {
+              "enum": [
+                "off",
+                "warn",
+                "error",
+                0,
+                1,
+                2
+              ]
+            },
+            {
+              "type": "array",
+              "prefixItems": [
+                {
+                  "enum": [
+                    "off",
+                    "warn",
+                    "error",
+                    0,
+                    1,
+                    2
+                  ]
+                },
+                {
+                  "type": "object"
+                }
+              ],
+              "minItems": 1,
+              "maxItems": 2
+            }
+          ],
+          "description": "Opt-in: text inputs, textareas and contenteditable areas where people type Persian or English should have dir=\"auto\" so each entry gets its own direction. Default: off."
         },
         "icon/directional": {
           "oneOf": [
@@ -716,6 +926,111 @@
           ],
           "description": "No space before ، ؛ ؟ ! . and none just inside « » guillemets. Default: warn."
         },
+        "fa/space-after-punctuation": {
+          "oneOf": [
+            {
+              "enum": [
+                "off",
+                "warn",
+                "error",
+                0,
+                1,
+                2
+              ]
+            },
+            {
+              "type": "array",
+              "prefixItems": [
+                {
+                  "enum": [
+                    "off",
+                    "warn",
+                    "error",
+                    0,
+                    1,
+                    2
+                  ]
+                },
+                {
+                  "type": "object"
+                }
+              ],
+              "minItems": 1,
+              "maxItems": 2
+            }
+          ],
+          "description": "Persian punctuation (، ؛ ؟ !) followed directly by a Persian word needs a space after it. Default: warn."
+        },
+        "fa/double-space": {
+          "oneOf": [
+            {
+              "enum": [
+                "off",
+                "warn",
+                "error",
+                0,
+                1,
+                2
+              ]
+            },
+            {
+              "type": "array",
+              "prefixItems": [
+                {
+                  "enum": [
+                    "off",
+                    "warn",
+                    "error",
+                    0,
+                    1,
+                    2
+                  ]
+                },
+                {
+                  "type": "object"
+                }
+              ],
+              "minItems": 1,
+              "maxItems": 2
+            }
+          ],
+          "description": "Two or more spaces between Persian words. Default: warn."
+        },
+        "fa/arrow-direction": {
+          "oneOf": [
+            {
+              "enum": [
+                "off",
+                "warn",
+                "error",
+                0,
+                1,
+                2
+              ]
+            },
+            {
+              "type": "array",
+              "prefixItems": [
+                {
+                  "enum": [
+                    "off",
+                    "warn",
+                    "error",
+                    0,
+                    1,
+                    2
+                  ]
+                },
+                {
+                  "type": "object"
+                }
+              ],
+              "minItems": 1,
+              "maxItems": 2
+            }
+          ],
+          "description": "A right-pointing arrow (→) in Persian text points backwards: Persian reads right to left, so \"next\" is ←. Default: warn."
+        },
         "fa/kashida": {
           "oneOf": [
             {
@@ -750,6 +1065,216 @@
             }
           ],
           "description": "Kashida/tatweel (ـ) stretches words visually but breaks search and copy; use CSS text-align: justify instead. Default: warn."
+        },
+        "fa/ellipsis": {
+          "oneOf": [
+            {
+              "enum": [
+                "off",
+                "warn",
+                "error",
+                0,
+                1,
+                2
+              ]
+            },
+            {
+              "type": "array",
+              "prefixItems": [
+                {
+                  "enum": [
+                    "off",
+                    "warn",
+                    "error",
+                    0,
+                    1,
+                    2
+                  ]
+                },
+                {
+                  "type": "object"
+                }
+              ],
+              "minItems": 1,
+              "maxItems": 2
+            }
+          ],
+          "description": "Opt-in: three dots after Persian text become the ellipsis character (…). Default: off."
+        },
+        "fa/percent-sign": {
+          "oneOf": [
+            {
+              "enum": [
+                "off",
+                "warn",
+                "error",
+                0,
+                1,
+                2
+              ]
+            },
+            {
+              "type": "array",
+              "prefixItems": [
+                {
+                  "enum": [
+                    "off",
+                    "warn",
+                    "error",
+                    0,
+                    1,
+                    2
+                  ]
+                },
+                {
+                  "type": "object"
+                }
+              ],
+              "minItems": 1,
+              "maxItems": 2
+            }
+          ],
+          "description": "Opt-in: after Persian digits use the Persian percent sign (٪) instead of %. Default: off."
+        },
+        "fa/decimal-separator": {
+          "oneOf": [
+            {
+              "enum": [
+                "off",
+                "warn",
+                "error",
+                0,
+                1,
+                2
+              ]
+            },
+            {
+              "type": "array",
+              "prefixItems": [
+                {
+                  "enum": [
+                    "off",
+                    "warn",
+                    "error",
+                    0,
+                    1,
+                    2
+                  ]
+                },
+                {
+                  "type": "object"
+                }
+              ],
+              "minItems": 1,
+              "maxItems": 2
+            }
+          ],
+          "description": "Opt-in: a decimal point between Persian digits becomes the Persian decimal separator (٫). Default: off."
+        },
+        "fa/thousands-separator": {
+          "oneOf": [
+            {
+              "enum": [
+                "off",
+                "warn",
+                "error",
+                0,
+                1,
+                2
+              ]
+            },
+            {
+              "type": "array",
+              "prefixItems": [
+                {
+                  "enum": [
+                    "off",
+                    "warn",
+                    "error",
+                    0,
+                    1,
+                    2
+                  ]
+                },
+                {
+                  "type": "object"
+                }
+              ],
+              "minItems": 1,
+              "maxItems": 2
+            }
+          ],
+          "description": "Opt-in: commas grouping Persian digits become the Persian thousands separator (٬). Default: off."
+        },
+        "fa/latin-digits": {
+          "oneOf": [
+            {
+              "enum": [
+                "off",
+                "warn",
+                "error",
+                0,
+                1,
+                2
+              ]
+            },
+            {
+              "type": "array",
+              "prefixItems": [
+                {
+                  "enum": [
+                    "off",
+                    "warn",
+                    "error",
+                    0,
+                    1,
+                    2
+                  ]
+                },
+                {
+                  "type": "object"
+                }
+              ],
+              "minItems": 1,
+              "maxItems": 2
+            }
+          ],
+          "description": "Opt-in: Latin digits inside a Persian sentence become Persian digits (not in codes like 3D, v2 or 1080p). Default: off."
+        },
+        "fa/guillemets": {
+          "oneOf": [
+            {
+              "enum": [
+                "off",
+                "warn",
+                "error",
+                0,
+                1,
+                2
+              ]
+            },
+            {
+              "type": "array",
+              "prefixItems": [
+                {
+                  "enum": [
+                    "off",
+                    "warn",
+                    "error",
+                    0,
+                    1,
+                    2
+                  ]
+                },
+                {
+                  "type": "object"
+                }
+              ],
+              "minItems": 1,
+              "maxItems": 2
+            }
+          ],
+          "description": "Opt-in, prose files only: straight double quotes around Persian text become «guillemets». Default: off."
         },
         "text/presentation-forms": {
           "oneOf": [
@@ -792,6 +1317,41 @@
             }
           ],
           "description": "Arabic-script presentation forms (pre-shaped glyphs from PDFs and old software) look right but break search and screen readers; use the normal letters. Default: error."
+        },
+        "text/invisible-characters": {
+          "oneOf": [
+            {
+              "enum": [
+                "off",
+                "warn",
+                "error",
+                0,
+                1,
+                2
+              ]
+            },
+            {
+              "type": "array",
+              "prefixItems": [
+                {
+                  "enum": [
+                    "off",
+                    "warn",
+                    "error",
+                    0,
+                    1,
+                    2
+                  ]
+                },
+                {
+                  "type": "object"
+                }
+              ],
+              "minItems": 1,
+              "maxItems": 2
+            }
+          ],
+          "description": "Invisible characters (zero-width space, word joiner, a stray BOM) that break search, word wrapping and string comparison. Default: warn."
         },
         "security/bidi-control": {
           "oneOf": [
@@ -1353,6 +1913,111 @@
                 ],
                 "description": "Opt-in: horizontal translate, background-position and transform-origin values point one way on screen and usually need an RTL counterpart. Default: off."
               },
+              "css/physical-transition": {
+                "oneOf": [
+                  {
+                    "enum": [
+                      "off",
+                      "warn",
+                      "error",
+                      0,
+                      1,
+                      2
+                    ]
+                  },
+                  {
+                    "type": "array",
+                    "prefixItems": [
+                      {
+                        "enum": [
+                          "off",
+                          "warn",
+                          "error",
+                          0,
+                          1,
+                          2
+                        ]
+                      },
+                      {
+                        "type": "object"
+                      }
+                    ],
+                    "minItems": 1,
+                    "maxItems": 2
+                  }
+                ],
+                "description": "transition and will-change lists that name physical properties (margin-left, left …) stop animating once those properties become logical. Default: warn."
+              },
+              "css/arabic-letter-spacing": {
+                "oneOf": [
+                  {
+                    "enum": [
+                      "off",
+                      "warn",
+                      "error",
+                      0,
+                      1,
+                      2
+                    ]
+                  },
+                  {
+                    "type": "array",
+                    "prefixItems": [
+                      {
+                        "enum": [
+                          "off",
+                          "warn",
+                          "error",
+                          0,
+                          1,
+                          2
+                        ]
+                      },
+                      {
+                        "type": "object"
+                      }
+                    ],
+                    "minItems": 1,
+                    "maxItems": 2
+                  }
+                ],
+                "description": "letter-spacing on Persian/Arabic text pulls joined letters apart; it is never right for Arabic script. Default: error."
+              },
+              "css/direction-property": {
+                "oneOf": [
+                  {
+                    "enum": [
+                      "off",
+                      "warn",
+                      "error",
+                      0,
+                      1,
+                      2
+                    ]
+                  },
+                  {
+                    "type": "array",
+                    "prefixItems": [
+                      {
+                        "enum": [
+                          "off",
+                          "warn",
+                          "error",
+                          0,
+                          1,
+                          2
+                        ]
+                      },
+                      {
+                        "type": "object"
+                      }
+                    ],
+                    "minItems": 1,
+                    "maxItems": 2
+                  }
+                ],
+                "description": "Opt-in: the CSS direction property hard-codes a direction; the HTML dir attribute (or dir=\"auto\") is the reliable way to set it. Default: off."
+              },
               "class/physical-utility": {
                 "oneOf": [
                   {
@@ -1430,6 +2095,41 @@
                 ],
                 "description": "translate-x and left/right transform origins (and, with { gradients: true }, horizontal gradients) need an rtl: counterpart to mirror. Default: warn."
               },
+              "class/space-reverse": {
+                "oneOf": [
+                  {
+                    "enum": [
+                      "off",
+                      "warn",
+                      "error",
+                      0,
+                      1,
+                      2
+                    ]
+                  },
+                  {
+                    "type": "array",
+                    "prefixItems": [
+                      {
+                        "enum": [
+                          "off",
+                          "warn",
+                          "error",
+                          0,
+                          1,
+                          2
+                        ]
+                      },
+                      {
+                        "type": "object"
+                      }
+                    ],
+                    "minItems": 1,
+                    "maxItems": 2
+                  }
+                ],
+                "description": "Opt-in (Tailwind 3 and earlier): space-x-* and divide-x-* use physical margins/borders and need rtl:space-x-reverse / rtl:divide-x-reverse. Default: off."
+              },
               "jsx/physical-style": {
                 "oneOf": [
                   {
@@ -1500,6 +2200,41 @@
                 ],
                 "description": "<html> with an RTL lang needs dir=\"rtl\"; a dynamic lang needs a dynamic dir. Default: error."
               },
+              "html/missing-lang": {
+                "oneOf": [
+                  {
+                    "enum": [
+                      "off",
+                      "warn",
+                      "error",
+                      0,
+                      1,
+                      2
+                    ]
+                  },
+                  {
+                    "type": "array",
+                    "prefixItems": [
+                      {
+                        "enum": [
+                          "off",
+                          "warn",
+                          "error",
+                          0,
+                          1,
+                          2
+                        ]
+                      },
+                      {
+                        "type": "object"
+                      }
+                    ],
+                    "minItems": 1,
+                    "maxItems": 2
+                  }
+                ],
+                "description": "<html> without lang: browsers, screen readers and fonts cannot tell the page is Persian, Arabic or Hebrew (and dir cannot be checked). Default: warn."
+              },
               "html/ltr-input": {
                 "oneOf": [
                   {
@@ -1534,6 +2269,41 @@
                   }
                 ],
                 "description": "Email, URL and phone inputs inherit dir=\"rtl\" and scramble their punctuation; give them dir=\"ltr\". Default: warn."
+              },
+              "html/user-content-dir": {
+                "oneOf": [
+                  {
+                    "enum": [
+                      "off",
+                      "warn",
+                      "error",
+                      0,
+                      1,
+                      2
+                    ]
+                  },
+                  {
+                    "type": "array",
+                    "prefixItems": [
+                      {
+                        "enum": [
+                          "off",
+                          "warn",
+                          "error",
+                          0,
+                          1,
+                          2
+                        ]
+                      },
+                      {
+                        "type": "object"
+                      }
+                    ],
+                    "minItems": 1,
+                    "maxItems": 2
+                  }
+                ],
+                "description": "Opt-in: text inputs, textareas and contenteditable areas where people type Persian or English should have dir=\"auto\" so each entry gets its own direction. Default: off."
               },
               "icon/directional": {
                 "oneOf": [
@@ -1896,6 +2666,111 @@
                 ],
                 "description": "No space before ، ؛ ؟ ! . and none just inside « » guillemets. Default: warn."
               },
+              "fa/space-after-punctuation": {
+                "oneOf": [
+                  {
+                    "enum": [
+                      "off",
+                      "warn",
+                      "error",
+                      0,
+                      1,
+                      2
+                    ]
+                  },
+                  {
+                    "type": "array",
+                    "prefixItems": [
+                      {
+                        "enum": [
+                          "off",
+                          "warn",
+                          "error",
+                          0,
+                          1,
+                          2
+                        ]
+                      },
+                      {
+                        "type": "object"
+                      }
+                    ],
+                    "minItems": 1,
+                    "maxItems": 2
+                  }
+                ],
+                "description": "Persian punctuation (، ؛ ؟ !) followed directly by a Persian word needs a space after it. Default: warn."
+              },
+              "fa/double-space": {
+                "oneOf": [
+                  {
+                    "enum": [
+                      "off",
+                      "warn",
+                      "error",
+                      0,
+                      1,
+                      2
+                    ]
+                  },
+                  {
+                    "type": "array",
+                    "prefixItems": [
+                      {
+                        "enum": [
+                          "off",
+                          "warn",
+                          "error",
+                          0,
+                          1,
+                          2
+                        ]
+                      },
+                      {
+                        "type": "object"
+                      }
+                    ],
+                    "minItems": 1,
+                    "maxItems": 2
+                  }
+                ],
+                "description": "Two or more spaces between Persian words. Default: warn."
+              },
+              "fa/arrow-direction": {
+                "oneOf": [
+                  {
+                    "enum": [
+                      "off",
+                      "warn",
+                      "error",
+                      0,
+                      1,
+                      2
+                    ]
+                  },
+                  {
+                    "type": "array",
+                    "prefixItems": [
+                      {
+                        "enum": [
+                          "off",
+                          "warn",
+                          "error",
+                          0,
+                          1,
+                          2
+                        ]
+                      },
+                      {
+                        "type": "object"
+                      }
+                    ],
+                    "minItems": 1,
+                    "maxItems": 2
+                  }
+                ],
+                "description": "A right-pointing arrow (→) in Persian text points backwards: Persian reads right to left, so \"next\" is ←. Default: warn."
+              },
               "fa/kashida": {
                 "oneOf": [
                   {
@@ -1930,6 +2805,216 @@
                   }
                 ],
                 "description": "Kashida/tatweel (ـ) stretches words visually but breaks search and copy; use CSS text-align: justify instead. Default: warn."
+              },
+              "fa/ellipsis": {
+                "oneOf": [
+                  {
+                    "enum": [
+                      "off",
+                      "warn",
+                      "error",
+                      0,
+                      1,
+                      2
+                    ]
+                  },
+                  {
+                    "type": "array",
+                    "prefixItems": [
+                      {
+                        "enum": [
+                          "off",
+                          "warn",
+                          "error",
+                          0,
+                          1,
+                          2
+                        ]
+                      },
+                      {
+                        "type": "object"
+                      }
+                    ],
+                    "minItems": 1,
+                    "maxItems": 2
+                  }
+                ],
+                "description": "Opt-in: three dots after Persian text become the ellipsis character (…). Default: off."
+              },
+              "fa/percent-sign": {
+                "oneOf": [
+                  {
+                    "enum": [
+                      "off",
+                      "warn",
+                      "error",
+                      0,
+                      1,
+                      2
+                    ]
+                  },
+                  {
+                    "type": "array",
+                    "prefixItems": [
+                      {
+                        "enum": [
+                          "off",
+                          "warn",
+                          "error",
+                          0,
+                          1,
+                          2
+                        ]
+                      },
+                      {
+                        "type": "object"
+                      }
+                    ],
+                    "minItems": 1,
+                    "maxItems": 2
+                  }
+                ],
+                "description": "Opt-in: after Persian digits use the Persian percent sign (٪) instead of %. Default: off."
+              },
+              "fa/decimal-separator": {
+                "oneOf": [
+                  {
+                    "enum": [
+                      "off",
+                      "warn",
+                      "error",
+                      0,
+                      1,
+                      2
+                    ]
+                  },
+                  {
+                    "type": "array",
+                    "prefixItems": [
+                      {
+                        "enum": [
+                          "off",
+                          "warn",
+                          "error",
+                          0,
+                          1,
+                          2
+                        ]
+                      },
+                      {
+                        "type": "object"
+                      }
+                    ],
+                    "minItems": 1,
+                    "maxItems": 2
+                  }
+                ],
+                "description": "Opt-in: a decimal point between Persian digits becomes the Persian decimal separator (٫). Default: off."
+              },
+              "fa/thousands-separator": {
+                "oneOf": [
+                  {
+                    "enum": [
+                      "off",
+                      "warn",
+                      "error",
+                      0,
+                      1,
+                      2
+                    ]
+                  },
+                  {
+                    "type": "array",
+                    "prefixItems": [
+                      {
+                        "enum": [
+                          "off",
+                          "warn",
+                          "error",
+                          0,
+                          1,
+                          2
+                        ]
+                      },
+                      {
+                        "type": "object"
+                      }
+                    ],
+                    "minItems": 1,
+                    "maxItems": 2
+                  }
+                ],
+                "description": "Opt-in: commas grouping Persian digits become the Persian thousands separator (٬). Default: off."
+              },
+              "fa/latin-digits": {
+                "oneOf": [
+                  {
+                    "enum": [
+                      "off",
+                      "warn",
+                      "error",
+                      0,
+                      1,
+                      2
+                    ]
+                  },
+                  {
+                    "type": "array",
+                    "prefixItems": [
+                      {
+                        "enum": [
+                          "off",
+                          "warn",
+                          "error",
+                          0,
+                          1,
+                          2
+                        ]
+                      },
+                      {
+                        "type": "object"
+                      }
+                    ],
+                    "minItems": 1,
+                    "maxItems": 2
+                  }
+                ],
+                "description": "Opt-in: Latin digits inside a Persian sentence become Persian digits (not in codes like 3D, v2 or 1080p). Default: off."
+              },
+              "fa/guillemets": {
+                "oneOf": [
+                  {
+                    "enum": [
+                      "off",
+                      "warn",
+                      "error",
+                      0,
+                      1,
+                      2
+                    ]
+                  },
+                  {
+                    "type": "array",
+                    "prefixItems": [
+                      {
+                        "enum": [
+                          "off",
+                          "warn",
+                          "error",
+                          0,
+                          1,
+                          2
+                        ]
+                      },
+                      {
+                        "type": "object"
+                      }
+                    ],
+                    "minItems": 1,
+                    "maxItems": 2
+                  }
+                ],
+                "description": "Opt-in, prose files only: straight double quotes around Persian text become «guillemets». Default: off."
               },
               "text/presentation-forms": {
                 "oneOf": [
@@ -1972,6 +3057,41 @@
                   }
                 ],
                 "description": "Arabic-script presentation forms (pre-shaped glyphs from PDFs and old software) look right but break search and screen readers; use the normal letters. Default: error."
+              },
+              "text/invisible-characters": {
+                "oneOf": [
+                  {
+                    "enum": [
+                      "off",
+                      "warn",
+                      "error",
+                      0,
+                      1,
+                      2
+                    ]
+                  },
+                  {
+                    "type": "array",
+                    "prefixItems": [
+                      {
+                        "enum": [
+                          "off",
+                          "warn",
+                          "error",
+                          0,
+                          1,
+                          2
+                        ]
+                      },
+                      {
+                        "type": "object"
+                      }
+                    ],
+                    "minItems": 1,
+                    "maxItems": 2
+                  }
+                ],
+                "description": "Invisible characters (zero-width space, word joiner, a stray BOM) that break search, word wrapping and string comparison. Default: warn."
               },
               "security/bidi-control": {
                 "oneOf": [

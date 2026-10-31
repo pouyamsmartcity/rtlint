@@ -10,6 +10,10 @@ const SKIPPED_AT_RULE = /^\s*@(?:page\b|supports\s+not\b)/i;
 // SCSS nested properties: `margin: { left: 4px }`.
 const NESTED_PROPERTY = /^[\w-]+\s*:\s*$/;
 
+function stripComments(css) {
+  return css.replace(/\/\*[\s\S]*?\*\//g, ' ').replace(/(^|\s)\/\/[^\n]*/g, '$1');
+}
+
 /**
  * Computes, once per file, the ranges of the CSS view where declarations
  * must be left alone, plus each block's bounds for block-level checks.
@@ -23,13 +27,14 @@ function analyse(file) {
   for (let i = 0; i < view.length; i++) {
     const c = view[i];
     if (c === '{') {
-      const prelude = view.slice(boundary, i).trim();
+      // Raw text: the view masks string contents, which would hide [dir="rtl"].
+      const prelude = stripComments(file.text.slice(boundary, i)).trim();
       stack.push({ open: i, prelude });
       boundary = i + 1;
     } else if (c === '}') {
       const block = stack.pop();
       if (block) {
-        blocks.push({ open: block.open, close: i });
+        blocks.push({ open: block.open, close: i, prelude: block.prelude });
         const { prelude } = block;
         if (DIRECTIONAL_PRELUDE.test(prelude) || SKIPPED_AT_RULE.test(prelude) || NESTED_PROPERTY.test(prelude)) {
           skip.push([block.open, i]);
@@ -100,4 +105,10 @@ export function leaveAlone(file, index) {
   }
   if (parens > 0) return true;
   return /\/\*!?\s*rtl:/.test(file.text.slice(k + 1, index));
+}
+
+/** Selectors and at-rule preludes of every block containing `index`, outermost first. */
+export function preludeChain(file, index) {
+  const { blocks } = cache(file);
+  return blocks.filter((b) => b.open < index && index < b.close).map((b) => b.prelude);
 }

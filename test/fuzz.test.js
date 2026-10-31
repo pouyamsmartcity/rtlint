@@ -33,6 +33,9 @@ const PIECES = [
   '[dir="rtl"] .x {', ':dir(rtl)', '@page {', '#{$gap}', '@{gap}', '$m: (', 'isRtl ? ', "'ml-2'",
   'interface P {', 'marginLeft: number;', '/re[/]/', '﴿', '﴾', '«', 'https://x.ir/a,b', '`code`',
   'tags: [', 'ال', 'ﻣﻘﺪ', ch(0xfe76), 'class:ml-2', 'style:left',
+  // Shapes for the 0.3 rules.
+  '→', '۵۰%', '۱.۵', '۱,۰۰۰', '...', '"', '12', 'letter-spacing: 2px;', ':lang(fa) {', 'transition: margin-left 1s;',
+  'space-x-2', 'rtl:tracking-wide', '<textarea>', '<html>', 'direction: rtl;', ch(0x200b), ch(0x2060),
 ];
 const FILES = ['a.css', 'a.scss', 'a.html', 'a.vue', 'a.svelte', 'a.jsx', 'a.tsx', 'a.js', 'a.md', 'fa.json', 'a.py', 'a.yml', 'a.csv'];
 
@@ -44,18 +47,21 @@ function sample(rand, length) {
 
 test('fuzz: no crash, fixes converge and are idempotent', () => {
   const rand = rng(20261101);
+  // Every other case runs with every rule on, opt-in ones included.
+  const ALL = { rules: { '*': 'warn' } };
   for (let i = 0; i < 1500; i++) {
     const filePath = FILES[i % FILES.length];
+    const config = i % 2 ? ALL : undefined;
     const text = sample(rand, 5 + Math.floor(rand() * 40));
     const where = `seed case ${i} (${filePath}): ${JSON.stringify(text)}`;
-    const lint = lintText(text, { filePath });
+    const lint = lintText(text, { filePath, config });
     assert.ok(!lint.messages.some((m) => m.fatal), `internal error for ${where}`);
     for (const m of lint.messages) {
       assert.ok(m.line >= 1 && m.column >= 1, `bad position for ${where}`);
       if (m.fix) assert.ok(m.fix.range[0] <= m.fix.range[1], `inverted fix range for ${where}`);
     }
-    const once = fixText(text, { filePath });
-    const twice = fixText(once.output, { filePath });
+    const once = fixText(text, { filePath, config });
+    const twice = fixText(once.output, { filePath, config });
     assert.equal(twice.output, once.output, `fix is not idempotent for ${where}`);
     assert.ok(!once.messages.some((m) => m.fix), `fixable problems left after --fix for ${where}`);
   }

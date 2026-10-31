@@ -26,12 +26,21 @@ export const DEFAULT_IGNORE: string[];
 
 type Formatter = (
   results: LintResult[],
-  options?: { cwd?: string; color?: boolean; version?: string },
+  options?: { cwd?: string; color?: boolean; version?: string; lang?: 'en' | 'fa' },
 ) => string;
-export const formatters: Record<'stylish' | 'compact' | 'json' | 'github' | 'sarif', Formatter>;
+export const formatters: Record<
+  'stylish' | 'compact' | 'json' | 'github' | 'sarif' | 'html' | 'markdown' | 'junit' | 'checkstyle' | 'gitlab' | 'summary',
+  Formatter
+>;
+
+/** Lints (and with fix, fixes) files on disk like the CLI: config discovery, .gitignore, encodings. */
+export function lintFiles(
+  patterns?: string[],
+  options?: { cwd?: string; fix?: boolean; config?: Config; lang?: 'en' | 'fa'; ignore?: string[] },
+): Promise<Array<LintResult & { filePath: string }>>;
 
 /** Runs the CLI with arguments; resolves to the exit code. */
 export function run(
   argv: string[],
-  io?: { stdout?: NodeJS.WritableStream; stderr?: NodeJS.WritableStream; stdin?: NodeJS.ReadableStream; cwd?: string },
+  io?: { stdout?: NodeJS.WritableStream; stderr?: NodeJS.WritableStream; stdin?: NodeJS.ReadableStream; cwd?: string; signal?: AbortSignal },
 ): Promise<number>;

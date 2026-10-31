@@ -13,7 +13,7 @@ Persian typography and Trojan Source bidi attacks, with safe `--fix`.
 ![Dependencies: 0](https://img.shields.io/badge/dependencies-0-brightgreen.svg)
 [![Made by Pouyam](https://img.shields.io/badge/made%20by-Pouyam-7c3aed.svg)](https://www.pouyam.com)
 
-[Playground](https://pouyamsmartcity.github.io/rtlint/playground/) · [Rules](docs/rules.md) · [فارسی](README.fa.md)
+[Playground](https://pouyamsmartcity.github.io/rtlint/playground/) · [Rules](docs/rules.md) · **[راهنمای کامل فارسی](README.fa.md)**
 
 </div>
 
@@ -73,7 +73,7 @@ export default [
 ];
 ```
 
-Every rule is available as `rtlint/<category>-<name>`. Fixes work with `eslint --fix`, and the
+Every rule is available as `rtlint/<category>-<name>`. Add `settings: { rtlint: { lang: 'fa' } }` for Persian messages. Fixes work with `eslint --fix`, and the
 plugin reads the raw source, so it also covers `.vue`, `.svelte` and `.astro` files your
 ESLint setup parses.
 
@@ -86,6 +86,12 @@ export default {
   rules: { 'rtlint/css': true }, // or { rules: { 'css/physical-value': 'off' } }
 };
 ```
+
+### Persian messages
+
+Every message and rule description is also available in Persian: `--lang fa` on the CLI, or
+`"lang": "fa"` in the config (ESLint: `settings.rtlint.lang`). The [playground](https://pouyamsmartcity.github.io/rtlint/playground/)
+opens in Persian, and there is a full [Persian guide](README.fa.md) and [rule reference](docs/rules.fa.md).
 
 ### Editor autocomplete
 
@@ -195,6 +201,7 @@ rtlint [paths/globs...] [options]
   -c, --config <path> / --no-config
   --ignore-pattern <glob>    (repeatable)
   --persian <auto|on|off>    Persian text detection
+  --lang <en|fa>             language of messages (fa = Persian)
   --stdin [--stdin-filename a.css]   editor integrations; with --fix prints the fixed text
   --list-rules
 ```

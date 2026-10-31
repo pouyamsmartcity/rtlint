@@ -48,6 +48,7 @@ export const presentationForms = {
         index: m.index,
         length: m[0].length,
         message: `"${m[0]}" is written with presentation-form glyphs; use the normal letters "${fixed}".`,
+        fa: `«${m[0]}» با حروف کپی\u200Cشده از PDF (presentation forms) نوشته شده؛ حروف معمولی «${fixed}» را بنویسید.`,
         fix: { text: fixed },
       });
     }

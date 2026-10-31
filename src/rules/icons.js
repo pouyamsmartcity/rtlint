@@ -45,11 +45,13 @@ export const directionalIcon = {
     if (!src) return;
     const hint =
       'In RTL it points backwards; mirror it (e.g. class="rtl:-scale-x-100", or [dir="rtl"] .icon { transform: scaleX(-1) }).';
+    const hintFa =
+      'در صفحه\u200Cی راست\u200Cبه\u200Cچپ جهتش برعکس می\u200Cشود؛ آینه\u200Cاش کنید (مثلاً class="rtl:-scale-x-100" یا [dir="rtl"] .icon { transform: scaleX(-1) }).';
     for (const m of src.matchAll(COMPONENT)) {
       const name = m[1].split('.').pop();
       if (!ICON_NAME.test(name) || VERTICAL.test(name)) continue;
       if (handled(src, m.index, m[2])) continue;
-      report({ index: m.index + 1, length: m[1].length, message: `<${m[1]}> is a directional icon. ${hint}` });
+      report({ index: m.index + 1, length: m[1].length, message: `<${m[1]}> is a directional icon. ${hint}`, fa: `<${m[1]}> آیکونی جهت\u200Cدار است. ${hintFa}` });
     }
     for (const [start, end] of file.classRegions) {
       const value = file.text.slice(start, end);
@@ -60,7 +62,7 @@ export const directionalIcon = {
         const tagEnd = src.indexOf('>', end);
         const tag = src.slice(tagStart, tagEnd < 0 ? end : tagEnd);
         if (handled(src, tagStart, tag)) continue;
-        report({ index: at, length: m[1].length, message: `"${m[1]}" is a directional icon. ${hint}` });
+        report({ index: at, length: m[1].length, message: `"${m[1]}" is a directional icon. ${hint}`, fa: `«${m[1]}» آیکونی جهت\u200Cدار است. ${hintFa}` });
       }
     }
     for (const m of src.matchAll(ICON_ATTR)) {
@@ -70,13 +72,13 @@ export const directionalIcon = {
       const tag = src.slice(tagStart, tagEnd < 0 ? src.length : tagEnd);
       if (handled(src, tagStart, tag.replace(m[0], ''))) continue;
       const at = m.index + m[0].indexOf(m[3], m[0].indexOf(m[1]) + 1);
-      report({ index: at, length: m[3].length, message: `Icon "${(m[2] ?? '') + m[3]}" is directional. ${hint}` });
+      report({ index: at, length: m[3].length, message: `Icon "${(m[2] ?? '') + m[3]}" is directional. ${hint}`, fa: `آیکون «${(m[2] ?? '') + m[3]}» جهت\u200Cدار است. ${hintFa}` });
     }
     for (const m of src.matchAll(MATERIAL)) {
       const tagStart = src.lastIndexOf('<', m.index);
       if (handled(src, tagStart, m[0])) continue;
       const at = m.index + m[0].lastIndexOf(m[1]);
-      report({ index: at, length: m[1].length, message: `Material icon "${m[1]}" is directional. ${hint}` });
+      report({ index: at, length: m[1].length, message: `Material icon "${m[1]}" is directional. ${hint}`, fa: `آیکون متریال «${m[1]}» جهت\u200Cدار است. ${hintFa}` });
     }
   },
 };

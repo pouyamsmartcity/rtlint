@@ -2,7 +2,7 @@
 # Rules
 
 Every rule can be set to `"off"`, `"warn"` or `"error"`, alone or as `["warn", { …options }]`.
-Wildcards work: `"fa/*": "off"`. ✎ means `rtlint --fix` can repair it.
+Wildcards work: `"fa/*": "off"`. ✎ means `rtlint --fix` can repair it. [راهنمای فارسی قانون‌ها](rules.fa.md)
 
 | Rule | Default | Fix |
 | --- | --- | --- |

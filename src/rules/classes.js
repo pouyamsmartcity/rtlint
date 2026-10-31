@@ -173,6 +173,7 @@ export const physicalUtility = {
             index: t.index,
             length: t.text.length,
             message: `"${t.text}" sits next to a translate-x utility (a centering trick); "${logical}" alone breaks it in RTL. Mirror the translate with an rtl: variant too.`,
+            fa: `«${t.text}» کنار یک translate-x آمده (ترفند وسط\u200Cچین)؛ اگر فقط آن را به «${logical}» تغییر دهید، در راست\u200Cبه\u200Cچپ از وسط خارج می\u200Cشود. translate را هم با یک نسخه\u200Cی rtl: آینه کنید.`,
           });
           continue;
         }
@@ -180,6 +181,7 @@ export const physicalUtility = {
           index: t.index,
           length: t.text.length,
           message: `"${t.text}" is physical and will not mirror in RTL; use "${logical}".`,
+          fa: `«${t.text}» فیزیکی است و در صفحه\u200Cی راست\u200Cبه\u200Cچپ برعکس نمی\u200Cشود؛ «${logical}» بنویسید.`,
           fix: { text: logical },
         });
       }
@@ -237,6 +239,7 @@ export const directionalUtility = {
             index: t.index,
             length: t.text.length,
             message: `"${t.text}" moves things horizontally and will point the wrong way in RTL; add "${suggestion}".`,
+            fa: `«${t.text}» چیزی را افقی جابه\u200Cجا می\u200Cکند و در راست\u200Cبه\u200Cچپ جهتش اشتباه می\u200Cشود؛ «${suggestion}» را هم اضافه کنید.`,
           });
           break;
         }

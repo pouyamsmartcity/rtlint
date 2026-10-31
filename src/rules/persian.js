@@ -60,10 +60,14 @@ export const arabicLetters = {
       const found = [...new Set(word.match(/[\u064A\u0643\u0649]/g))]
         .map((c) => `"${c}" (${codePoint(c)})`)
         .join(', ');
+      const foundFa = [...new Set(word.match(/[\u064A\u0643\u0649]/g))]
+        .map((c) => `«${c}» عربی (${codePoint(c)})`)
+        .join('، ');
       report({
         index,
         length: word.length,
         message: `Arabic ${found} in Persian word "${word}"; use "${fixed}".`,
+        fa: `در «${word}» ${foundFa} آمده؛ «${fixed}» با حروف فارسی بنویسید.`,
         fix: { text: fixed },
       });
     });
@@ -85,6 +89,7 @@ export const arabicDigits = {
         index,
         length: m[0].length,
         message: `Arabic-Indic digits "${m[0]}" in Persian text; use Persian digits "${fixed}".`,
+        fa: `رقم عربی «${m[0]}» در متن فارسی؛ رقم فارسی «${fixed}» بنویسید.`,
         fix: { text: fixed },
       });
     });
@@ -107,6 +112,7 @@ export const mixedDigits = {
         index,
         length: n.length,
         message: `Number "${n}" mixes Latin and Persian digits; use "${fixed}".`,
+        fa: `عدد «${n}» رقم لاتین و فارسی را قاطی کرده؛ «${fixed}» بنویسید.`,
         fix: { text: fixed },
       });
     });
@@ -137,6 +143,7 @@ export const zwnjPrefix = {
         index: index + m[1].length,
         length: m[2].length,
         message: `Use a zero-width non-joiner (نیم\u200Cفاصله) instead of a space: "${m[1]} ${m[3]}" → "${m[1]}${ZWNJ}${m[3]}".`,
+        fa: `به\u200Cجای فاصله نیم\u200Cفاصله بگذارید: «${m[1]} ${m[3]}» ← «${m[1]}${ZWNJ}${m[3]}».`,
         fix: { text: ZWNJ },
       });
     });
@@ -154,7 +161,7 @@ const ADJECTIVES = [
   'پرطرفدار', 'کارآمد', 'آرام', 'شلوغ', 'خلوت', 'پهن', 'باریک', 'چاق', 'لاغر', 'جوان', 'پیر',
 ];
 // rtlint-disable-next-line fa/* -- example or regex, not prose
-// The last alternative is the ezafe: «خانه ی من» → «خانه‌ی من».
+// The last alternative is the ezafe: «خانه ی من» → «خانه\u200Cی من».
 const AFTER_HEH = 'ایی|ای|ام|ات|اش|ایم|اید|اند|ی';
 
 function suffixRegexes(comparatives) {
@@ -187,6 +194,7 @@ export const zwnjSuffix = {
           index,
           length: m[1].length,
           message: `Attach "${m[2]}" with a zero-width non-joiner (نیم\u200Cفاصله), not a space.`,
+          fa: `«${m[2]}» را با نیم\u200Cفاصله بچسبانید، نه با فاصله.`,
           fix: { text: ZWNJ },
         });
       });
@@ -196,6 +204,8 @@ export const zwnjSuffix = {
 
 // Any letter or mark, in any script: a ZWNJ between "sanitize" and a Persian
 // suffix, or around a tatweel in «طلایی\u200Cـ\u200Cمشکی», is deliberate.
+const ZWJ = String.fromCharCode(0x200d);
+
 const WORD_CHAR = /[\p{L}\p{M}]/u;
 
 export const zwnjInvalid = {
@@ -209,8 +219,13 @@ export const zwnjInvalid = {
   check(file, report) {
     eachPersianMatch(file, /\u200C+/g, (m, index) => {
       const line = m.input;
-      const before = line[m.index - 1] ?? '';
-      const after = line[m.index + m[0].length] ?? '';
+      // Look past Markdown emphasis: in **فیزیکی**‌اند the ZWNJ still separates two letters.
+      let b = m.index - 1;
+      while (b >= 0 && /[*_~`]/.test(line[b])) b--;
+      let a = m.index + m[0].length;
+      while (a < line.length && /[*_~`]/.test(line[a])) a++;
+      const before = line[b] ?? '';
+      const after = line[a] ?? '';
       const inside = WORD_CHAR.test(before) && WORD_CHAR.test(after);
       if (inside && m[0].length === 1) return;
       report({
@@ -219,6 +234,9 @@ export const zwnjInvalid = {
         message: inside
           ? 'Repeated zero-width non-joiner; one is enough.'
           : 'Zero-width non-joiner outside a word (next to a space, digit or punctuation) does nothing; remove it.',
+        fa: inside
+          ? 'نیم\u200Cفاصله\u200Cی تکراری؛ یکی کافی است.'
+          : 'نیم\u200Cفاصله\u200Cی بیرون از کلمه (کنار فاصله، عدد یا علامت) کاری نمی\u200Cکند؛ حذفش کنید.',
         fix: { text: inside ? ZWNJ : '' },
       });
     });
@@ -229,6 +247,7 @@ export const zwnjInvalid = {
         index,
         length: 1,
         message: `A ${name} sits inside a Persian word; the half-space is the zero-width non-joiner (U+200C).`,
+        fa: `یک ${m[0] === ZWJ ? 'اتصال\u200Cدهنده\u200Cی بی\u200Cعرض (ZWJ)' : 'فاصله\u200Cی بی\u200Cعرض (ZWSP)'} داخل کلمه\u200Cی فارسی است؛ نیم\u200Cفاصله\u200Cی درست نویسه\u200Cی U+200C است.`,
         fix: { text: ZWNJ },
       });
     });
@@ -263,6 +282,7 @@ export const punctuation = {
           index,
           length: m[0].length,
           message: `Latin "${m[0].trim()}" in Persian text; use "${persian}".`,
+          fa: `«${m[0].trim()}» لاتین در متن فارسی؛ «${persian}» بنویسید.`,
           fix: { text: persian },
         });
       });
@@ -284,6 +304,7 @@ export const spacing = {
         index,
         length: m[1].length,
         message: 'No space before punctuation in Persian.',
+        fa: 'در فارسی قبل از علامت\u200Cهای نگارشی فاصله نمی\u200Cآید.',
         fix: { text: '' },
       });
     });
@@ -294,6 +315,7 @@ export const spacing = {
         index: opening ? index + 1 : index,
         length: spaces.length,
         message: opening ? 'No space after «.' : 'No space before ».',
+        fa: opening ? 'بعد از گیومه\u200Cی باز («) فاصله نمی\u200Cآید.' : 'قبل از گیومه\u200Cی بسته (») فاصله نمی\u200Cآید.',
         fix: { text: '' },
       });
     });
@@ -315,6 +337,7 @@ export const kashida = {
         index,
         length: m[0].length,
         message: 'Kashida (tatweel) inside a Persian word; remove it.',
+        fa: 'کشیده (ـ) داخل کلمه\u200Cی فارسی؛ حذفش کنید.',
         fix: { text: '' },
       });
     });

@@ -1,5 +1,67 @@
 # Changelog
 
+## 0.3.0
+
+50 new features.
+
+**16 rules**
+- `css/physical-transition` — transitions keep animating after the switch to logical properties
+- `css/arabic-letter-spacing` — letter-spacing that breaks Persian/Arabic letter joins
+- `css/direction-property` (opt-in)
+- `class/space-reverse` (opt-in, Tailwind 3)
+- `html/missing-lang`
+- `html/user-content-dir` (opt-in)
+- `fa/space-after-punctuation`
+- `fa/double-space`
+- `fa/arrow-direction`
+- `fa/ellipsis`, `fa/percent-sign`, `fa/decimal-separator`, `fa/thousands-separator`, `fa/latin-digits`, `fa/guillemets` (opt-in)
+- `text/invisible-characters`
+
+**12 CLI features**
+- `rtlint init` (detects the project)
+- `rtlint explain <rule>`
+- `--changed [ref]`, `--staged`
+- `--watch`
+- `--cache`
+- `--baseline` / `--update-baseline`
+- `--fix-only`
+- `--report-unused-disable-directives`
+- `--stats`
+- `--print-config`
+- `--no-error-on-unmatched-pattern`
+
+**6 report formats:** html (bilingual, RTL in Persian), markdown, junit, checkstyle, gitlab, summary.
+
+**8 integrations**
+- MCP server for AI assistants (`rtlint mcp`, `rtlint-mcp`)
+- Vite plugin
+- `lintFiles` API
+- pre-commit hooks
+- GitHub Action with `lang`, `changed-only` and a job summary
+- AGENTS.md, Cursor and Claude Code skill templates
+- browser ESM via CDN
+- `llms.txt`
+
+**8 playground features**
+- Share links
+- Open or drop a file
+- Problem filter
+- Per-rule switches
+- Live RTL preview before and after the fix
+- Fix a single problem
+- Download
+- Keyboard shortcuts and remembered theme
+
+**Discoverability**
+- Guides: Tailwind RTL, logical CSS cheat sheet, React Native, Persian typography, and a Persian site guide
+- SEO metadata, JSON-LD, sitemap and an Open Graph image for the playground
+- FAQ in both READMEs
+
+**Fixes**
+- HTML rules skip code inside `<script>` blocks.
+- Regex literals are hidden from markup rules.
+- `[dir="rtl"]` selectors are recognised even inside quotes.
+
 ## 0.2.0
 
 - **Persian everywhere:**

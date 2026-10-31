@@ -219,7 +219,7 @@ export const zwnjInvalid = {
   check(file, report) {
     eachPersianMatch(file, /\u200C+/g, (m, index) => {
       const line = m.input;
-      // Look past Markdown emphasis: in **فیزیکی**‌اند the ZWNJ still separates two letters.
+      // Look past Markdown emphasis: in **فیزیکی**\u200Cاند the ZWNJ still separates two letters.
       let b = m.index - 1;
       while (b >= 0 && /[*_~`]/.test(line[b])) b--;
       let a = m.index + m[0].length;

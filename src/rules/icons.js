@@ -20,7 +20,7 @@ const TERNARY =
   /(?:rtl|ltr|dir|direction)[\w.'"\])\s=!]*(?:\?|&&|\|\|)\s*(?:\(?\s*<[^<>]*>\s*\)?\s*:\s*)?\(?\s*$/i;
 
 function source(file) {
-  if (file.kind === 'markup') return file.markupView;
+  if (file.kind === 'markup') return file.htmlView;
   if (file.kind === 'script') return file.jsxView;
   return null;
 }

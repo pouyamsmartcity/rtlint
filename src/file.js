@@ -1,5 +1,5 @@
 import { proseText } from './prose.js';
-import { blank, classRegions, cssRegions, maskHtml, maskJs } from './scan.js';
+import { blank, classRegions, cssRegions, maskHtml, maskJs, maskScripts } from './scan.js';
 import { HAS_ARABIC_SCRIPT, NOT_PERSIAN, PERSIAN_SIGNAL, PERSIAN_STRONG } from './unicode.js';
 
 const KINDS = {
@@ -47,6 +47,8 @@ export function createFile(text, path = 'input.txt', settings = {}) {
   const file = { text, path, ext, kind: kindOf(ext), settings };
   lazy(file, 'lineStarts', () => lineStarts(text));
   lazy(file, 'markupView', () => maskHtml(text));
+  // Markup without the code inside <script> blocks: what HTML rules should read.
+  lazy(file, 'htmlView', () => maskScripts(file.markupView));
   lazy(file, 'scriptView', () => (file.kind === 'script' ? maskJs(text) : blank(text)));
   lazy(file, 'jsxView', () => (file.kind === 'script' ? maskJs(text, { strings: true }) : blank(text)));
   lazy(file, 'css', () => cssRegions(file));

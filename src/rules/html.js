@@ -17,7 +17,7 @@ export function isRtlLanguage(tag) {
 }
 
 function markupSource(file) {
-  if (file.kind === 'markup') return file.markupView;
+  if (file.kind === 'markup') return file.htmlView;
   if (file.kind === 'script') return file.jsxView;
   return null;
 }

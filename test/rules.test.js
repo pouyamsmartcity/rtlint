@@ -15,7 +15,8 @@ test('css/physical-property: logical replacements', () => {
 
 test('css/physical-property: ignores comments, selectors and values', () => {
   const css = '/* margin-left: 1px */ .margin-left:hover { transition: left 1s; } @page :left { margin: 0 }';
-  assert.deepEqual(ids(css, 'a.css'), []);
+  // `transition: left` is css/physical-transition's job, not this rule's.
+  assert.deepEqual(ids(css, 'a.css'), ['css/physical-transition']);
 });
 
 test('css/physical-property: centering trick is reported but not fixed', () => {
@@ -313,6 +314,12 @@ test('every message has a Persian translation (lang: fa)', async () => {
     ['a.md', 'متن ‮معکوس ⁧باز ‬'],
     ['a.js', 'const x = "‮";'],
   ];
+  samples.push(
+    ['v3.css', '.a { transition: margin-left 1s; direction: rtl; } :lang(fa) h1 { letter-spacing: 2px; }'],
+    ['v3.html', '<html><body><div class="space-x-2"></div><textarea></textarea></body></html>'],
+    ['v3.md', 'پژوهش،خوب    است → ۵۰% و ۱.۵ و ۱,۰۰۰ و 12 و "کیفیت"...'],
+    ['v3.js', 'const a = "x' + String.fromCharCode(0x200b) + 'y";'],
+  );
   const config = { lang: 'fa', rules: { '*': 'warn' } };
   const seen = new Set();
   for (const [filePath, text] of samples) {

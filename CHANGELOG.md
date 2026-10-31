@@ -2,6 +2,12 @@
 
 ## 0.2.0
 
+- **Persian everywhere:**
+  - Every message and rule description has a Persian version (`--lang fa`, `"lang": "fa"`, ESLint `settings.rtlint.lang`).
+  - The playground opens in Persian (right-to-left) with a visual before/after example.
+  - A full Persian README and a Persian rule guide (`docs/rules.fa.md`).
+  - A Persian demo image.
+
 - New rules:
   - `fa/zwnj-joined` fixes glued verb prefixes (`میخواهم` → `می‌خواهم`) for known verbs only.
   - `icon/directional` flags back/next icons (Lucide, Heroicons, react-icons, Font Awesome, Bootstrap Icons, Iconify, Material) that do not mirror.

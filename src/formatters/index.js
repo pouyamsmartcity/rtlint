@@ -30,7 +30,8 @@ function totals(results) {
   return t;
 }
 
-export function stylish(results, { cwd = process.cwd(), color = false } = {}) {
+export function stylish(results, { cwd = process.cwd(), color = false, lang = 'en' } = {}) {
+  const fa = lang === 'fa';
   const c = colors(color);
   let out = '';
   for (const r of results) {
@@ -39,16 +40,23 @@ export function stylish(results, { cwd = process.cwd(), color = false } = {}) {
     const w = Math.max(...r.messages.map((m) => `${m.line}:${m.column}`.length));
     for (const m of r.messages) {
       const where = `${m.line}:${m.column}`.padEnd(w);
-      const sev = m.severity === 2 ? c.red('error'.padEnd(7)) : c.yellow('warning');
+      const sev = m.severity === 2 ? c.red((fa ? 'خطا' : 'error').padEnd(7)) : c.yellow((fa ? 'هشدار' : 'warning').padEnd(7));
       out += `  ${c.dim(where)}  ${sev}  ${m.message}  ${c.dim(m.ruleId + (m.fix ? ' ✎' : ''))}\n`;
     }
   }
   const t = totals(results);
   const problems = t.errors + t.warnings;
   if (!problems) return '';
-  const summary = `✖ ${problems} problem${problems === 1 ? '' : 's'} (${t.errors} error${t.errors === 1 ? '' : 's'}, ${t.warnings} warning${t.warnings === 1 ? '' : 's'})`;
+  const summary = fa
+    ? `✖ ${problems} مشکل (${t.errors} خطا، ${t.warnings} هشدار)`
+    : `✖ ${problems} problem${problems === 1 ? '' : 's'} (${t.errors} error${t.errors === 1 ? '' : 's'}, ${t.warnings} warning${t.warnings === 1 ? '' : 's'})`;
   out += '\n' + c.bold(t.errors ? c.red(summary) : c.yellow(summary)) + '\n';
-  if (t.fixable) out += c.dim(`  ${t.fixable} fixable with the --fix option (✎).`) + '\n';
+  if (t.fixable) {
+    const hint = fa
+      ? `  ${t.fixable} مورد با گزینه\u200Cی --fix خودکار درست می\u200Cشود (✎).`
+      : `  ${t.fixable} fixable with the --fix option (✎).`;
+    out += c.dim(hint) + '\n';
+  }
   return out;
 }
 

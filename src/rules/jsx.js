@@ -108,6 +108,7 @@ function checkObjects(view, offset, native, report) {
       index: offset + index,
       length: m[3].length,
       message: `"${m[3]}" is physical and will not mirror in RTL; use "${logical}"${native ? ' (React Native)' : ''}.`,
+      fa: `«${m[3]}» فیزیکی است و در راست\u200Cبه\u200Cچپ برعکس نمی\u200Cشود؛ «${logical}» بنویسید${native ? ' (React Native)' : ''}.`,
       fix: { text: logical },
     });
   }
@@ -120,6 +121,7 @@ function checkObjects(view, offset, native, report) {
       index: offset + index,
       length: m[5].length,
       message: `${m[3]}: '${m[5]}' will not mirror in RTL; use '${logical}'.`,
+      fa: `${m[3]}: '${m[5]}' در راست\u200Cبه\u200Cچپ برعکس نمی\u200Cشود؛ '${logical}' بنویسید.`,
       fix: { text: logical },
     });
   }

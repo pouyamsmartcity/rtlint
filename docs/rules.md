@@ -28,6 +28,22 @@ Wildcards work: `"fa/*": "off"`. ✎ means `rtlint --fix` can repair it. [راه
 | [`fa/kashida`](#fakashida) | warn | ✎ |
 | [`text/presentation-forms`](#textpresentation-forms) | error | ✎ |
 | [`security/bidi-control`](#securitybidi-control) | error | |
+| [`css/physical-transition`](#cssphysical-transition) | warn | ✎ |
+| [`css/arabic-letter-spacing`](#cssarabic-letter-spacing) | error |  |
+| [`css/direction-property`](#cssdirection-property) | off (opt-in) |  |
+| [`class/space-reverse`](#classspace-reverse) | off (opt-in) | ✎ |
+| [`html/missing-lang`](#htmlmissing-lang) | warn |  |
+| [`html/user-content-dir`](#htmluser-content-dir) | off (opt-in) | ✎ |
+| [`fa/space-after-punctuation`](#faspace-after-punctuation) | warn | ✎ |
+| [`fa/double-space`](#fadouble-space) | warn | ✎ |
+| [`fa/arrow-direction`](#faarrow-direction) | warn | ✎ |
+| [`fa/ellipsis`](#faellipsis) | off (opt-in) | ✎ |
+| [`fa/percent-sign`](#fapercent-sign) | off (opt-in) | ✎ |
+| [`fa/decimal-separator`](#fadecimal-separator) | off (opt-in) | ✎ |
+| [`fa/thousands-separator`](#fathousands-separator) | off (opt-in) | ✎ |
+| [`fa/latin-digits`](#falatin-digits) | off (opt-in) | ✎ |
+| [`fa/guillemets`](#faguillemets) | off (opt-in) | ✎ |
+| [`text/invisible-characters`](#textinvisible-characters) | warn | ✎ |
 
 ---
 
@@ -259,6 +275,87 @@ display differently from how it runs: the
   whose direction leaks into whatever is rendered next.
 
 Not auto-fixed: a human should look at each one.
+
+## css/physical-transition
+
+`transition` and `will-change` name properties. Once `margin-left` becomes `margin-inline-start`,
+`transition: margin-left 0.2s` no longer animates anything. This rule renames them too:
+`transition: margin-left 0.2s` → `transition: margin-inline-start 0.2s`.
+
+## css/arabic-letter-spacing
+
+`letter-spacing` pulls joined Arabic-script letters apart, so «سلام» turns into separate shapes.
+Reported in blocks that target RTL or Persian/Arabic text (`:lang(fa)`, `[lang="ar"]`, `[dir="rtl"]`,
+`:dir(rtl)`, `.rtl`, `.fa`, `.persian`) and for Tailwind `rtl:tracking-*`. `letter-spacing: normal` and `0` are fine.
+
+## css/direction-property
+
+Opt-in. `direction: rtl` in CSS sets the visual direction, but the HTML `dir` attribute is what
+screen readers, form submission and the bidi algorithm rely on. Phone, email, URL and code fields
+(`input[type=tel] { direction: ltr }`) are not reported.
+
+## class/space-reverse
+
+Opt-in, for Tailwind 3 and earlier, where `space-x-*` and `divide-x-*` use physical margins and borders.
+Adds `rtl:space-x-reverse` / `rtl:divide-x-reverse`. Tailwind 4 made them logical; leave this off there.
+`rtlint init` turns it on when it detects Tailwind 3.
+
+## html/missing-lang
+
+`<html>` without `lang`: browsers pick the wrong fonts and hyphenation, screen readers the wrong
+voice, and rtlint cannot check `dir`. Not auto-fixed, because only you know the language.
+
+## html/user-content-dir
+
+Opt-in. Text inputs, search boxes, textareas and `contenteditable` areas where people type in any
+language should have `dir="auto"`, so a Persian comment reads right to left and an English one left
+to right, whatever the page direction. The fix adds `dir="auto"`.
+
+## fa/space-after-punctuation
+
+«سلام،دنیا» → «سلام، دنیا». One space after ، ؛ ؟ ! when a Persian word follows. Numbers such as ۱۲،۵ are not touched.
+
+## fa/double-space
+
+Two or more spaces between Persian words become one. Code indentation is never touched.
+
+## fa/arrow-direction
+
+Persian reads right to left, so «ادامه →» points backwards and «ادامه ←» points forward. `→` in
+Persian text becomes `←`. Arrows between two Latin/code tokens (`margin-left → margin-inline-start`)
+are left alone.
+
+## fa/ellipsis
+
+Opt-in. `...` after Persian text → `…`.
+
+## fa/percent-sign
+
+Opt-in. `۵۰%` → `۵۰٪`.
+
+## fa/decimal-separator
+
+Opt-in. `۱.۵` → `۱٫۵`. Dates such as `۱۴۰۳.۰۵.۱۲` are not touched.
+
+## fa/thousands-separator
+
+Opt-in. `۱,۲۵۰,۰۰۰` → `۱٬۲۵۰٬۰۰۰`.
+
+## fa/latin-digits
+
+Opt-in. Latin digits that stand alone in a Persian sentence become Persian digits («سال 1403» → «سال ۱۴۰۳»).
+Codes such as `3D`, `v2` and `1080p` are not touched.
+
+## fa/guillemets
+
+Opt-in, and only in prose files (`.md`, `.txt`, `.srt`, `.vtt`): `"کیفیت بالا"` → `«کیفیت بالا»`.
+Never in code, JSON or HTML, where the quotes are syntax.
+
+## text/invisible-characters
+
+Zero-width spaces (U+200B), word joiners (U+2060), Mongolian vowel separators (U+180E) and a byte
+order mark in the middle of a file. They break search, line wrapping and string comparison, and
+are removed. A BOM at the start of a file, emoji ZWJ sequences and Persian half-spaces are left alone.
 
 ---
 

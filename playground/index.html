@@ -5,6 +5,44 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>rtlint | باگ‌یاب راست‌به‌چپ و فارسی</title>
 <meta name="description" content="کدتان را بچسبانید و باگ‌های راست‌به‌چپ و اشتباه‌های نگارش فارسی را ببینید و خودکار درست کنید. همه‌چیز در مرورگر خودتان اجرا می‌شود.">
+<meta name="keywords" content="rtl, right-to-left, راست‌به‌چپ, راست‌چین, فارسی, نیم‌فاصله, persian, farsi, arabic, logical css, margin-inline-start, tailwind rtl, eslint, stylelint, linter, پویام, pouyam">
+<meta name="author" content="Pouyam">
+<link rel="canonical" href="https://pouyamsmartcity.github.io/rtlint/playground/">
+<link rel="alternate" hreflang="fa" href="https://pouyamsmartcity.github.io/rtlint/playground/">
+<link rel="alternate" hreflang="en" href="https://pouyamsmartcity.github.io/rtlint/playground/#lang=en">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="rtlint by Pouyam">
+<meta property="og:title" content="rtlint: باگ‌یاب راست‌به‌چپ و نگارش فارسی (RTL linter)">
+<meta property="og:description" content="Find and fix right-to-left (RTL) bugs and Persian typography in CSS, Tailwind, React and text. باگ‌های راست‌به‌چپ و اشتباه‌های نگارش فارسی را پیدا و خودکار درست کنید.">
+<meta property="og:url" content="https://pouyamsmartcity.github.io/rtlint/playground/">
+<meta property="og:image" content="https://pouyamsmartcity.github.io/rtlint/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="fa_IR">
+<meta property="og:locale:alternate" content="en_US">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://pouyamsmartcity.github.io/rtlint/og.png">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "rtlint",
+  "alternateName": ["rtlint by Pouyam", "باگ‌یاب راست‌به‌چپ پویام"],
+  "description": "Open-source linter that finds and fixes right-to-left (RTL) layout bugs and Persian typography mistakes in CSS, Tailwind, Bootstrap, React, React Native, Vue, Svelte, HTML and text.",
+  "applicationCategory": "DeveloperApplication",
+  "operatingSystem": "Any (Node.js 20+), web browser",
+  "inLanguage": ["fa", "en"],
+  "license": "https://opensource.org/licenses/MIT",
+  "isAccessibleForFree": true,
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+  "url": "https://pouyamsmartcity.github.io/rtlint/playground/",
+  "downloadUrl": "https://github.com/pouyamsmartcity/rtlint",
+  "codeRepository": "https://github.com/pouyamsmartcity/rtlint",
+  "image": "https://pouyamsmartcity.github.io/rtlint/og.png",
+  "author": { "@type": "Organization", "name": "Pouyam", "url": "https://www.pouyam.com" },
+  "keywords": "RTL, right-to-left, Persian, Farsi, Arabic, logical CSS, Tailwind RTL, ZWNJ, half-space, نیم‌فاصله, راست‌به‌چپ"
+}
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
@@ -694,6 +732,7 @@ document.addEventListener('keydown', (e) => {
 });
 
 async function start() {
+  if (location.hash === '#lang=en') lang = 'en';
   const shared = location.hash.match(/^#s=([\w-]+)/);
   if (shared) {
     try {

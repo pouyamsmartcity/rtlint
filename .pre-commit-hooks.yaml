@@ -1,0 +1,18 @@
+# https://pre-commit.com hook: add to your .pre-commit-config.yaml
+#   - repo: https://github.com/pouyamsmartcity/rtlint
+#     rev: v0.3.0
+#     hooks:
+#       - id: rtlint
+- id: rtlint
+  name: rtlint (RTL layout and Persian typography)
+  description: Find and fix right-to-left (RTL) bugs and Persian typography mistakes. By Pouyam.
+  entry: rtlint
+  language: node
+  types_or: [css, scss, less, html, vue, svelte, javascript, jsx, ts, tsx, markdown, json, yaml]
+  require_serial: false
+- id: rtlint-fix
+  name: rtlint --fix (RTL layout and Persian typography)
+  description: Apply rtlint's safe fixes before committing.
+  entry: rtlint --fix
+  language: node
+  types_or: [css, scss, less, html, vue, svelte, javascript, jsx, ts, tsx, markdown, json, yaml]

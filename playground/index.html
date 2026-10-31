@@ -5,6 +5,44 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>rtlint | باگ‌یاب راست‌به‌چپ و فارسی</title>
 <meta name="description" content="کدتان را بچسبانید و باگ‌های راست‌به‌چپ و اشتباه‌های نگارش فارسی را ببینید و خودکار درست کنید. همه‌چیز در مرورگر خودتان اجرا می‌شود.">
+<meta name="keywords" content="rtl, right-to-left, راست‌به‌چپ, راست‌چین, فارسی, نیم‌فاصله, persian, farsi, arabic, logical css, margin-inline-start, tailwind rtl, eslint, stylelint, linter, پویام, pouyam">
+<meta name="author" content="Pouyam">
+<link rel="canonical" href="https://pouyamsmartcity.github.io/rtlint/playground/">
+<link rel="alternate" hreflang="fa" href="https://pouyamsmartcity.github.io/rtlint/playground/">
+<link rel="alternate" hreflang="en" href="https://pouyamsmartcity.github.io/rtlint/playground/#lang=en">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="rtlint by Pouyam">
+<meta property="og:title" content="rtlint: باگ‌یاب راست‌به‌چپ و نگارش فارسی (RTL linter)">
+<meta property="og:description" content="Find and fix right-to-left (RTL) bugs and Persian typography in CSS, Tailwind, React and text. باگ‌های راست‌به‌چپ و اشتباه‌های نگارش فارسی را پیدا و خودکار درست کنید.">
+<meta property="og:url" content="https://pouyamsmartcity.github.io/rtlint/playground/">
+<meta property="og:image" content="https://pouyamsmartcity.github.io/rtlint/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="fa_IR">
+<meta property="og:locale:alternate" content="en_US">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://pouyamsmartcity.github.io/rtlint/og.png">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "rtlint",
+  "alternateName": ["rtlint by Pouyam", "باگ‌یاب راست‌به‌چپ پویام"],
+  "description": "Open-source linter that finds and fixes right-to-left (RTL) layout bugs and Persian typography mistakes in CSS, Tailwind, Bootstrap, React, React Native, Vue, Svelte, HTML and text.",
+  "applicationCategory": "DeveloperApplication",
+  "operatingSystem": "Any (Node.js 20+), web browser",
+  "inLanguage": ["fa", "en"],
+  "license": "https://opensource.org/licenses/MIT",
+  "isAccessibleForFree": true,
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+  "url": "https://pouyamsmartcity.github.io/rtlint/playground/",
+  "downloadUrl": "https://github.com/pouyamsmartcity/rtlint",
+  "codeRepository": "https://github.com/pouyamsmartcity/rtlint",
+  "image": "https://pouyamsmartcity.github.io/rtlint/og.png",
+  "author": { "@type": "Organization", "name": "Pouyam", "url": "https://www.pouyam.com" },
+  "keywords": "RTL, right-to-left, Persian, Farsi, Arabic, logical CSS, Tailwind RTL, ZWNJ, half-space, نیم‌فاصله, راست‌به‌چپ"
+}
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
@@ -130,6 +168,17 @@
   .badge { font-size: 12px; border: 1px solid var(--line); border-radius: 999px; padding: 0 8px; margin-inline-start: 6px; color: var(--muted); font-weight: 500; }
 
   footer { padding-block: 28px 36px; color: var(--muted); font-size: 14px; }
+  .preview { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 18px; margin-block-start: 16px; }
+  .preview h2 { margin: 0 0 4px; font-size: 19px; }
+  .preview > p { margin: 0 0 12px; color: var(--muted); font-size: 15px; }
+  .preview figure { margin: 0; }
+  .preview figcaption { font-weight: 700; margin-block-end: 6px; }
+  .preview iframe { inline-size: 100%; block-size: 260px; border: 1px solid var(--line); border-radius: 10px; background: #fff; }
+  .keys { color: var(--muted); font-size: 13px; margin-block: 10px 0; }
+  kbd { border: 1px solid var(--line); border-block-end-width: 2px; border-radius: 5px; padding: 0 5px; background: var(--panel); }
+  .fix-one { grid-column: 3; justify-self: start; font-size: 12px; padding: 1px 8px; margin-block-start: 2px; }
+  textarea.drag { outline: 3px dashed var(--accent); outline-offset: -6px; }
+  .rules dt label { margin-inline-start: 8px; font-weight: 500; font-size: 13px; color: var(--muted); cursor: pointer; }
 </style>
 </head>
 <body>
@@ -215,24 +264,45 @@
           <option value="icons" data-i18n="o_icons">آیکون‌ها</option>
           <option value="pdf" data-i18n="o_pdf">متن کپی‌شده از PDF</option>
           <option value="trojan" data-i18n="o_trojan">حمله‌ی Trojan Source</option>
+          <option value="preview" data-i18n="o_preview">HTML با پیش‌نمایش زنده</option>
         </select>
       </label>
-      <label><span data-i18n="file">نام فایل:</span> <input id="filename" type="text" spellcheck="false" aria-describedby="file-hint"></label>
+      <label><span data-i18n="file">نام فایل:</span> <input id="filename" type="text" spellcheck="false"></label>
+      <button id="open" type="button" data-i18n="open">باز کردن فایل</button>
+      <input id="file" type="file" hidden>
+      <button id="share" type="button" data-i18n="share">اشتراک لینک</button>
     </div>
-    <textarea id="input" spellcheck="false" aria-label="Source"></textarea>
+    <textarea id="input" spellcheck="false" aria-label="Source" data-i18n-placeholder="drop"></textarea>
   </section>
 
   <section class="pane" aria-labelledby="problems-title">
     <div class="bar">
       <h2 id="problems-title" data-i18n="problems">مشکل‌ها</h2>
-      <button id="apply" class="primary" type="button" data-i18n="apply">اصلاح خودکار</button>
+      <select id="filter" aria-label="Filter">
+        <option value="all" data-i18n="f_all">همه</option>
+        <option value="error" data-i18n="f_err">فقط خطاها</option>
+        <option value="fix" data-i18n="f_fix">قابل اصلاح</option>
+      </select>
+      <button id="apply" class="primary" type="button" data-i18n="apply" title="Ctrl+Enter">اصلاح خودکار</button>
     </div>
     <div id="summary" class="summary" role="status"></div>
     <ol id="problems" class="problems"></ol>
-    <div class="output-head"><span><span data-i18n="fixed">کد اصلاح‌شده</span> <small data-i18n="fixedHint">(تغییرها پررنگ شده‌اند)</small></span><button id="copy" type="button" data-i18n="copy">کپی</button></div>
+    <div class="output-head"><span><span data-i18n="fixed">کد اصلاح‌شده</span> <small data-i18n="fixedHint">(تغییرها پررنگ شده‌اند)</small></span><button id="copy" type="button" data-i18n="copy">کپی</button><button id="download" type="button" data-i18n="download" title="Ctrl+S">دانلود</button></div>
     <pre id="output" aria-label="Fixed output"></pre>
   </section>
 </main>
+
+<div class="wrap">
+  <section class="preview" id="preview" hidden aria-labelledby="preview-title">
+    <h2 id="preview-title" data-i18n="pv">پیش‌نمایش زنده در صفحه‌ی راست‌به‌چپ</h2>
+    <p data-i18n="pvp">کد HTML شما همین‌جا در یک صفحه‌ی فارسی اجرا می‌شود، قبل و بعد از اصلاح. اسکریپت‌ها اجرا نمی‌شوند.</p>
+    <div class="compare">
+      <figure><figcaption data-i18n="pvb">کد شما</figcaption><iframe id="pv-before" sandbox title="Before"></iframe></figure>
+      <figure><figcaption data-i18n="pva">بعد از اصلاح</figcaption><iframe id="pv-after" sandbox title="After"></iframe></figure>
+    </div>
+  </section>
+  <p class="keys" data-i18n-html="keys"><bdi dir="ltr"><kbd>Ctrl</kbd>+<kbd>Enter</kbd></bdi> اصلاح خودکار · <bdi dir="ltr"><kbd>Ctrl</kbd>+<kbd>S</kbd></bdi> دانلود فایل اصلاح‌شده · فایل را روی جعبه‌ی کد بکشید و رها کنید.</p>
+</div>
 
 <div class="wrap">
   <section class="install">
@@ -254,7 +324,7 @@ npx github:pouyamsmartcity/rtlint --lang fa --fix</pre>
 </div>
 
 <script type="module">
-import { fixText, lintText, listRules } from '../src/core.js';
+import { applyFixes, fixText, lintText, listRules } from '../src/core.js';
 
 const ch = (...codes) => String.fromCharCode(...codes);
 
@@ -330,6 +400,20 @@ export function Pager() {
   "note": "ﻻﺯﻡ ﺍﺳﺖ"
 }
 `],
+  preview: ['Card.html', `<style>
+  .card { display: flex; align-items: center; padding: 12px; border: 1px solid #ddd;
+          border-radius: 14px 0 0 14px; font-family: Vazirmatn, Tahoma, sans-serif; }
+  .avatar { width: 40px; height: 40px; border-radius: 50%; background: #8b6dff; margin-right: 12px; }
+  .arrow { margin-left: auto; font-size: 22px; color: #6d4aff; }
+  input { display: block; margin-top: 12px; padding: 6px 8px; width: 240px; }
+</style>
+<div class="card">
+  <div class="avatar"></div>
+  <div><b>مريم رضایی</b><br><small>پیام تازه دارید، ادامه →</small></div>
+  <span class="arrow">›</span>
+</div>
+<input type="email" value="maryam@example.com">
+`],
   trojan: ['access.js', `function isAdmin(user) {
   // Looks like a comment that ends before the check, but runs differently:
   if (user.role !== "admin${ch(0x202e)} ${ch(0x2066)}// check later${ch(0x2069)} ${ch(0x2066)}") {
@@ -359,20 +443,25 @@ const T = {
     it: 'On your own project', i1: 'Needs Node.js 20 or newer. In your project folder run:',
     i2: 'The first command only reports; the second applies the safe fixes. ESLint and Stylelint plugins and a GitHub Action are included.',
     rt: 'Every rule, explained',
+    open: 'Open file', share: 'Share link', drop: 'Paste code here, or drop a file', f_all: 'All', f_err: 'Errors only', f_fix: 'Fixable',
+    download: 'Download', pv: 'Live preview on a right-to-left page', pvp: 'Your HTML runs here on a Persian page, before and after the fix. Scripts do not run.',
+    pvb: 'Your code', pva: 'After the fix', o_preview: 'HTML with live preview',
+    keys: '<bdi dir="ltr"><kbd>Ctrl</kbd>+<kbd>Enter</kbd></bdi> fix · <bdi dir="ltr"><kbd>Ctrl</kbd>+<kbd>S</kbd></bdi> download the fixed file · drop a file on the code box.',
     footer: 'Made by the <a href="https://www.pouyam.com">Pouyam</a> team · open source, MIT · everything runs in your browser; no code is sent anywhere.',
   },
 };
 // Persian strings are the ones already in the page.
 for (const el of document.querySelectorAll('[data-i18n]')) T.fa[el.dataset.i18n] = el.textContent;
 for (const el of document.querySelectorAll('[data-i18n-html]')) T.fa[el.dataset.i18nHtml] = el.innerHTML;
+T.fa.drop = 'کد را این‌جا بچسبانید یا یک فایل را رها کنید';
 
 const UI = {
   fa: { error: 'خطا', warning: 'هشدار', fixable: 'قابل اصلاح خودکار', clean: '✓ مشکلی پیدا نشد.', copied: 'کپی شد', copyFailed: 'کپی نشد',
     summary: (n, e, w, f) => `${toFa(n)} مشکل (${toFa(e)} خطا، ${toFa(w)} هشدار)؛ ${toFa(f)} مورد خودکار درست می‌شود`,
-    switchTo: 'English', fixWord: 'خودکار' },
+    switchTo: 'English', fixWord: 'خودکار', fixOne: 'اصلاح همین', on: 'فعال', linkCopied: 'لینک کپی شد', linkFailed: 'لینک ساخته شد' },
   en: { error: 'error', warning: 'warning', fixable: 'fixable', clean: '✓ No RTL problems found.', copied: 'Copied', copyFailed: 'Copy failed',
     summary: (n, e, w, f) => `${n} problem${n === 1 ? '' : 's'} (${e} error${e === 1 ? '' : 's'}, ${w} warning${w === 1 ? '' : 's'}), ${f} fixable`,
-    switchTo: 'فارسی', fixWord: 'fix' },
+    switchTo: 'فارسی', fixWord: 'fix', fixOne: 'Fix this', on: 'on', linkCopied: 'Link copied', linkFailed: 'Link ready' },
 };
 const toFa = (n) => String(n).replace(/[0-9]/g, (d) => '۰۱۲۳۴۵۶۷۸۹'[d]);
 
@@ -409,10 +498,17 @@ function offsetOf(text, line, column) {
 }
 
 let last = null;
+// Rules switched on or off by the visitor (id → level); empty means defaults.
+const ruleLevels = {};
+
+function currentConfig() {
+  return { lang, rules: { ...ruleLevels } };
+}
+
 function update() {
   const text = input.value;
   const filePath = filename.value.trim() || 'input.txt';
-  const config = { lang };
+  const config = currentConfig();
   const ui = UI[lang];
   let result, fixed;
   try {
@@ -422,10 +518,12 @@ function update() {
     $('summary').textContent = String(err.message ?? err);
     return;
   }
-  last = { text, fixed };
+  last = { text, fixed, filePath };
+  const filter = $('filter').value;
+  const shownMessages = result.messages.filter((m) => filter === 'all' || (filter === 'error' ? m.severity === 2 : m.fix));
   const list = $('problems');
   list.replaceChildren();
-  for (const m of result.messages) {
+  for (const m of shownMessages) {
     const li = document.createElement('li');
     li.tabIndex = 0;
     const pos = lang === 'fa' ? `${toFa(m.line)}:${toFa(m.column)}` : `${m.line}:${m.column}`;
@@ -434,13 +532,25 @@ function update() {
       `<span class="sev ${m.severity === 2 ? 'error' : 'warning'}">${m.severity === 2 ? ui.error : ui.warning}</span>` +
       `<span class="msg">${escapeHtml(m.message)}</span>` +
       `<span class="rule"><a href="${DOCS}${m.ruleId.replace('/', '')}" target="_blank" rel="noopener"><code>${m.ruleId}</code></a>${m.fix ? ` · ${ui.fixable}` : ''}</span>`;
+    if (m.fix) {
+      const one = document.createElement('button');
+      one.type = 'button';
+      one.className = 'fix-one';
+      one.textContent = ui.fixOne;
+      one.addEventListener('click', (e) => {
+        e.stopPropagation();
+        input.value = applyFixes(text, [m]);
+        update();
+      });
+      li.append(one);
+    }
     const select = () => {
       const start = offsetOf(text, m.line, m.column);
       const end = offsetOf(text, m.endLine, m.endColumn);
       input.focus();
       input.setSelectionRange(start, Math.max(end, start + 1));
     };
-    li.addEventListener('click', (e) => { if (!e.target.closest('a')) select(); });
+    li.addEventListener('click', (e) => { if (!e.target.closest('a, button')) select(); });
     li.addEventListener('keydown', (e) => { if (e.key === 'Enter') select(); });
     list.append(li);
   }
@@ -451,6 +561,24 @@ function update() {
   summary.textContent = n === 0 ? ui.clean : ui.summary(n, result.errorCount, result.warningCount, fixable);
   $('output').innerHTML = highlight(text, fixed.output);
   $('apply').disabled = !fixed.fixed;
+  renderPreview(text, fixed.output, filePath);
+}
+
+const PREVIEWABLE = /\.(?:html?|svelte|vue|astro)$/i;
+let previewTimer;
+/** Renders HTML input before and after the fix on a right-to-left page, scripts disabled. */
+function renderPreview(before, after, filePath) {
+  const section = $('preview');
+  const show = PREVIEWABLE.test(filePath);
+  section.hidden = !show;
+  if (!show) return;
+  clearTimeout(previewTimer);
+  previewTimer = setTimeout(() => {
+    const page = (body) =>
+      `<!doctype html><html lang="fa" dir="rtl"><head><meta charset="utf-8"><style>body{margin:14px;font:15px/1.7 Vazirmatn,Tahoma,sans-serif;color:#1b1830}</style></head><body>${body.replace(/<script\b[\s\S]*?<\/script>/gi, '')}</body></html>`;
+    $('pv-before').srcdoc = page(before);
+    $('pv-after').srcdoc = page(after);
+  }, 200);
 }
 
 function renderRules() {
@@ -458,9 +586,17 @@ function renderRules() {
   dl.replaceChildren();
   for (const r of listRules()) {
     const dt = document.createElement('dt');
+    const enabled = (ruleLevels[r.id] ?? r.level) !== 'off';
     dt.innerHTML = `<a href="${DOCS}${r.id.replace('/', '')}" target="_blank" rel="noopener"><code>${r.id}</code></a>` +
       (r.fixable ? `<span class="badge">${UI[lang].fixWord}</span>` : '') +
-      (r.level === 'off' ? `<span class="badge">${lang === 'fa' ? 'اختیاری' : 'opt-in'}</span>` : '');
+      (r.level === 'off' ? `<span class="badge">${lang === 'fa' ? 'اختیاری' : 'opt-in'}</span>` : '') +
+      `<label><input type="checkbox" ${enabled ? 'checked' : ''} data-rule="${r.id}"> ${UI[lang].on}</label>`;
+    dt.querySelector('input').addEventListener('change', (e) => {
+      const want = e.target.checked ? (r.level === 'off' ? 'warn' : r.level) : 'off';
+      if (want === r.level) delete ruleLevels[r.id];
+      else ruleLevels[r.id] = want;
+      update();
+    });
     const dd = document.createElement('dd');
     dd.textContent = lang === 'fa' ? r.descriptionFa : r.description;
     dl.append(dt, dd);
@@ -474,6 +610,7 @@ function applyLang() {
   document.title = lang === 'fa' ? 'rtlint | باگ‌یاب راست‌به‌چپ و فارسی' : 'rtlint playground';
   for (const el of document.querySelectorAll('[data-i18n]')) el.textContent = T[lang][el.dataset.i18n] ?? el.textContent;
   for (const el of document.querySelectorAll('[data-i18n-html]')) el.innerHTML = T[lang][el.dataset.i18nHtml] ?? el.innerHTML;
+  for (const el of document.querySelectorAll('[data-i18n-placeholder]')) el.placeholder = T[lang][el.dataset.i18nPlaceholder] ?? '';
   const btn = $('lang');
   btn.textContent = UI[lang].switchTo;
   btn.lang = lang === 'fa' ? 'en' : 'fa';
@@ -515,8 +652,105 @@ $('theme').addEventListener('click', () => {
   root.dataset.theme = dark ? 'light' : 'dark';
 });
 
-loadSample('fa');
-applyLang();
+$('filter').addEventListener('change', update);
+
+// Theme choice is remembered.
+try {
+  const saved = localStorage.getItem('rtlint-theme');
+  if (saved) document.documentElement.dataset.theme = saved;
+} catch {}
+new MutationObserver(() => {
+  try { localStorage.setItem('rtlint-theme', document.documentElement.dataset.theme ?? ''); } catch {}
+}).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+
+// Share links carry the code, file name, language and rule switches in the URL hash.
+const toBase64Url = (bytes) => btoa(String.fromCharCode(...bytes)).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+const fromBase64Url = (text) => Uint8Array.from(atob(text.replace(/-/g, '+').replace(/_/g, '/')), (c) => c.charCodeAt(0));
+async function pipe(bytes, stream) {
+  return new Uint8Array(await new Response(new Blob([bytes]).stream().pipeThrough(stream)).arrayBuffer());
+}
+async function encodeState() {
+  const json = new TextEncoder().encode(JSON.stringify({ f: filename.value, c: input.value, l: lang, r: ruleLevels }));
+  if (typeof CompressionStream === 'function') return 'z' + toBase64Url(await pipe(json, new CompressionStream('deflate-raw')));
+  return 'j' + toBase64Url(json);
+}
+async function decodeState(hash) {
+  const kind = hash[0];
+  let bytes = fromBase64Url(hash.slice(1));
+  if (kind === 'z') bytes = await pipe(bytes, new DecompressionStream('deflate-raw'));
+  return JSON.parse(new TextDecoder().decode(bytes));
+}
+$('share').addEventListener('click', async () => {
+  const btn = $('share');
+  const url = `${location.origin}${location.pathname}#s=${await encodeState()}`;
+  history.replaceState(null, '', url);
+  try {
+    await navigator.clipboard.writeText(url);
+    btn.textContent = UI[lang].linkCopied;
+  } catch {
+    btn.textContent = UI[lang].linkFailed;
+  }
+  setTimeout(() => (btn.textContent = T[lang].share), 1600);
+});
+
+// Open or drop a file.
+function loadFile(file) {
+  if (!file || file.size > 1_000_000) return;
+  file.text().then((text) => {
+    filename.value = file.name;
+    input.value = text;
+    update();
+  });
+}
+$('open').addEventListener('click', () => $('file').click());
+$('file').addEventListener('change', (e) => loadFile(e.target.files[0]));
+input.addEventListener('dragover', (e) => { e.preventDefault(); input.classList.add('drag'); });
+input.addEventListener('dragleave', () => input.classList.remove('drag'));
+input.addEventListener('drop', (e) => {
+  e.preventDefault();
+  input.classList.remove('drag');
+  loadFile(e.dataTransfer.files[0]);
+});
+
+// Download the fixed file under its own name.
+function download() {
+  if (!last) return;
+  const url = URL.createObjectURL(new Blob([last.fixed.output], { type: 'text/plain;charset=utf-8' }));
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = (filename.value.trim() || 'fixed.txt').split(/[\\/]/).pop();
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+$('download').addEventListener('click', download);
+
+// Keyboard shortcuts.
+document.addEventListener('keydown', (e) => {
+  const mod = e.ctrlKey || e.metaKey;
+  if (mod && e.key === 'Enter') { e.preventDefault(); $('apply').click(); }
+  if (mod && (e.key === 's' || e.key === 'S')) { e.preventDefault(); download(); }
+});
+
+async function start() {
+  if (location.hash === '#lang=en') lang = 'en';
+  const shared = location.hash.match(/^#s=([\w-]+)/);
+  if (shared) {
+    try {
+      const state = await decodeState(shared[1]);
+      if (state.l === 'fa' || state.l === 'en') lang = state.l;
+      Object.assign(ruleLevels, state.r ?? {});
+      filename.value = String(state.f ?? 'input.txt');
+      input.value = String(state.c ?? '');
+      applyLang();
+      return;
+    } catch {
+      // A broken link falls back to the default sample.
+    }
+  }
+  loadSample('fa');
+  applyLang();
+}
+start();
 </script>
 </body>
 </html>

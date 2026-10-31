@@ -30,6 +30,22 @@
 | [`fa/kashida`](#fakashida) | هشدار | ✎ |
 | [`text/presentation-forms`](#textpresentation-forms) | خطا | ✎ |
 | [`security/bidi-control`](#securitybidi-control) | خطا | |
+| [`css/physical-transition`](#cssphysical-transition) | هشدار | ✎ |
+| [`css/arabic-letter-spacing`](#cssarabic-letter-spacing) | خطا |  |
+| [`css/direction-property`](#cssdirection-property) | خاموش (اختیاری) |  |
+| [`class/space-reverse`](#classspace-reverse) | خاموش (اختیاری) | ✎ |
+| [`html/missing-lang`](#htmlmissing-lang) | هشدار |  |
+| [`html/user-content-dir`](#htmluser-content-dir) | خاموش (اختیاری) | ✎ |
+| [`fa/space-after-punctuation`](#faspace-after-punctuation) | هشدار | ✎ |
+| [`fa/double-space`](#fadouble-space) | هشدار | ✎ |
+| [`fa/arrow-direction`](#faarrow-direction) | هشدار | ✎ |
+| [`fa/ellipsis`](#faellipsis) | خاموش (اختیاری) | ✎ |
+| [`fa/percent-sign`](#fapercent-sign) | خاموش (اختیاری) | ✎ |
+| [`fa/decimal-separator`](#fadecimal-separator) | خاموش (اختیاری) | ✎ |
+| [`fa/thousands-separator`](#fathousands-separator) | خاموش (اختیاری) | ✎ |
+| [`fa/latin-digits`](#falatin-digits) | خاموش (اختیاری) | ✎ |
+| [`fa/guillemets`](#faguillemets) | خاموش (اختیاری) | ✎ |
+| [`text/invisible-characters`](#textinvisible-characters) | هشدار | ✎ |
 
 ---
 
@@ -212,6 +228,71 @@ rtlint **فقط متن فارسی** را درست می‌کند. متن عربی
 - در متن و ترجمه‌ها، که ممکن است عمداً استفاده شده باشند، فقط موارد خطرناک گزارش می‌شوند: نویسه‌های override و آن‌هایی که در همان خط بسته نشده‌اند.
 
 اصلاح خودکار ندارد؛ هر مورد را باید یک نفر ببیند.
+
+## css/physical-transition
+
+`transition` و `will-change` نام ویژگی را می‌آورند. وقتی `margin-left` به `margin-inline-start` تبدیل شود، `transition: margin-left` دیگر انیمیشنی ندارد. این قانون نام داخل transition را هم منطقی می‌کند.
+
+## css/arabic-letter-spacing
+
+`letter-spacing` حروف به‌هم‌چسبیده‌ی فارسی را از هم جدا می‌کند. در بخش‌هایی که برای متن فارسی، عربی یا راست‌به‌چپ نوشته شده‌اند (`:lang(fa)`، `[dir="rtl"]`، `.rtl` و …) و برای کلاس‌های `rtl:tracking-*` در Tailwind گزارش می‌شود.
+
+## css/direction-property
+
+اختیاری. `direction` در CSS فقط ظاهر را عوض می‌کند؛ صفحه‌خوان و الگوریتم جهت متن به ویژگی `dir` در HTML تکیه می‌کنند. فیلدهای تلفن، ایمیل و کد گزارش نمی‌شوند.
+
+## class/space-reverse
+
+اختیاری، برای Tailwind 3 و قبل‌تر که `space-x-*` و `divide-x-*` سمت فیزیکی دارند. `rtl:space-x-reverse` را اضافه می‌کند. `rtlint init` اگر Tailwind 3 ببیند، خودش روشنش می‌کند.
+
+## html/missing-lang
+
+`<html>` بدون `lang`؛ مرورگر فونت و صفحه‌خوان صدای اشتباه انتخاب می‌کند. اصلاح خودکار ندارد، چون زبان را فقط خودتان می‌دانید.
+
+## html/user-content-dir
+
+اختیاری. فیلد متن، جست‌وجو، textarea و بخش‌های قابل‌ویرایش که کاربر هر زبانی در آن‌ها می‌نویسد، `dir="auto"` می‌گیرند تا نظر فارسی راست‌به‌چپ و نظر انگلیسی چپ‌به‌راست نمایش داده شود.
+
+## fa/space-after-punctuation
+
+<!-- rtlint-disable-next-line fa/space-after-punctuation -->
+«سلام،دنیا» ← «سلام، دنیا». بعد از «،»، «؛»، «؟» و «!» اگر کلمه‌ی فارسی بیاید، یک فاصله می‌آید.
+
+## fa/double-space
+
+بیش از یک فاصله بین کلمه‌های فارسی به یک فاصله تبدیل می‌شود. به تورفتگی کد دست نمی‌زند.
+
+## fa/arrow-direction
+
+فارسی از راست به چپ خوانده می‌شود، پس «ادامه ←» به جلو اشاره می‌کند. فلش `→` در متن فارسی به «←» تبدیل می‌شود. فلش بین دو کلمه‌ی لاتین یا کد دست نمی‌خورد.
+
+## fa/ellipsis
+
+اختیاری. سه نقطه بعد از متن فارسی ← «…».
+
+## fa/percent-sign
+
+اختیاری. `۵۰%` ← ۵۰٪.
+
+## fa/decimal-separator
+
+اختیاری. `۱.۵` ← ۱٫۵. تاریخ‌هایی مثل `۱۴۰۳.۰۵.۱۲` دست نمی‌خورند.
+
+## fa/thousands-separator
+
+اختیاری. `۱,۲۵۰,۰۰۰` ← ۱٬۲۵۰٬۰۰۰.
+
+## fa/latin-digits
+
+اختیاری. رقم لاتینی که تنها وسط جمله‌ی فارسی آمده به رقم فارسی تبدیل می‌شود. کدهایی مثل `3D`، `v2` و `1080p` دست نمی‌خورند.
+
+## fa/guillemets
+
+اختیاری و فقط در فایل‌های متنی (`.md`، `.txt`، زیرنویس): گیومه‌ی انگلیسی دور متن فارسی به «» تبدیل می‌شود. در کد، JSON و HTML هیچ‌وقت، چون آن‌جا گیومه بخشی از کد است.
+
+## text/invisible-characters
+
+نویسه‌های نامرئی مثل فاصله‌ی بی‌عرض (U+200B)، اتصال‌دهنده‌ی کلمه (U+2060) و BOM وسط فایل حذف می‌شوند، چون جست‌وجو و مقایسه‌ی متن را خراب می‌کنند. BOM اول فایل، ایموجی‌های ترکیبی و نیم‌فاصله‌ی فارسی دست نمی‌خورند.
 
 ---
 

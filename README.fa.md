@@ -2,7 +2,7 @@
 
 <div align="center">
 
-# rtlint
+# rtlint، باگ‌یاب راست‌به‌چپ پویام
 
 **باگ‌های راست‌به‌چپ و اشتباه‌های نگارش فارسی را در کد پیدا می‌کند و بیشترشان را خودش درست می‌کند.**
 
@@ -11,7 +11,7 @@
 ![Dependencies: 0](https://img.shields.io/badge/dependencies-0-brightgreen.svg)
 [![Made by Pouyam](https://img.shields.io/badge/made%20by-Pouyam-7c3aed.svg)](https://www.pouyam.com)
 
-**[امتحان آنلاین (بدون نصب)](https://pouyamsmartcity.github.io/rtlint/playground/)** · [راهنمای همه‌ی قانون‌ها](docs/rules.fa.md) · [English](README.md)
+**[امتحان آنلاین (بدون نصب)](https://pouyamsmartcity.github.io/rtlint/playground/)** · [راهنمای همه‌ی قانون‌ها](docs/rules.fa.md) · [راهنمای راست‌به‌چپ کردن سایت](docs/guides/rtl-website.fa.md) · [English](README.md)
 
 </div>
 
@@ -73,6 +73,10 @@ npx github:pouyamsmartcity/rtlint --lang fa --fix
 
 > فقط یک فایل یا پوشه را بررسی کنید: `npx github:pouyamsmartcity/rtlint src/components --lang fa`
 
+**ساخت خودکار تنظیمات:** دستور `npx github:pouyamsmartcity/rtlint init` پروژه را می‌شناسد (Tailwind، Bootstrap، React، ترجمه‌های فارسی و …) و فایل تنظیمات مناسب را می‌سازد.
+
+**توضیح هر قانون:** `npx github:pouyamsmartcity/rtlint explain fa/zwnj-suffix --lang fa` همان‌جا در ترمینال توضیح و مثال می‌دهد.
+
 ---
 
 ## چه چیزهایی را پیدا می‌کند؟
@@ -86,6 +90,8 @@ npx github:pouyamsmartcity/rtlint --lang fa --fix
 | کلاس‌های Tailwind و Bootstrap | `ml-4`، `pr-2`، `text-right`، `border-l-2`، `rounded-tr-lg` | به `ms-4`، `pe-2`، `text-end` و … تبدیل می‌کند ✎ |
 | استایل React و React Native | `marginLeft`، `textAlign: 'left'` | به `marginInlineStart` (یا `marginStart` در React Native) تبدیل می‌کند ✎ |
 | حرکت افقی | `translate-x-1`، `origin-left` | می‌گوید نسخه‌ی `rtl:` لازم است |
+| انیمیشن | `transition: margin-left` | نام داخل transition را هم منطقی می‌کند ✎ |
+| فاصله‌ی حروف | `letter-spacing` روی متن فارسی | می‌گوید اتصال حروف را خراب می‌کند |
 | آیکون‌های جلو و عقب | `<ChevronRight>`، `fa-arrow-right`، `arrow_forward` | می‌گوید باید آینه شوند |
 
 ### ۲. جهت صفحه و فرم‌ها
@@ -93,6 +99,8 @@ npx github:pouyamsmartcity/rtlint --lang fa --fix
 - `<html lang="fa">` بدون `dir="rtl"` ✎
 - `lang` پویا (مثلاً در Next.js یا SvelteKit) بدون `dir`
 - فیلد ایمیل، آدرس اینترنتی و تلفن بدون `dir="ltr"` ✎
+- `<html>` بدون `lang`
+- (اختیاری) فیلد متن و textarea بدون `dir="auto"`، برای جایی که کاربر فارسی یا انگلیسی می‌نویسد ✎
 
 ### ۳. نگارش فارسی
 
@@ -106,6 +114,11 @@ npx github:pouyamsmartcity/rtlint --lang fa --fix
 | `,` و `?` و `;` لاتین | «،» و «؟» و «؛» ✎ |
 | فاصله قبل از علامت یا داخل گیومه | بدون فاصله ✎ |
 | کشیده (ـ) | حذف ✎ |
+| `سلام،دنیا` (بدون فاصله بعد از علامت) | «سلام، دنیا» ✎ |
+| چند فاصله‌ی پشت‌سرهم | یک فاصله ✎ |
+| فلش `→` در متن فارسی | ← ✎ |
+| نویسه‌های نامرئی (فاصله‌ی بی‌عرض و …) | حذف ✎ |
+| (اختیاری) `%`، ممیز، جداکننده‌ی هزارگان، رقم لاتین، گیومه‌ی انگلیسی، سه نقطه | ٪، ٫، ٬، رقم فارسی، «»، … ✎ |
 | حروف کپی‌شده از PDF | حروف معمولی ✎ |
 
 ### ۴. امنیت
@@ -200,6 +213,65 @@ export default [
 
 مشکل‌ها با پیام فارسی روی همان خط‌های تغییرکرده‌ی Pull Request نمایش داده می‌شوند.
 
+### پروژه‌ی بزرگ و قدیمی دارید؟
+
+لازم نیست همه‌ی مشکل‌ها را یک‌جا درست کنید:
+
+<div dir="ltr">
+
+```bash
+npx rtlint --update-baseline                  # مشکل‌های فعلی ثبت می‌شوند
+npx rtlint --baseline rtlint-baseline.json    # از این به بعد فقط مشکل‌های تازه گزارش می‌شوند
+npx rtlint --changed                          # فقط فایل‌های تغییرکرده
+npx rtlint --staged                           # فقط فایل‌های آماده‌ی commit
+npx rtlint --fix-only fa/*                    # فقط قانون‌های فارسی را اصلاح کن
+npx rtlint --cache                            # فایل‌های بدون تغییر را دوباره بررسی نکن
+npx rtlint --watch                            # با هر ذخیره دوباره بررسی کن
+```
+
+</div>
+
+### گزارش برای تیم و CI
+
+با `-f html --lang fa` یک گزارش فارسی و راست‌به‌چپ می‌سازد که می‌شود برای تیم فرستاد. `-f markdown` برای نظر در Pull Request است، و `junit`، `checkstyle` و `gitlab` برای Jenkins، GitLab و بقیه‌ی سیستم‌های CI. با `--stats` جدول خلاصه‌ی مشکل‌ها بر اساس قانون را هم می‌بینید.
+
+### Vite و pre-commit
+
+<div dir="ltr">
+
+```js
+// vite.config.js
+import rtlint from 'rtlint/vite';
+export default { plugins: [rtlint({ lang: 'fa' })] };
+```
+
+</div>
+
+هر بار که فایلی را ذخیره می‌کنید، مشکل‌ها در ترمینال Vite نمایش داده می‌شوند. برای چک خودکار قبل از هر commit هم از [pre-commit](https://pre-commit.com) یا دستور `rtlint --staged` استفاده کنید.
+
+### دستیار هوش مصنوعی (Claude، Cursor، Copilot)
+
+rtlint یک سرور MCP دارد؛ یعنی دستیار هوش مصنوعی شما می‌تواند خودش کد را با rtlint بررسی و اصلاح کند:
+
+<div dir="ltr">
+
+```bash
+claude mcp add rtlint -- npx -y github:pouyamsmartcity/rtlint mcp
+```
+
+</div>
+
+تنظیمات Cursor و VS Code، و قالب آماده‌ی `AGENTS.md`، قانون Cursor و مهارت Claude در [راهنمای AI](docs/ai.md) است.
+
+### صفحه‌ی امتحان آنلاین
+
+[صفحه‌ی امتحان](https://pouyamsmartcity.github.io/rtlint/playground/) فقط یک جعبه‌ی متن نیست:
+
+- **پیش‌نمایش زنده:** کد HTML شما را در یک صفحه‌ی فارسی، قبل و بعد از اصلاح، کنار هم نشان می‌دهد.
+- **لینک اشتراک:** کد و تنظیماتتان را با یک لینک برای هم‌تیمی بفرستید.
+- **فایل:** فایل را باز کنید یا روی جعبه بکشید و رها کنید. نسخه‌ی اصلاح‌شده را دانلود کنید.
+- **کنترل کامل:** اصلاح تک‌تک مشکل‌ها، فیلتر خطاها و روشن و خاموش کردن هر قانون.
+
 ---
 
 ## سؤال‌های رایج
@@ -215,6 +287,9 @@ CSS، SCSS و Less، Tailwind، UnoCSS و Bootstrap، React و Next.js، React N
 
 **اگر چیزی را اشتباه گرفت چه کنم؟**
 با یک توضیح `rtlint-disable` آن خط را رد کنید و لطفاً [یک issue باز کنید](https://github.com/pouyamsmartcity/rtlint/issues/new/choose). گزارش‌های اشتباه مهم‌ترین چیزی است که به بهتر شدن ابزار کمک می‌کند.
+
+**چطور سایتم را راست‌به‌چپ کنم؟**
+[راهنمای راست‌به‌چپ کردن سایت](docs/guides/rtl-website.fa.md) قدم‌به‌قدم توضیح می‌دهد؛ rtlint هم بیشتر کارها را خودکار انجام می‌دهد.
 
 **ترمینال من فارسی را به‌هم‌ریخته نشان می‌دهد.**
 بعضی ترمینال‌ها متن راست‌به‌چپ را درست نمایش نمی‌دهند. در این حالت پیام‌های فارسی را در VS Code (با افزونه‌ی ESLint)، در Pull Request گیت‌هاب، یا در صفحه‌ی امتحان آنلاین ببینید. یا در ترمینال `--lang fa` را نزنید.

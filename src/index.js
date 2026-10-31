@@ -4,3 +4,4 @@ export { findConfig, loadConfig } from './config.js';
 export { collectFiles, DEFAULT_IGNORE, readSource, writeSource } from './files.js';
 export { formatters } from './formatters/index.js';
 export { run } from './cli.js';
+export { lintFiles } from './node-api.js';

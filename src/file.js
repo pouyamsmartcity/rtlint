@@ -1,5 +1,5 @@
 import { proseText } from './prose.js';
-import { blank, classRegions, cssRegions, maskHtml, maskJs } from './scan.js';
+import { blank, classRegions, cssRegions, maskHtml, maskJs, maskScripts } from './scan.js';
 import { HAS_ARABIC_SCRIPT, NOT_PERSIAN, PERSIAN_SIGNAL, PERSIAN_STRONG } from './unicode.js';
 
 const KINDS = {
@@ -47,6 +47,8 @@ export function createFile(text, path = 'input.txt', settings = {}) {
   const file = { text, path, ext, kind: kindOf(ext), settings };
   lazy(file, 'lineStarts', () => lineStarts(text));
   lazy(file, 'markupView', () => maskHtml(text));
+  // Markup without the code inside <script> blocks: what HTML rules should read.
+  lazy(file, 'htmlView', () => maskScripts(file.markupView));
   lazy(file, 'scriptView', () => (file.kind === 'script' ? maskJs(text) : blank(text)));
   lazy(file, 'jsxView', () => (file.kind === 'script' ? maskJs(text, { strings: true }) : blank(text)));
   lazy(file, 'css', () => cssRegions(file));
@@ -117,7 +119,7 @@ function persianLines(file) {
     const end = i + 1 < starts.length ? starts[i + 1] - 1 : text.length;
     const line = prose.slice(start, end).replace(/\r$/, '');
     if (!HAS_ARABIC_SCRIPT.test(line) || NOT_PERSIAN.test(line)) continue;
-    if (PERSIAN_SIGNAL.test(line) || (filePersian && !arabicLooking(line))) out.push({ start, text: line });
+    if (PERSIAN_SIGNAL.test(line) || (filePersian && !arabicLooking(line)) || neutral(line)) out.push({ start, text: line });
   }
   return out;
 }
@@ -133,4 +135,17 @@ function arabicLooking(line) {
   const words = line.match(AR_WORD) ?? [];
   if (words.length >= 2 && words.filter((w) => w.startsWith('\u0627\u0644')).length / words.length >= 0.3) return true;
   return (line.match(HARAKAT)?.length ?? 0) >= 4;
+}
+
+// Letters and marks only Arabic (not Persian) uses: yeh, kaf, alef maksura, taa marbuta, Arabic-Indic digits.
+const ARABIC_ONLY = /[\u064A\u0643\u0649\u0629\u0660-\u0669]/;
+const ARABIC_ARTICLE = /(?:^|[^\u0621-\u06FF])\u0627\u0644[\u0621-\u06D3]{2,}/;
+
+/**
+ * A short line like «ادامه بده» has no Persian-only letter, but nothing Arabic
+ * either: no Arabic-only letters or digits and no article ال. It is treated
+ * as Persian; anything that could be Arabic is not.
+ */
+function neutral(line) {
+  return !ARABIC_ONLY.test(line) && !ARABIC_ARTICLE.test(line) && !arabicLooking(line);
 }

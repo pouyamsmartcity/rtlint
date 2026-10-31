@@ -26,10 +26,14 @@ jobs:
       - uses: actions/checkout@v4
       - name: Build site
         run: |
+          site=https://pouyamsmartcity.github.io/rtlint
           mkdir -p _site/playground
           cp -r src _site/src
           cp playground/index.html _site/playground/index.html
-          printf '<!doctype html><meta charset="utf-8"><meta http-equiv="refresh" content="0; url=playground/"><title>rtlint</title>' > _site/index.html
+          cp docs/og.png llms.txt _site/
+          printf '<!doctype html><html lang="fa" dir="rtl"><meta charset="utf-8"><title>rtlint by Pouyam</title><link rel="canonical" href="%s/playground/"><meta http-equiv="refresh" content="0; url=playground/"><a href="playground/">rtlint playground</a></html>' "$site" > _site/index.html
+          printf 'User-agent: *\nAllow: /\nSitemap: %s/sitemap.xml\n' "$site" > _site/robots.txt
+          printf '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><url><loc>%s/playground/</loc><changefreq>weekly</changefreq></url></urlset>\n' "$site" > _site/sitemap.xml
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:

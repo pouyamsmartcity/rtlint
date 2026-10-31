@@ -75,6 +75,8 @@ export interface LintOptions {
   config?: Config;
   /** Pre-resolved settings (from resolveSettings); takes precedence over config. */
   settings?: Settings;
+  /** Also report rtlint-disable comments that suppress nothing. */
+  reportUnusedDirectives?: boolean;
 }
 
 export interface FixOptions extends LintOptions {

@@ -1,5 +1,5 @@
 name: rtlint
-description: Find right-to-left (RTL) layout bugs and Persian typography mistakes, with annotations on the pull request.
+description: Find right-to-left (RTL) layout bugs and Persian typography mistakes, with annotations on the pull request. By Pouyam.
 author: Pouyam
 branding:
   icon: align-right
@@ -11,6 +11,15 @@ inputs:
   args:
     description: Extra rtlint options, e.g. "--max-warnings 0 --rule fa/*=off".
     default: ''
+  lang:
+    description: Language of the messages, en or fa (Persian).
+    default: en
+  changed-only:
+    description: Only lint files changed in the pull request ("true" or "false").
+    default: 'false'
+  summary:
+    description: Write a summary table to the job summary page ("true" or "false").
+    default: 'true'
   sarif:
     description: Also write a SARIF report to this path (for github/codeql-action/upload-sarif).
     default: ''
@@ -22,11 +31,23 @@ runs:
       env:
         RTLINT_PATHS: ${{ inputs.paths }}
         RTLINT_ARGS: ${{ inputs.args }}
+        RTLINT_LANG: ${{ inputs.lang }}
+        RTLINT_CHANGED: ${{ inputs.changed-only }}
+        RTLINT_SUMMARY: ${{ inputs.summary }}
         RTLINT_SARIF: ${{ inputs.sarif }}
+        RTLINT_BASE: ${{ github.event.pull_request.base.sha }}
       run: |
         set -o pipefail
         bin="$GITHUB_ACTION_PATH/bin/rtlint.js"
-        if [ -n "$RTLINT_SARIF" ]; then
-          node "$bin" $RTLINT_PATHS $RTLINT_ARGS --format sarif --output-file "$RTLINT_SARIF" || true
+        extra="--lang $RTLINT_LANG"
+        if [ "$RTLINT_CHANGED" = "true" ] && [ -n "$RTLINT_BASE" ]; then
+          git fetch --no-tags --depth=1 origin "$RTLINT_BASE" 2>/dev/null || true
+          extra="$extra --changed $RTLINT_BASE"
         fi
-        node "$bin" $RTLINT_PATHS $RTLINT_ARGS --format github
+        if [ -n "$RTLINT_SARIF" ]; then
+          node "$bin" $RTLINT_PATHS $RTLINT_ARGS $extra --format sarif --output-file "$RTLINT_SARIF" || true
+        fi
+        if [ "$RTLINT_SUMMARY" = "true" ] && [ -n "$GITHUB_STEP_SUMMARY" ]; then
+          node "$bin" $RTLINT_PATHS $RTLINT_ARGS $extra --format markdown >> "$GITHUB_STEP_SUMMARY" || true
+        fi
+        node "$bin" $RTLINT_PATHS $RTLINT_ARGS $extra --format github

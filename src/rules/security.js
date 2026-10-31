@@ -36,7 +36,18 @@ export const bidiControl = {
   check(file, report) {
     const { text } = file;
     if (!/[\u202A-\u202E\u2066-\u2069]/.test(text)) return;
-    const strict = file.kind === 'script' || file.kind === 'code' || file.kind === 'css';
+    const codeFile = file.kind === 'script' || file.kind === 'code' || file.kind === 'css';
+    // In .vue/.svelte/.html files, <script> and <style> blocks are code too.
+    const codeBlocks = [];
+    if (file.kind === 'markup') {
+      const src = file.markupView;
+      const lower = src.toLowerCase();
+      for (const m of src.matchAll(/<(script|style)\b[^>]*>/gi)) {
+        const close = lower.indexOf(`</${m[1].toLowerCase()}`, m.index);
+        codeBlocks.push([m.index, close < 0 ? src.length : close]);
+      }
+    }
+    const isCode = (index) => codeFile || codeBlocks.some(([s, e]) => index >= s && index < e);
     const starts = file.lineStarts;
     for (let i = 0; i < starts.length; i++) {
       const start = starts[i];
@@ -48,7 +59,7 @@ export const bidiControl = {
         const c = line[j];
         if (!NAMES[c]) continue;
         const index = start + j;
-        if (strict) {
+        if (isCode(index)) {
           report({
             index,
             length: 1,

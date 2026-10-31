@@ -39,13 +39,18 @@ export function splitCssValue(value) {
 /** Reads an attribute from an HTML/JSX attribute string. */
 export function getAttr(attrs, name) {
   const re = new RegExp(
-    `(?<![\\w:.-])${escapeRe(name)}\\s*=\\s*(?:"([^"]*)"|'([^']*)'|\\{([^}]*)\\})`,
+    `(?<![\\w:.-])${escapeRe(name)}\\s*=\\s*(?:"([^"]*)"|'([^']*)'|\\{([^}]*)\\}|([^\\s"'=<>\`{}]+))`,
     'i',
   );
   const m = attrs.match(re);
   if (!m) {
     const bare = new RegExp(`(?<![\\w:.-])${escapeRe(name)}(?![\\w:.-]|\\s*=)`, 'i');
     return bare.test(attrs) ? { present: true, value: '', dynamic: false, index: -1 } : null;
+  }
+  if (m[4] !== undefined) {
+    // Unquoted HTML value: lang=fa, type=email.
+    const value = m[4].replace(/\/$/, '');
+    return { present: true, value, dynamic: false, index: m.index, valueStart: m.index + m[0].length - m[4].length };
   }
   const valueStart = m.index + m[0].length - (m[1] ?? m[2] ?? m[3]).length - 1;
   if (m[3] !== undefined) {
@@ -56,4 +61,22 @@ export function getAttr(attrs, name) {
   const value = m[1] ?? m[2];
   const dynamic = /\{\{|\{%|<\?|%[\w.]+%|\$\{/.test(value);
   return { present: true, value, dynamic, index: m.index, valueStart };
+}
+
+const DIRECTION_WORD = /rtl|ltr|\bdir\b|direction|I18nManager/i;
+const CONDITION_BEFORE = /(?:rtl|ltr|\bdir\b|direction|I18nManager)[^;\n]*?(?:\?|&&|\|\|)[^;\n]*$/i;
+
+/**
+ * True when the code at [index, index + length) is picked by a direction
+ * check, e.g. `isRtl ? 'mr-2' : 'ml-2'`, `{ 'ml-2': !isRtl }` or
+ * `marginLeft: isRTL ? 0 : 8`. Such code already handles RTL, and converting
+ * it to logical properties would swap the sides a second time.
+ */
+export function directionConditional(src, index, length) {
+  if (CONDITION_BEFORE.test(src.slice(Math.max(0, index - 160), index))) return true;
+  // A key whose value depends on direction: `'ml-2': !isRtl` or `marginLeft: isRTL ? 0 : 8`.
+  const after = src.slice(index + length, index + length + 120);
+  if (!/^['"`]?\s*:/.test(after)) return false;
+  const stop = after.search(/[,;}\n]/);
+  return DIRECTION_WORD.test(stop < 0 ? after : after.slice(0, stop));
 }

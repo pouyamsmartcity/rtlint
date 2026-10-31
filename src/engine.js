@@ -25,20 +25,42 @@ function applyRules(target, entries, where) {
   }
 }
 
-const SCALARS = ['persian', 'classes', 'classPrefix'];
+const PERSIAN_MODES = { auto: 'auto', true: true, on: true, false: false, off: false };
+
+function applyScalars(settings, from, where) {
+  if ('persian' in from) {
+    const mode = PERSIAN_MODES[String(from.persian)];
+    if (mode === undefined) throw new ConfigError(`${where}persian must be "auto", true or false, got ${JSON.stringify(from.persian)}`);
+    settings.persian = mode;
+  }
+  if ('classes' in from) {
+    if (typeof from.classes !== 'boolean') throw new ConfigError(`${where}classes must be true or false`);
+    settings.classes = from.classes;
+  }
+  if ('classPrefix' in from) {
+    if (typeof from.classPrefix !== 'string') throw new ConfigError(`${where}classPrefix must be a string`);
+    settings.classPrefix = from.classPrefix;
+  }
+}
 
 /** Resolves rule levels and options for one file from a config object. */
 export function resolveSettings(config = {}, relPath = '') {
   const settings = { persian: 'auto', classes: true, classPrefix: '', rules: {} };
   for (const r of rules) settings.rules[r.id] = { level: r.meta.level, options: {} };
-  for (const key of SCALARS) if (key in config) settings[key] = config[key];
+  applyScalars(settings, config, '');
   applyRules(settings.rules, config.rules, 'rules');
   for (const [i, o] of (config.overrides ?? []).entries()) {
     if (!o.files) throw new ConfigError(`overrides[${i}] needs a "files" glob`);
     if (!matchAny(relPath, o.files) || matchAny(relPath, o.excludedFiles ?? [])) continue;
-    for (const key of SCALARS) if (key in o) settings[key] = o[key];
+    applyScalars(settings, o, `overrides[${i}].`);
     applyRules(settings.rules, o.rules, `overrides[${i}].rules`);
   }
+  return settings;
+}
+
+/** Applies rule levels on top of resolved settings (used for CLI flags, which win over the config). */
+export function applyRuleOverrides(settings, entries) {
+  applyRules(settings.rules, entries, '--rule');
   return settings;
 }
 
@@ -56,8 +78,24 @@ export function lintText(text, { filePath = 'input.txt', config = {}, settings }
     const rs = resolved.rules[rule.id];
     if (!rs || rs.level === 'off') continue;
     const severity = rs.level === 'error' ? 2 : 1;
-    rule.check(
-      file,
+    const found = [];
+    try {
+      rule.check(file, (p) => found.push(p), rs.options ?? {});
+    } catch (err) {
+      // One broken rule must not hide every other rule's results.
+      messages.push({
+        ruleId: rule.id,
+        severity: 2,
+        fatal: true,
+        message: `rtlint internal error in ${rule.id}: ${err?.message ?? err}. Please report it at https://github.com/pouyamsmartcity/rtlint/issues`,
+        line: 1,
+        column: 1,
+        endLine: 1,
+        endColumn: 1,
+      });
+      continue;
+    }
+    found.forEach(
       (p) => {
         const start = position(file.lineStarts, p.index);
         if (directives.suppressed(rule.id, start.line)) return;
@@ -79,7 +117,6 @@ export function lintText(text, { filePath = 'input.txt', config = {}, settings }
         }
         messages.push(message);
       },
-      rs.options ?? {},
     );
   }
   messages.sort((a, b) => a.line - b.line || a.column - b.column || a.ruleId.localeCompare(b.ruleId));

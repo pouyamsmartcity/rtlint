@@ -7,35 +7,126 @@ export function blank(s) {
   return s.replace(/[^\n]/g, ' ');
 }
 
-/** Masks CSS comments. `//` line comments are masked too, except in plain CSS. */
+/** Blanks out[from, to) in a char array, keeping newlines. */
+function hideRange(out, from, to) {
+  for (let k = from; k < to; k++) if (out[k] !== '\n') out[k] = ' ';
+}
+
+// Bracket matching gives up after this many characters or nesting levels:
+// real attribute expressions are short, and adversarial input must stay linear.
+const SCAN_LIMIT = 4000;
+const DEPTH_LIMIT = 64;
+
+/**
+ * Masks CSS comments and the contents of CSS strings (quotes are kept), so
+ * `content: "a; left: 0"` is not read as a declaration. `//` line comments
+ * are masked too, except in plain CSS where `//` is not a comment.
+ */
 export function maskCss(text, ext = 'css') {
-  let out = text.replace(/\/\*[\s\S]*?\*\//g, blank);
-  if (ext !== 'css') {
-    out = out.replace(/(^|[\s;{}])(\/\/[^\n]*)/g, (_, pre, comment) => pre + blank(comment));
+  const out = text.split('');
+  const n = text.length;
+  const lineComments = ext !== 'css';
+  let i = 0;
+  while (i < n) {
+    const c = text[i];
+    if (c === '/' && text[i + 1] === '*') {
+      const end = text.indexOf('*/', i + 2);
+      const stop = end < 0 ? n : end + 2;
+      hideRange(out, i, stop);
+      i = stop;
+      continue;
+    }
+    if (lineComments && c === '/' && text[i + 1] === '/' && (i === 0 || /[\s;{}]/.test(text[i - 1]))) {
+      const end = text.indexOf('\n', i);
+      const stop = end < 0 ? n : end;
+      hideRange(out, i, stop);
+      i = stop;
+      continue;
+    }
+    if (c === '"' || c === "'") {
+      const { end, terminated } = skipQuoted(text, i);
+      if (terminated) hideRange(out, i + 1, end - 1);
+      i = terminated ? end : i + 1;
+      continue;
+    }
+    i++;
   }
-  return out;
+  return out.join('');
 }
 
 export function maskHtml(text) {
-  return text.replace(/<!--[\s\S]*?-->/g, blank);
+  if (!text.includes('<!--')) return text;
+  let out = '';
+  let pos = 0;
+  for (;;) {
+    const open = text.indexOf('<!--', pos);
+    if (open < 0) break;
+    const close = text.indexOf('-->', open + 4);
+    const stop = close < 0 ? text.length : close + 3;
+    out += text.slice(pos, open) + blank(text.slice(open, stop));
+    pos = stop;
+    if (close < 0) break;
+  }
+  return out + text.slice(pos);
 }
+
+const REGEX_PRECEDER = /[(,=:[!&|?{};+\-*%~^<>]/;
+const REGEX_KEYWORDS = new Set([
+  'return', 'typeof', 'instanceof', 'case', 'do', 'else', 'in', 'of', 'new', 'delete', 'void',
+  'throw', 'yield', 'await',
+]);
+
+/** Whether a '/' at `i` starts a regex literal, judged by the token before it. */
+function regexAllowed(src, i) {
+  let k = i - 1;
+  while (k >= 0 && (src[k] === ' ' || src[k] === '\t' || src[k] === '\n' || src[k] === '\r')) k--;
+  if (k < 0) return true;
+  const p = src[k];
+  if (REGEX_PRECEDER.test(p)) return true;
+  if (/[\w$]/.test(p)) {
+    let s = k;
+    while (s > 0 && /[\w$]/.test(src[s - 1])) s--;
+    return REGEX_KEYWORDS.has(src.slice(s, k + 1));
+  }
+  return false;
+}
+
+/** Index just past a regex literal starting at `i`, or -1 if it is not one. */
+function skipRegex(src, i) {
+  let j = i + 1;
+  let inClass = false;
+  while (j < src.length) {
+    const c = src[j];
+    if (c === '\n') return -1;
+    if (c === '\\') { j += 2; continue; }
+    if (c === '[') inClass = true;
+    else if (c === ']') inClass = false;
+    else if (c === '/' && !inClass) {
+      j++;
+      while (j < src.length && /[a-z]/.test(src[j])) j++;
+      return j;
+    }
+    j++;
+  }
+  return -1;
+}
+
+// A quote that opens a JSX/HTML attribute value: <Tag … name="…".
+const JSX_ATTRIBUTE = /<[A-Za-z][\w.:-]*(?:\s+[^<>;]*?)?\s[\w:.@-]+\s*=\s*$/;
 
 /**
  * Masks JavaScript/TypeScript comments while keeping strings and template
- * literals intact. Regex literals are not recognised; that can only cause a
- * missed report, never a false one.
+ * literals intact. Regex literals are skipped as a unit, so `/\/*$/` does
+ * not open a comment.
  *
  * With `strings: true` the contents of string literals are masked too, except
- * templates tagged html`…` or svg`…` (lit, htm), so markup rules see JSX and
- * HTML templates but not messages that merely mention a tag.
+ * JSX attribute values and templates tagged html`…` or svg`…` (lit, htm), so
+ * markup rules see JSX and HTML templates but not messages that mention a tag.
  */
 export function maskJs(src, { strings = false } = {}) {
   const out = src.split('');
   const n = src.length;
   const modes = [{ template: false, depth: 0 }];
-  const hide = (from, to) => {
-    for (let k = from; k < to; k++) if (out[k] !== '\n') out[k] = ' ';
-  };
   let i = 0;
   while (i < n) {
     const c = src[i];
@@ -43,30 +134,39 @@ export function maskJs(src, { strings = false } = {}) {
     const top = modes[modes.length - 1];
     if (top.template) {
       if (c === '\\') {
-        if (top.hidden) hide(i, i + 2);
+        if (top.hidden) hideRange(out, i, i + 2);
         i += 2;
       } else if (c === '`') { modes.pop(); i++; }
       else if (c === '$' && d === '{') { modes.push({ template: false, depth: 0 }); i += 2; }
       else {
-        if (top.hidden) hide(i, i + 1);
+        if (top.hidden) hideRange(out, i, i + 1);
         i++;
       }
       continue;
     }
     if (c === '/' && d === '/') {
-      while (i < n && src[i] !== '\n') out[i++] = ' ';
+      const end = src.indexOf('\n', i);
+      const stop = end < 0 ? n : end;
+      hideRange(out, i, stop);
+      i = stop;
       continue;
     }
     if (c === '/' && d === '*') {
       const end = src.indexOf('*/', i + 2);
       const stop = end < 0 ? n : end + 2;
-      for (; i < stop; i++) if (src[i] !== '\n') out[i] = ' ';
+      hideRange(out, i, stop);
+      i = stop;
       continue;
     }
+    if (c === '/' && regexAllowed(src, i)) {
+      const end = skipRegex(src, i);
+      if (end > 0) { i = end; continue; }
+    }
     if (c === '"' || c === "'") {
-      const end = skipQuoted(src, i);
-      // A JSX attribute value (name="…", no space before '=') stays visible.
-      if (strings && !/[\w-]=\s*$/.test(src.slice(Math.max(0, i - 40), i))) hide(i + 1, end - 1);
+      const { end, terminated } = skipQuoted(src, i);
+      // An apostrophe in JSX text ("Don't") never closes; it is not a string.
+      if (!terminated) { i++; continue; }
+      if (strings && !JSX_ATTRIBUTE.test(src.slice(Math.max(0, i - 200), i))) hideRange(out, i + 1, end - 1);
       i = end;
       continue;
     }
@@ -86,26 +186,29 @@ export function maskJs(src, { strings = false } = {}) {
   return out.join('');
 }
 
-/** Returns the index just past a '…' or "…" string starting at `i`. Stops at a newline. */
+/**
+ * Scans a '…' or "…" string starting at `i`. `terminated` is false when a
+ * newline or the end of input comes first (JS and CSS strings cannot do that).
+ */
 function skipQuoted(src, i) {
   const q = src[i];
   let j = i + 1;
   while (j < src.length) {
     const c = src[j];
     if (c === '\\') { j += 2; continue; }
-    if (c === q) return j + 1;
-    if (c === '\n') return j;
+    if (c === q) return { end: j + 1, terminated: true };
+    if (c === '\n') return { end: j, terminated: false };
     j++;
   }
-  return j;
+  return { end: src.length, terminated: false };
 }
 
 /**
  * Scans a template literal whose opening backtick is at `i`. Returns the
- * static text pieces as [start, end) ranges and the index past the closing
- * backtick.
+ * static text pieces and the `${…}` holes as [start, end) ranges, and the
+ * index past the closing backtick.
  */
-export function scanTemplate(src, i) {
+export function scanTemplate(src, i, depth = 0) {
   const pieces = [];
   const holes = [];
   let start = i + 1;
@@ -116,7 +219,7 @@ export function scanTemplate(src, i) {
     if (c === '`') { pieces.push([start, j]); return { pieces, holes, end: j + 1 }; }
     if (c === '$' && src[j + 1] === '{') {
       pieces.push([start, j]);
-      const close = matchClose(src, j + 1, '{', '}');
+      const close = matchClose(src, j + 1, '{', '}', depth + 1);
       holes.push([j + 2, close]);
       j = close;
       start = j + 1;
@@ -127,37 +230,48 @@ export function scanTemplate(src, i) {
   return { pieces, holes, end: src.length };
 }
 
-/** Index of the bracket that closes the one at `i`, skipping strings. */
-export function matchClose(src, i, open, close) {
-  let depth = 0;
+/**
+ * Index of the bracket that closes the one at `i`, skipping strings and
+ * templates. Gives up (returns the scan limit) on runaway or deeply nested input.
+ */
+export function matchClose(src, i, open, close, depth = 0) {
+  const limit = Math.min(src.length, i + SCAN_LIMIT);
+  if (depth > DEPTH_LIMIT) return limit;
+  let level = 0;
   let j = i;
-  while (j < src.length) {
+  while (j < limit) {
     const c = src[j];
-    if (c === '"' || c === "'") { j = skipQuoted(src, j); continue; }
-    if (c === '`') { j = scanTemplate(src, j).end; continue; }
-    if (c === open) depth++;
-    else if (c === close && --depth === 0) return j;
+    if (c === '"' || c === "'") {
+      const q = skipQuoted(src, j);
+      j = q.terminated ? q.end : j + 1;
+      continue;
+    }
+    if (c === '`') { j = scanTemplate(src, j, depth + 1).end; continue; }
+    if (c === open) level++;
+    else if (c === close && --level === 0) return j;
     j++;
   }
-  return src.length;
+  return limit;
 }
 
 /** Ranges of the contents of every string literal between `from` and `to`. */
-export function stringRanges(src, from, to) {
+export function stringRanges(src, from, to, depth = 0) {
   const ranges = [];
+  if (depth > DEPTH_LIMIT) return ranges;
   let j = from;
   while (j < to) {
     const c = src[j];
     if (c === '"' || c === "'") {
-      const end = skipQuoted(src, j);
-      ranges.push([j + 1, Math.min(end - 1, to)]);
-      j = end;
+      const q = skipQuoted(src, j);
+      if (!q.terminated) { j++; continue; }
+      ranges.push([j + 1, Math.min(q.end - 1, to)]);
+      j = q.end;
       continue;
     }
     if (c === '`') {
-      const t = scanTemplate(src, j);
+      const t = scanTemplate(src, j, depth + 1);
       for (const [s, e] of t.pieces) ranges.push([s, Math.min(e, to)]);
-      for (const [s, e] of t.holes) ranges.push(...stringRanges(src, s, Math.min(e, to)));
+      for (const [s, e] of t.holes) ranges.push(...stringRanges(src, s, Math.min(e, to), depth + 1));
       j = t.end;
       continue;
     }
@@ -188,20 +302,34 @@ export function viewFromRegions(text, regions, terminator = '') {
   return out + tail;
 }
 
-const STYLED =
-  /\b(?:styled(?:\.[A-Za-z]\w*|\s*\([^()]*\))(?:\s*\.\s*attrs\s*\((?:[^()]|\([^()]*\))*\))?|css|injectGlobal|createGlobalStyle|keyframes)\s*`/g;
+// styled.div`…`, styled(Link)`…`, styled.div<Props>`…`, css<Props>`…`, keyframes`…`.
+const GENERIC = '(?:\\s*<(?:[^<>`]|<[^<>`]*>)*>)?';
+const STYLED = new RegExp(
+  `\\b(?:styled(?:\\.[A-Za-z]\\w*|\\s*\\([^()]*\\))(?:\\s*\\.\\s*attrs\\s*\\((?:[^()]|\\([^()]*\\))*\\))?${GENERIC}|(?:css|injectGlobal|createGlobalStyle|keyframes)${GENERIC})\\s*\``,
+  'g',
+);
 
-/** CSS regions: whole stylesheets, <style> blocks, style="" attributes, styled-components/emotion templates. */
+const INDENTED_LANGS = /\blang\s*=\s*["']?(?:sass|styl|stylus)\b/i;
+
+/**
+ * CSS regions: whole stylesheets, <style> blocks, style="" attributes and
+ * styled-components/emotion templates. `indented` lists <style lang="sass">
+ * blocks, where a fix must not add semicolons.
+ */
 export function cssRegions(file) {
   const { text, kind } = file;
-  if (kind === 'css') return { view: maskCss(text, file.ext), regions: [[0, text.length]] };
+  if (kind === 'css') return { view: maskCss(text, file.ext), regions: [[0, text.length]], indented: [] };
   const regions = [];
+  const indented = [];
   if (kind === 'markup') {
     const src = file.markupView;
-    for (const m of src.matchAll(/<style\b[^>]*>/gi)) {
+    const lower = src.toLowerCase();
+    for (const m of src.matchAll(/<style\b([^>]*)>/gi)) {
       const start = m.index + m[0].length;
-      const close = src.toLowerCase().indexOf('</style', start);
-      regions.push([start, close < 0 ? src.length : close]);
+      const close = lower.indexOf('</style', start);
+      const range = [start, close < 0 ? src.length : close];
+      regions.push(range);
+      if (INDENTED_LANGS.test(m[1])) indented.push(range);
     }
     for (const m of src.matchAll(/(?<![\w:.@-])style\s*=\s*(["'])/gi)) {
       const start = m.index + m[0].length;
@@ -215,19 +343,60 @@ export function cssRegions(file) {
       regions.push(...scanTemplate(src, tick).pieces);
     }
   }
-  if (!regions.length) return { view: blank(text), regions };
-  return { view: maskCss(viewFromRegions(text, regions, ';'), 'css'), regions };
+  if (!regions.length) return { view: blank(text), regions, indented };
+  // <style lang="scss"> may use // comments; plain CSS never starts a line with //.
+  return { view: maskCss(viewFromRegions(text, regions, ';'), 'scss'), regions, indented };
 }
 
 const CLASS_ATTR =
   /(?<![\w:.@-])(class|className|class:list|:class|v-bind:class|\[ngClass\]|ngClass|\[class\])\s*=\s*/g;
 const CLASS_HELPER = /\b(?:cn|clsx|classnames|classNames|cx|cva|twMerge|twJoin|tv)\s*\(/g;
+const CLASS_DIRECTIVE = /(?<![\w-])class:([^\s=>/"'{}]+)(?=[\s=>/])/g;
 
 /**
- * Regions holding class names: class/className attributes and string
- * literals passed to class helpers such as clsx() or cn(). Each region is
- * one attribute value or one string, so rules can reason about the classes
- * that sit together.
+ * End of a quoted attribute value that may contain {…} expressions with their
+ * own quotes (Svelte/Astro: class="a {x ? "b" : ""} c").
+ */
+function attributeEnd(src, start, quote) {
+  const limit = Math.min(src.length, start + SCAN_LIMIT);
+  let j = start;
+  while (j < limit) {
+    const c = src[j];
+    if (c === quote) return j;
+    if (c === '{') {
+      j = matchClose(src, j, '{', '}') + 1;
+      continue;
+    }
+    j++;
+  }
+  return -1;
+}
+
+/** Splits a static attribute value into its literal text and the strings inside its {…} expressions. */
+function staticValueRanges(src, start, end) {
+  const ranges = [];
+  let pos = start;
+  let j = start;
+  while (j < end) {
+    if (src[j] === '{') {
+      ranges.push([pos, j]);
+      const close = Math.min(matchClose(src, j, '{', '}'), end);
+      ranges.push(...stringRanges(src, j + 1, close));
+      j = close + 1;
+      pos = j;
+      continue;
+    }
+    j++;
+  }
+  ranges.push([pos, end]);
+  return ranges;
+}
+
+/**
+ * Regions holding class names: class/className attributes, Svelte class:
+ * directives, and string literals passed to class helpers such as clsx() or
+ * cn(). Each region is one attribute value or one string, so rules can reason
+ * about the classes that sit together.
  */
 export function classRegions(file) {
   const { kind } = file;
@@ -240,14 +409,23 @@ export function classRegions(file) {
     const c = src[p];
     const dynamic = name.startsWith(':') || name.startsWith('v-bind') || name.startsWith('[');
     if (c === '"' || c === "'") {
-      const end = src.indexOf(c, p + 1);
-      if (end < 0) continue;
-      if (dynamic) regions.push(...stringRanges(src, p + 1, end));
-      else regions.push([p + 1, end]);
+      if (dynamic) {
+        const end = src.indexOf(c, p + 1);
+        if (end > 0) regions.push(...stringRanges(src, p + 1, end));
+      } else {
+        const end = attributeEnd(src, p + 1, c);
+        if (end > 0) regions.push(...staticValueRanges(src, p + 1, end));
+      }
     } else if (c === '{') {
       regions.push(...stringRanges(src, p + 1, matchClose(src, p, '{', '}')));
     } else if (c === '`') {
       regions.push(...scanTemplate(src, p).pieces);
+    }
+  }
+  if (kind === 'markup' && file.ext === 'svelte') {
+    for (const m of src.matchAll(CLASS_DIRECTIVE)) {
+      const start = m.index + 6;
+      regions.push([start, start + m[1].length]);
     }
   }
   for (const m of src.matchAll(CLASS_HELPER)) {
@@ -257,7 +435,9 @@ export function classRegions(file) {
   for (const m of src.matchAll(/\btw\s*`/g)) {
     regions.push(...scanTemplate(src, m.index + m[0].length - 1).pieces);
   }
-  return dedupeRegions(regions);
+  // styles["text-left"] is a CSS Modules lookup, not a class list.
+  const memberAccess = ([s]) => /[\w$)\]]\s*\[\s*["'`]$/.test(src.slice(Math.max(0, s - 40), s));
+  return dedupeRegions(regions.filter((r) => !memberAccess(r)));
 }
 
 function dedupeRegions(regions) {

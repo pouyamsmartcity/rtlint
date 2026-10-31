@@ -1,3 +1,4 @@
+import { blockAt, leaveAlone } from './css-context.js';
 import { escapeRe, splitCssValue } from './util.js';
 
 const PHYSICAL = {
@@ -33,15 +34,23 @@ const PHYSICAL_DECL = new RegExp(`(^|[\\s{;])(${NAMES})(\\s*:)([^;{}\\n]*)`, 'g'
 
 const SAFE_AREA = /safe-area-inset-(?:left|right)/;
 
-/** True when `left: 50%` is paired with a -50% translate in the same block. */
-function isCentering(view, index, value) {
+const CENTER_TRANSLATE = /translate(?:X|3d)?\(\s*-50%|translate\s*:\s*-50%/i;
+
+/** True when `left: 50%` is paired with a -50% translate in the same block (checked once per block). */
+function isCentering(file, index, value) {
   if (!/^(?:50%|calc\(\s*50%)/.test(value.trim())) return false;
-  const open = view.lastIndexOf('{', index);
-  let close = view.indexOf('}', index);
-  if (close < 0) close = view.length;
-  const block = view.slice(open < 0 ? 0 : open, close);
-  return /translate(?:X|3d)?\(\s*-50%|translate\s*:\s*-50%/i.test(block);
+  const block = blockAt(file, index);
+  const key = block ? block.open : -1;
+  file._centering ??= new Map();
+  if (!file._centering.has(key)) {
+    const view = file.cssView;
+    const text = block ? view.slice(block.open, block.close) : view;
+    file._centering.set(key, CENTER_TRANSLATE.test(text));
+  }
+  return file._centering.get(key);
 }
+
+const SVELTE_STYLE_DIRECTIVE = new RegExp(`(?<![\\w-])style:(${NAMES})(?=[\\s=>/|])`, 'g');
 
 export const physicalProperty = {
   id: 'css/physical-property',
@@ -57,8 +66,8 @@ export const physicalProperty = {
       const name = m[2];
       const logical = PHYSICAL[name];
       // Notch/home-indicator insets are physical by nature; they must not flip.
-      if (SAFE_AREA.test(m[4])) continue;
-      if ((name === 'left' || name === 'right') && isCentering(view, index, m[4])) {
+      if (SAFE_AREA.test(m[4]) || leaveAlone(file, index)) continue;
+      if ((name === 'left' || name === 'right') && isCentering(file, index, m[4])) {
         report({
           index,
           length: name.length,
@@ -72,6 +81,17 @@ export const physicalProperty = {
         message: `"${name}" is physical and will not mirror in RTL; use "${logical}".`,
         fix: { text: logical },
       });
+    }
+    if (file.ext === 'svelte') {
+      for (const m of file.markupView.matchAll(SVELTE_STYLE_DIRECTIVE)) {
+        const index = m.index + 6;
+        report({
+          index,
+          length: m[1].length,
+          message: `"style:${m[1]}" is physical and will not mirror in RTL; use "style:${PHYSICAL[m[1]]}".`,
+          fix: { text: PHYSICAL[m[1]] },
+        });
+      }
     }
   },
 };
@@ -95,6 +115,7 @@ export const physicalValue = {
   },
   check(file, report) {
     for (const m of file.cssView.matchAll(VALUE_DECL)) {
+      if (leaveAlone(file, m.index + m[1].length)) continue;
       const index = m.index + m[1].length + m[2].length + m[3].length;
       const logical = LOGICAL_VALUE[m[2]][m[4]];
       report({
@@ -140,16 +161,26 @@ export const asymmetricShorthand = {
     level: 'warn',
   },
   check(file, report) {
-    const canFix = !INDENTED.has(file.ext);
-    for (const m of file.cssView.matchAll(SHORTHAND_DECL)) {
+    const view = file.cssView;
+    const indented = file.css.indented ?? [];
+    for (const m of view.matchAll(SHORTHAND_DECL)) {
       const prop = m[2];
+      const declStart = m.index + m[1].length;
+      if (leaveAlone(file, declStart)) continue;
+      // Sass/Less interpolation (#{$x}, @{x}) is cut short by the value pattern; skip it.
+      const after = view[m.index + m[0].length];
+      if (after === '{' || /[#@]$/.test(m[4].trimEnd()) || /[#@]\{/.test(m[4])) continue;
       const raw = m[4].replace(/\s+$/, '');
+      const inIndented = indented.some(([s, e]) => declStart >= s && declStart < e);
+      // A fix rewrites the raw text, so a comment inside the value would be lost.
+      const rawText = file.text.slice(declStart, declStart + m[2].length + m[3].length + raw.length);
+      const canFix = !INDENTED.has(file.ext) && !inIndented && !rawText.includes('/*');
       const important = /\s*!important$/i.test(raw) ? ' !important' : '';
-      const value = raw.replace(/\s*!important$/i, '');
+      const value = raw.replace(/\s*!important$/i, '').replace(/\s+/g, ' ');
       if (/[,/]/.test(value.replace(/\([^)]*\)/g, ''))) continue;
       if (SAFE_AREA.test(value)) continue;
       const parts = splitCssValue(value);
-      const index = m.index + m[1].length;
+      const index = declStart;
       const length = m[2].length + m[3].length + raw.length;
 
       if (prop === 'border-radius') {
@@ -184,6 +215,47 @@ export const asymmetricShorthand = {
         fix: canFix
           ? { text: `${block}: ${blockValue}${important}; ${inline}: ${left} ${right}${important}` }
           : undefined,
+      });
+    }
+  },
+};
+
+const DIRECTIONAL_DECL =
+  /(^|[\s{;])(transform|translate|background-position|background-position-x|transform-origin)(\s*:\s*)([^;{}\n]+)/g;
+
+/** The horizontal part of a value that would need mirroring, or null. */
+function directionalPart(prop, value) {
+  if (prop === 'transform') {
+    const m = value.match(/translate(?:X|3d)?\(\s*(-?[\d.]+[a-z%]*)/i);
+    if (m && parseFloat(m[1]) !== 0 && !/^-50%$/.test(m[1])) return m[0] + '…)';
+    return null;
+  }
+  if (prop === 'translate') {
+    const x = value.trim().split(/\s+/)[0];
+    return parseFloat(x) !== 0 && !Number.isNaN(parseFloat(x)) && x !== '-50%' ? x : null;
+  }
+  const side = value.match(/\b(left|right)\b/);
+  return side ? side[1] : null;
+}
+
+export const directionalValue = {
+  id: 'css/directional-value',
+  meta: {
+    description:
+      'Opt-in: horizontal translate, background-position and transform-origin values point one way on screen and usually need an RTL counterpart.',
+    fixable: false,
+    level: 'off',
+  },
+  check(file, report) {
+    const view = file.cssView;
+    for (const m of view.matchAll(DIRECTIONAL_DECL)) {
+      const part = directionalPart(m[2], m[4]);
+      if (!part) continue;
+      if (leaveAlone(file, m.index + m[1].length)) continue;
+      report({
+        index: m.index + m[1].length,
+        length: m[2].length + m[3].length + m[4].trimEnd().length,
+        message: `"${m[2]}: ${m[4].trim()}" moves or anchors things horizontally (${part}); add a [dir="rtl"] counterpart if it should follow the reading direction.`,
       });
     }
   },

@@ -103,6 +103,8 @@
           <option value="jsx">React (JSX)</option>
           <option value="native">React Native</option>
           <option value="fa">Persian text</option>
+          <option value="icons">Icons</option>
+          <option value="pdf">Text copied from a PDF</option>
           <option value="trojan">Trojan Source</option>
         </select>
       </label>
@@ -177,9 +179,30 @@ export const styles = StyleSheet.create({
   fa: ['post.fa.md', `# آموزش نوشتن درست فارسي
 
 من مي خواهم كتاب ها را بخوانم, ولی وقت ندارم?
+میخواهم به خانه ی دوستم بروم ولی نمیتوانم.
 این خانه ای است که در سال ١٤٠٣ ساخته اند .
 قیمت : ۱۲3 هزار تومان و «  تخفیف ویژه »
 تـــهران زیباست.
+`],
+  icons: ['Pager.tsx', `import { ChevronLeft, ChevronRight, ArrowUpRight } from 'lucide-react';
+
+export function Pager({ isRtl }) {
+  return (
+    <nav className="flex gap-2">
+      <button><ChevronLeft className="size-4" /> Previous</button>
+      <button>Next <ChevronRight className="size-4 rtl:-scale-x-100" /></button>
+      <a href="/docs">Docs <ArrowUpRight /></a>
+      <i className="fa fa-arrow-right" />
+      <span className="material-icons">arrow_forward</span>
+    </nav>
+  );
+}
+`],
+  pdf: ['countries.json', `{
+  "mk": "ﻣﻘﺪﻭﻧﯿﻪ ﺷﻤﺎﻟﯽ",
+  "price": "۲۵۰٬۰۰۰ ﷼",
+  "note": "ﻻﺯﻡ ﺍﺳﺖ"
+}
 `],
   trojan: ['access.js', `function isAdmin(user) {
   // Looks like a comment that ends before the return, but runs differently:

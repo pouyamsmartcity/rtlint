@@ -84,7 +84,7 @@ export function init(cwd, { force = false, lang } = {}) {
   }
   out.push('');
   out.push(fa ? 'قدم بعدی:' : 'Next:');
-  out.push(fa ? '  npx rtlint            گزارش مشکل‌ها' : '  npx rtlint            report problems');
+  out.push(fa ? '  npx rtlint            گزارش مشکل\u200Cها' : '  npx rtlint            report problems');
   out.push(fa ? '  npx rtlint --fix      اصلاح خودکار' : '  npx rtlint --fix      apply safe fixes');
   out.push(fa ? '  npx rtlint explain <قانون>   توضیح یک قانون' : '  npx rtlint explain <rule>   explain a rule');
   return out;
@@ -112,7 +112,7 @@ export function explain(id, lang = 'en') {
   const { meta } = rule;
   const head = [
     id,
-    `${lang === 'fa' ? 'سطح پیش‌فرض' : 'Default'}: ${meta.level}${meta.fixable ? (lang === 'fa' ? ' · اصلاح خودکار' : ' · fixable') : ''}`,
+    `${lang === 'fa' ? 'سطح پیش\u200Cفرض' : 'Default'}: ${meta.level}${meta.fixable ? (lang === 'fa' ? ' · اصلاح خودکار' : ' · fixable') : ''}`,
     '',
   ];
   const body = section

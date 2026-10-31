@@ -286,7 +286,7 @@ export async function run(argv, io = {}) {
         const count = results.reduce((n, r) => n + r.messages.length, 0);
         stdout.write(
           lang === 'fa'
-            ? `${count} مشکل موجود در ${opts.baseline} ثبت شد؛ از این به بعد فقط مشکل‌های تازه گزارش می‌شوند.\n`
+            ? `${count} مشکل موجود در ${opts.baseline} ثبت شد؛ از این به بعد فقط مشکل\u200Cهای تازه گزارش می\u200Cشوند.\n`
             : `Recorded ${count} existing problem${count === 1 ? '' : 's'} in ${opts.baseline}; from now on only new problems are reported.\n`,
         );
         return 0;

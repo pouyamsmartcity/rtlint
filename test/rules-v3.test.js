@@ -107,3 +107,17 @@ test('HTML rules skip code inside <script> blocks of markup files', () => {
   const svelte = '<script>\n  // Sync flags -> CSS vars on <html> and <input type="email">\n</script>\n<p>x</p>';
   assert.deepEqual(ids(svelte, 'a.svelte'), []);
 });
+
+test('text/invisible-characters: character tables and regexes in code are left alone', () => {
+  const bom = String.fromCharCode(0xfeff);
+  const zwsp = String.fromCharCode(0x200b);
+  assert.deepEqual(ids(`final r = RegExp(r'[${String.fromCharCode(0xfe70)}-${bom}]');`, 'a.dart'), []);
+  assert.deepEqual(ids(`const re = /[${zwsp}${bom}]/g;`, 'a.js'), []);
+  assert.deepEqual(ids(`const a${zwsp}b = 1;`, 'a.js'), ['text/invisible-characters']);
+});
+
+test('a short Persian line without Persian-only letters is still Persian, Arabic is not', () => {
+  assert.equal(fix('<p>ادامه →</p>', 'a.html', only('fa/arrow-direction')), '<p>ادامه ←</p>');
+  assert.deepEqual(ids('<p>مرحبا ١٢٣ →</p>', 'a.html'), []);
+  assert.deepEqual(ids('<p>هذه مكتبة →</p>', 'a.html'), []);
+});

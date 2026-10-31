@@ -70,6 +70,23 @@ export function maskHtml(text) {
   return out + text.slice(pos);
 }
 
+/** Blanks the contents of <script> blocks (keeps the tags), so HTML rules skip code and its comments. */
+export function maskScripts(text) {
+  if (!/<script\b/i.test(text)) return text;
+  const lower = text.toLowerCase();
+  let out = '';
+  let pos = 0;
+  for (const m of text.matchAll(/<script\b[^>]*>/gi)) {
+    const start = m.index + m[0].length;
+    if (start < pos) continue;
+    const close = lower.indexOf('</script', start);
+    const end = close < 0 ? text.length : close;
+    out += text.slice(pos, start) + blank(text.slice(start, end));
+    pos = end;
+  }
+  return out + text.slice(pos);
+}
+
 const REGEX_PRECEDER = /[(,=:[!&|?{};+\-*%~^<>]/;
 const REGEX_KEYWORDS = new Set([
   'return', 'typeof', 'instanceof', 'case', 'do', 'else', 'in', 'of', 'new', 'delete', 'void',
@@ -160,7 +177,11 @@ export function maskJs(src, { strings = false } = {}) {
     }
     if (c === '/' && regexAllowed(src, i)) {
       const end = skipRegex(src, i);
-      if (end > 0) { i = end; continue; }
+      if (end > 0) {
+        if (strings) hideRange(out, i, end);
+        i = end;
+        continue;
+      }
     }
     if (c === '"' || c === "'") {
       const { end, terminated } = skipQuoted(src, i);

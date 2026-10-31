@@ -1,0 +1,77 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1240" height="634" viewBox="0 0 1240 634" role="img" aria-label="rtlint output on a demo Svelte project">
+  <rect width="1240" height="634" rx="12" fill="#14111f"/>
+  <circle cx="24" cy="20" r="6" fill="#ff5f57"/><circle cx="44" cy="20" r="6" fill="#febc2e"/><circle cx="64" cy="20" r="6" fill="#28c840"/>
+  <g font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, Vazirmatn, Tahoma, monospace" font-size="13.5">
+    <text x="24" direction="ltr" y="58" fill="#8f8aa8">$ </text>
+    <text x="40" direction="ltr" y="58" fill="#e6e4f2">npx rtlint src</text>
+    <text x="24" direction="ltr" y="102" fill="#c7b8ff" text-decoration="underline">src/Card.svelte</text>
+    <text x="40" direction="ltr" y="124" fill="#8f8aa8">6:42</text>
+    <text x="96" direction="ltr" y="124" fill="#f2c14b">warning</text>
+    <text x="164" direction="ltr" y="124" fill="#e6e4f2">"pl-4" is physical and will not mirror in RTL; use "ps-4".</text>
+    <text x="984" direction="ltr" y="124" fill="#8f8aa8">class/physical-utility ✎</text>
+    <text x="40" direction="ltr" y="146" fill="#8f8aa8">6:47</text>
+    <text x="96" direction="ltr" y="146" fill="#f2c14b">warning</text>
+    <text x="164" direction="ltr" y="146" fill="#e6e4f2">"text-left" is physical and will not mirror in RTL; use "text-start".</text>
+    <text x="984" direction="ltr" y="146" fill="#8f8aa8">class/physical-utility ✎</text>
+    <text x="40" direction="ltr" y="168" fill="#8f8aa8">7:15</text>
+    <text x="96" direction="ltr" y="168" fill="#f2c14b">warning</text>
+    <text x="164" direction="ltr" y="168" fill="#e6e4f2">"rounded-l-lg" is physical and will not mirror in RTL; use "rounded-s-lg".</text>
+    <text x="984" direction="ltr" y="168" fill="#8f8aa8">class/physical-utility ✎</text>
+    <text x="40" direction="ltr" y="190" fill="#8f8aa8">8:4</text>
+    <text x="96" direction="ltr" y="190" fill="#f2c14b">warning</text>
+    <text x="164" direction="ltr" y="190" fill="#e6e4f2">&lt;ChevronRight&gt; is a directional icon. In RTL it points backwards; mirror it (e.g. class="rtl:-sca…</text>
+    <text x="984" direction="ltr" y="190" fill="#8f8aa8">icon/directional</text>
+    <text x="40" direction="ltr" y="212" fill="#8f8aa8">8:24</text>
+    <text x="96" direction="ltr" y="212" fill="#f2c14b">warning</text>
+    <text x="164" direction="ltr" y="212" fill="#e6e4f2">"ml-auto" is physical and will not mirror in RTL; use "ms-auto".</text>
+    <text x="984" direction="ltr" y="212" fill="#8f8aa8">class/physical-utility ✎</text>
+    <text x="40" direction="ltr" y="234" fill="#8f8aa8">8:32</text>
+    <text x="96" direction="ltr" y="234" fill="#f2c14b">warning</text>
+    <text x="164" direction="ltr" y="234" fill="#e6e4f2">"group-hover:translate-x-1" moves things horizontally and will point the wrong way in RTL; add "r…</text>
+    <text x="984" direction="ltr" y="234" fill="#8f8aa8">class/directional-utility</text>
+    <text x="40" direction="ltr" y="256" fill="#8f8aa8">9:3</text>
+    <text x="96" direction="ltr" y="256" fill="#f2c14b">warning</text>
+    <text x="164" direction="ltr" y="256" fill="#e6e4f2">&lt;input type="email"&gt; inherits the page direction; in RTL "user@example.com" and "+98 912…" render…</text>
+    <text x="984" direction="ltr" y="256" fill="#8f8aa8">html/ltr-input ✎</text>
+    <text x="40" direction="ltr" y="278" fill="#8f8aa8">14:5</text>
+    <text x="96" direction="ltr" y="278" fill="#f2c14b">warning</text>
+    <text x="164" direction="ltr" y="278" fill="#e6e4f2">"margin-left" is physical and will not mirror in RTL; use "margin-inline-start".</text>
+    <text x="984" direction="ltr" y="278" fill="#8f8aa8">css/physical-property ✎</text>
+    <text x="40" direction="ltr" y="300" fill="#8f8aa8">15:5</text>
+    <text x="96" direction="ltr" y="300" fill="#f2c14b">warning</text>
+    <text x="164" direction="ltr" y="300" fill="#e6e4f2">"padding: 0 26px 0 20px" has different left (20px) and right (26px) values and will not mirror in…</text>
+    <text x="984" direction="ltr" y="300" fill="#8f8aa8">css/asymmetric-shorthand ✎</text>
+    <text x="40" direction="ltr" y="322" fill="#8f8aa8">18:5</text>
+    <text x="96" direction="ltr" y="322" fill="#f2c14b">warning</text>
+    <text x="164" direction="ltr" y="322" fill="#e6e4f2">"left: 50%" with translate(-50%) is a centering trick; switching to "inset-inline-start" alone br…</text>
+    <text x="984" direction="ltr" y="322" fill="#8f8aa8">css/physical-property</text>
+    <text x="24" direction="ltr" y="366" fill="#c7b8ff" text-decoration="underline">src/app.html</text>
+    <text x="40" direction="ltr" y="388" fill="#8f8aa8">2:1</text>
+    <text x="96" direction="ltr" y="388" fill="#ff6b93">error</text>
+    <text x="164" direction="ltr" y="388" fill="#e6e4f2">&lt;html&gt; sets lang dynamically but has no dir; RTL locales will render left-to-right. Derive dir fr…</text>
+    <text x="984" direction="ltr" y="388" fill="#8f8aa8">html/dir-attribute</text>
+    <text x="24" direction="ltr" y="432" fill="#c7b8ff" text-decoration="underline">src/lib/i18n/fa.json</text>
+    <text x="40" direction="ltr" y="454" fill="#8f8aa8">3:19</text>
+    <text x="96" direction="ltr" y="454" fill="#ff6b93">error</text>
+    <text x="164" direction="ltr" y="454" fill="#e6e4f2">Arabic "<tspan direction="rtl" unicode-bidi="isolate">ي</tspan>" (U+064A) in Persian word "<tspan direction="rtl" unicode-bidi="isolate">عادي</tspan>"; use "<tspan direction="rtl" unicode-bidi="isolate">عادی</tspan>".</text>
+    <text x="984" direction="ltr" y="454" fill="#8f8aa8">fa/arabic-letters ✎</text>
+    <text x="40" direction="ltr" y="476" fill="#8f8aa8">4:22</text>
+    <text x="96" direction="ltr" y="476" fill="#ff6b93">error</text>
+    <text x="164" direction="ltr" y="476" fill="#e6e4f2">Arabic "<tspan direction="rtl" unicode-bidi="isolate">ي</tspan>" (U+064A) in Persian word "<tspan direction="rtl" unicode-bidi="isolate">ويژه</tspan>"; use "<tspan direction="rtl" unicode-bidi="isolate">ویژه</tspan>".</text>
+    <text x="984" direction="ltr" y="476" fill="#8f8aa8">fa/arabic-letters ✎</text>
+    <text x="40" direction="ltr" y="498" fill="#8f8aa8">6:14</text>
+    <text x="96" direction="ltr" y="498" fill="#ff6b93">error</text>
+    <text x="164" direction="ltr" y="498" fill="#e6e4f2">Arabic "<tspan direction="rtl" unicode-bidi="isolate">ي</tspan>" (U+064A) in Persian word "<tspan direction="rtl" unicode-bidi="isolate">مي</tspan>"; use "<tspan direction="rtl" unicode-bidi="isolate">می</tspan>".</text>
+    <text x="984" direction="ltr" y="498" fill="#8f8aa8">fa/arabic-letters ✎</text>
+    <text x="40" direction="ltr" y="520" fill="#8f8aa8">6:16</text>
+    <text x="96" direction="ltr" y="520" fill="#f2c14b">warning</text>
+    <text x="164" direction="ltr" y="520" fill="#e6e4f2">Use a zero-width non-joiner (<tspan direction="rtl" unicode-bidi="isolate">نیم‌فاصله</tspan>) instead of a space: "<tspan direction="rtl" unicode-bidi="isolate">مي خواهم</tspan>" → "<tspan direction="rtl" unicode-bidi="isolate">مي‌خواهم</tspan>".</text>
+    <text x="984" direction="ltr" y="520" fill="#8f8aa8">fa/zwnj-prefix ✎</text>
+    <text x="40" direction="ltr" y="542" fill="#8f8aa8">7:13</text>
+    <text x="96" direction="ltr" y="542" fill="#f2c14b">warning</text>
+    <text x="164" direction="ltr" y="542" fill="#e6e4f2">Arabic-Indic digits "<tspan direction="rtl" unicode-bidi="isolate">١٢</tspan>" in Persian text; use Persian digits "<tspan direction="rtl" unicode-bidi="isolate">۱۲</tspan>".</text>
+    <text x="984" direction="ltr" y="542" fill="#8f8aa8">fa/arabic-digits ✎</text>
+    <text x="24" direction="ltr" y="586" fill="#ff6b93" font-weight="700">✖ 16 problems (4 errors, 12 warnings)</text>
+    <text x="40" direction="ltr" y="608" fill="#8f8aa8">12 fixable with --fix ✎</text>
+  </g>
+</svg>

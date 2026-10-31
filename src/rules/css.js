@@ -188,3 +188,46 @@ export const asymmetricShorthand = {
     }
   },
 };
+
+const DIRECTIONAL_DECL =
+  /(^|[\s{;])(transform|translate|background-position|background-position-x|transform-origin)(\s*:\s*)([^;{}\n]+)/g;
+
+/** The horizontal part of a value that would need mirroring, or null. */
+function directionalPart(prop, value) {
+  if (prop === 'transform') {
+    const m = value.match(/translate(?:X|3d)?\(\s*(-?[\d.]+[a-z%]*)/i);
+    if (m && parseFloat(m[1]) !== 0 && !/^-50%$/.test(m[1])) return m[0] + '…)';
+    return null;
+  }
+  if (prop === 'translate') {
+    const x = value.trim().split(/\s+/)[0];
+    return parseFloat(x) !== 0 && !Number.isNaN(parseFloat(x)) && x !== '-50%' ? x : null;
+  }
+  const side = value.match(/\b(left|right)\b/);
+  return side ? side[1] : null;
+}
+
+export const directionalValue = {
+  id: 'css/directional-value',
+  meta: {
+    description:
+      'Opt-in: horizontal translate, background-position and transform-origin values point one way on screen and usually need an RTL counterpart.',
+    fixable: false,
+    level: 'off',
+  },
+  check(file, report) {
+    const view = file.cssView;
+    for (const m of view.matchAll(DIRECTIONAL_DECL)) {
+      const part = directionalPart(m[2], m[4]);
+      if (!part) continue;
+      const open = view.lastIndexOf('{', m.index);
+      const selector = view.slice(Math.max(0, view.lastIndexOf('}', open) + 1), open);
+      if (/dir|rtl|ltr/i.test(selector)) continue;
+      report({
+        index: m.index + m[1].length,
+        length: m[2].length + m[3].length + m[4].trimEnd().length,
+        message: `"${m[2]}: ${m[4].trim()}" moves or anchors things horizontally (${part}); add a [dir="rtl"] counterpart if it should follow the reading direction.`,
+      });
+    }
+  },
+};

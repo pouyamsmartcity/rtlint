@@ -1,6 +1,19 @@
 import { codePoint, LETTER, toPersianDigits, WORD, ZWNJ } from '../unicode.js';
 import { eachPersianMatch } from './util.js';
 
+/**
+ * A lone letter, or letters inside a regex class or alternation, in code are a
+ * reference to the character (normalisers such as replaceAll('ي', 'ی')), not
+ * Persian text.
+ */
+function isCharacterReference(file, index, word) {
+  if (word.length === 1) return true;
+  if (file.kind !== 'script' && file.kind !== 'code') return false;
+  const before = file.text[index - 1] ?? '';
+  const after = file.text[index + word.length] ?? '';
+  return /[[|]/.test(before) || /[\]|]/.test(after);
+}
+
 const ARABIC_FORMS = { '\u064A': 'ی', '\u0643': 'ک', '\u0649': 'ی' };
 const WORD_RE = new RegExp(`[${WORD}\\u0640\\u200C]+`, 'g');
 
@@ -15,6 +28,7 @@ export const arabicLetters = {
   check(file, report) {
     eachPersianMatch(file, WORD_RE, (m, index) => {
       const word = m[0];
+      if (isCharacterReference(file, index, word)) return;
       if (!/[\u064A\u0643\u0649]/.test(word)) return;
       const fixed = word.replace(/[\u064A\u0643\u0649]/g, (c) => ARABIC_FORMS[c]);
       const found = [...new Set(word.match(/[\u064A\u0643\u0649]/g))]
@@ -104,7 +118,9 @@ export const zwnjPrefix = {
 
 const PLURAL = 'هایشان|هایتان|هایمان|هایی|هایم|هایت|هایش|های|ها';
 const COMPARATIVE = 'ترین|تر';
-const AFTER_HEH = 'ایی|ای|ام|ات|اش|ایم|اید|اند';
+// rtlint-disable-next-line fa/* -- example or regex, not prose
+// The last alternative is the ezafe: «خانه ی من» → «خانه‌ی من».
+const AFTER_HEH = 'ایی|ای|ام|ات|اش|ایم|اید|اند|ی';
 
 function suffixRegexes(comparatives) {
   const plain = comparatives ? `${PLURAL}|${COMPARATIVE}` : PLURAL;
@@ -121,7 +137,7 @@ export const zwnjSuffix = {
   id: 'fa/zwnj-suffix',
   meta: {
     description:
-      'Suffixes such as ها/های/تر/ترین and ای/ام/اند after a final ه attach with a zero-width non-joiner, not a space: «کتاب\u200Cها».',
+      'Suffixes such as ها/های/تر/ترین, and ای/ام/اند or the ezafe ی after a final ه, attach with a zero-width non-joiner, not a space: «کتاب\u200Cها», «خانه\u200Cی من».',
     fixable: true,
     level: 'warn',
   },
@@ -139,7 +155,9 @@ export const zwnjSuffix = {
   },
 };
 
-const WORD_CHAR = new RegExp(`[${WORD}]`);
+// Any letter or mark, in any script: a ZWNJ between "sanitize" and a Persian
+// suffix, or around a tatweel in «طلایی\u200Cـ\u200Cمشکی», is deliberate.
+const WORD_CHAR = /[\p{L}\p{M}]/u;
 
 export const zwnjInvalid = {
   id: 'fa/zwnj-invalid',

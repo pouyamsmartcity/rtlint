@@ -234,3 +234,66 @@ test('markup rules ignore tags mentioned inside JS strings', () => {
   assert.deepEqual(ids("const msg = '<html lang=\"fa\"> needs dir';\nconst m2 = `<input type=\"email\">`;", 'a.js'), []);
   assert.deepEqual(ids('const t = html`<input type="email">`;', 'a.js'), ['html/ltr-input']);
 });
+
+test('fa/arabic-letters: character references in code are not Persian text', () => {
+  const dart = "static String norm(String s) => s.replaceAll('ي', 'ی').replaceAll('ك', 'ک');";
+  assert.deepEqual(ids(dart, 'a.dart'), []);
+  assert.deepEqual(ids("const re = /[يك]/g; // پ", 'a.js'), []);
+});
+
+test('fa/zwnj-invalid: ZWNJ between letters of any script is deliberate', () => {
+  assert.deepEqual(ids('متن sanitize\u200Cشده پ', 'a.md'), []);
+  assert.deepEqual(ids('طلایی\u200Cـ\u200Cمشکی', 'a.md'), []);
+});
+
+test('fa/zwnj-joined: known verb forms only', () => {
+  const Z = String.fromCharCode(0x200c);
+  assert.equal(fix('من میخواهم و نمیتوانم. او میرفت.', 'a.md'), `من می${Z}خواهم و نمی${Z}توانم. او می${Z}رفت.`);
+  assert.deepEqual(ids('میدان و میز و میوه و میلیون و میگو و همیشه و میهمانی و راهنمای میدانی', 'a.md'), []);
+});
+
+test('fa/zwnj-suffix: ezafe after a final heh', () => {
+  const Z = String.fromCharCode(0x200c);
+  assert.equal(fix('خانه ی من', 'a.md'), `خانه${Z}ی من`);
+  assert.deepEqual(ids('که ی', 'a.md'), []);
+});
+
+test('icon/directional', () => {
+  assert.deepEqual(ids('<ChevronRight class="size-4" />', 'a.svelte'), ['icon/directional']);
+  assert.deepEqual(ids('const x = <ArrowLeftIcon className="h-4" />;', 'a.tsx'), ['icon/directional']);
+  assert.deepEqual(ids('<i class="fa fa-chevron-right"></i>', 'a.html'), ['icon/directional']);
+  assert.deepEqual(ids('<Icon icon="lucide:arrow-right" />', 'a.vue'), ['icon/directional']);
+  assert.deepEqual(ids('<span class="material-icons">arrow_forward</span>', 'a.html'), ['icon/directional']);
+  assert.deepEqual(ids('<ChevronRight class="rtl:-scale-x-100" />', 'a.svelte'), []);
+  assert.deepEqual(ids('{isRtl ? <ChevronLeft /> : <ChevronRight />}', 'a.jsx'), []);
+  assert.deepEqual(ids('<ArrowUpRight /><ChevronDown /><i class="fa fa-arrow-up"></i>', 'a.jsx'), []);
+  assert.deepEqual(ids('<i class="fa fa-chevron-right fa-flip-horizontal"></i>', 'a.html'), []);
+  assert.deepEqual(ids("const label = '<ChevronRight>';", 'a.js'), []);
+});
+
+test('text/presentation-forms', () => {
+  assert.equal(fix('{"name": "ﻣﻘﺪﻭﻧﯿﻪ"}', 'countries.json'), '{"name": "مقدونیه"}');
+  assert.equal(fix('ﻻ', 'a.md'), 'لا');
+  assert.deepEqual(ids('قیمت ۱۰۰ ﷼', 'a.md'), []);
+  assert.deepEqual(ids("ctx.fillText('ﻣﻘﺪﻭﻧﯿﻪ', 0, 0);", 'a.js'), []);
+  assert.deepEqual(
+    ids("ctx.fillText('ﻣﻘﺪﻭﻧﯿﻪ', 0, 0);", 'a.js', { rules: { 'text/presentation-forms': ['error', { code: true }] } }),
+    ['text/presentation-forms'],
+  );
+});
+
+test('css/directional-value is opt-in', () => {
+  const css = '.slide { transform: translateX(20px); background-position: left top; } [dir="rtl"] .slide { transform: translateX(-20px); } .c { transform: translate(-50%, 0); }';
+  assert.deepEqual(ids(css, 'a.css'), []);
+  const on = { rules: { 'css/directional-value': 'warn' } };
+  assert.deepEqual(ids(css, 'a.css', on), ['css/directional-value', 'css/directional-value']);
+});
+
+test('icon/directional: an unrelated isRtl nearby does not hide icons', () => {
+  const tsx = `export function Pager({ isRtl }) {
+  return <nav><button><ChevronLeft className="size-4" /></button><i className="fa fa-arrow-right" /></nav>;
+}`;
+  assert.deepEqual(ids(tsx, 'a.tsx'), ['icon/directional', 'icon/directional']);
+  assert.deepEqual(ids("{dir === 'rtl' && <ArrowLeft />}", 'a.jsx'), []);
+  assert.deepEqual(ids('{isRtl ? (<ChevronLeft />) : (<ChevronRight />)}', 'a.jsx'), []);
+});

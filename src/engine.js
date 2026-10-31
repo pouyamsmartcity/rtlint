@@ -56,8 +56,24 @@ export function lintText(text, { filePath = 'input.txt', config = {}, settings }
     const rs = resolved.rules[rule.id];
     if (!rs || rs.level === 'off') continue;
     const severity = rs.level === 'error' ? 2 : 1;
-    rule.check(
-      file,
+    const found = [];
+    try {
+      rule.check(file, (p) => found.push(p), rs.options ?? {});
+    } catch (err) {
+      // One broken rule must not hide every other rule's results.
+      messages.push({
+        ruleId: rule.id,
+        severity: 2,
+        fatal: true,
+        message: `rtlint internal error in ${rule.id}: ${err?.message ?? err}. Please report it at https://github.com/pouyamsmartcity/rtlint/issues`,
+        line: 1,
+        column: 1,
+        endLine: 1,
+        endColumn: 1,
+      });
+      continue;
+    }
+    found.forEach(
       (p) => {
         const start = position(file.lineStarts, p.index);
         if (directives.suppressed(rule.id, start.line)) return;
@@ -79,7 +95,6 @@ export function lintText(text, { filePath = 'input.txt', config = {}, settings }
         }
         messages.push(message);
       },
-      rs.options ?? {},
     );
   }
   messages.sort((a, b) => a.line - b.line || a.column - b.column || a.ruleId.localeCompare(b.ruleId));

@@ -142,13 +142,16 @@ export async function run(argv, io = {}) {
         ignore: [...(config.ignore ?? []), ...opts.ignore],
       });
       for (const abs of files) {
-        const text = readText(abs);
-        if (text === null) continue;
+        const raw = readText(abs);
+        if (raw === null) continue;
+        // Editors do not count a BOM as a column; lint without it and keep it on write.
+        const bom = raw.charCodeAt(0) === 0xfeff ? raw[0] : '';
+        const text = bom ? raw.slice(1) : raw;
         const rel = relToConfig(abs);
         const options = { filePath: rel, settings: resolveSettings(config, rel) };
         if (opts.fix) {
           const r = fixText(text, options);
-          if (r.fixed && !opts.dryRun) writeFileSync(abs, r.output);
+          if (r.fixed && !opts.dryRun) writeFileSync(abs, bom + r.output);
           results.push({ ...r, filePath: abs, output: undefined });
         } else {
           results.push({ ...lintText(text, options), filePath: abs });

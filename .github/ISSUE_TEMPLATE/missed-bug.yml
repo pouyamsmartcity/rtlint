@@ -1,0 +1,21 @@
+name: Missed RTL or typography bug
+description: A real bug rtlint did not catch
+labels: [enhancement]
+body:
+  - type: textarea
+    id: snippet
+    attributes:
+      label: Snippet and file name
+      render: text
+    validations:
+      required: true
+  - type: textarea
+    id: why
+    attributes:
+      label: What goes wrong for RTL users?
+    validations:
+      required: true
+  - type: textarea
+    id: fix
+    attributes:
+      label: What should the fix be?

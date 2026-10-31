@@ -38,6 +38,18 @@ npx github:pouyamsmartcity/rtlint src --fix  # اعمال اصلاح‌های ا
 
 فقط Node.js نسخه‌ی ۲۰ یا بالاتر لازم است؛ نه نصب، نه تنظیمات، نه وابستگی.
 
+افزونه‌ی ESLint و Stylelint هم دارد:
+
+<div dir="ltr">
+
+```js
+// eslint.config.js
+import rtlint from 'rtlint/eslint';
+export default [rtlint.configs.recommended];
+```
+
+</div>
+
 ## چه چیزهایی را بررسی می‌کند؟
 
 ### چیدمانی که آینه نمی‌شود
@@ -46,6 +58,7 @@ npx github:pouyamsmartcity/rtlint src --fix  # اعمال اصلاح‌های ا
 - `padding: 0 26px 0 20px` ← `padding-block` و `padding-inline`؛ گوشه‌های `border-radius` هم همین‌طور. نتیجه در LTR دقیقاً همان می‌ماند.
 - کلاس‌های Tailwind، UnoCSS و Bootstrap: `ml-4` ← `ms-4`، `text-right` ← `text-end`، `border-l-2` ← `border-s-2`، با حفظ variantها و مقدارهای منفی و دلخواه
 - `translate-x` و `origin-left` بدون جفت `rtl:`
+- آیکون‌های جلو و عقب مثل `<ChevronRight>`، `fa-chevron-right` یا `arrow_forward` که در راست‌به‌چپ برعکس نمی‌شوند
 - استایل‌های React و React Native: `marginLeft` ← `marginInlineStart` یا `marginStart`
 
 ### جهت
@@ -59,11 +72,12 @@ npx github:pouyamsmartcity/rtlint src --fix  # اعمال اصلاح‌های ا
 - «ي»، «ك» و «ى» عربی ← «ی» و «ک» فارسی. متن عربی خودکار تشخیص داده می‌شود و دست نمی‌خورد.
 - رقم‌های عربی و رقم‌های قاطی ← رقم فارسی
 <!-- rtlint-disable-next-line fa/* -->
-- نیم‌فاصله: «می روم» ← «می‌روم»، «کتاب ها» ← «کتاب‌ها»، «خانه ای» ← «خانه‌ای»
+- نیم‌فاصله: «می روم» و «میروم» ← «می‌روم»، «کتاب ها» ← «کتاب‌ها»، «خانه ای» ← «خانه‌ای»، «خانه ی من» ← «خانه‌ی من». پیشوند چسبیده فقط برای فعل‌های شناخته‌شده اصلاح می‌شود، پس «میز» و «میدان» دست نمی‌خورند.
 - نیم‌فاصله‌ی تکراری یا بی‌جا و کاراکترهای ZWJ و ZWSP به‌جای نیم‌فاصله
 - ویرگول، نقطه‌ویرگول و علامت سؤال لاتین ← «،» «؛» «؟»
 - فاصله‌ی اضافه قبل از علامت‌ها و داخل گیومه
 - کشیدن حروف (کشیده یا «ـ»)
+- حروف کپی‌شده از PDF (presentation forms) که درست دیده می‌شوند ولی جست‌وجو پیدایشان نمی‌کند
 
 ### امنیت
 

@@ -119,7 +119,7 @@ function persianLines(file) {
     const end = i + 1 < starts.length ? starts[i + 1] - 1 : text.length;
     const line = prose.slice(start, end).replace(/\r$/, '');
     if (!HAS_ARABIC_SCRIPT.test(line) || NOT_PERSIAN.test(line)) continue;
-    if (PERSIAN_SIGNAL.test(line) || (filePersian && !arabicLooking(line))) out.push({ start, text: line });
+    if (PERSIAN_SIGNAL.test(line) || (filePersian && !arabicLooking(line)) || neutral(line)) out.push({ start, text: line });
   }
   return out;
 }
@@ -135,4 +135,17 @@ function arabicLooking(line) {
   const words = line.match(AR_WORD) ?? [];
   if (words.length >= 2 && words.filter((w) => w.startsWith('\u0627\u0644')).length / words.length >= 0.3) return true;
   return (line.match(HARAKAT)?.length ?? 0) >= 4;
+}
+
+// Letters and marks only Arabic (not Persian) uses: yeh, kaf, alef maksura, taa marbuta, Arabic-Indic digits.
+const ARABIC_ONLY = /[\u064A\u0643\u0649\u0629\u0660-\u0669]/;
+const ARABIC_ARTICLE = /(?:^|[^\u0621-\u06FF])\u0627\u0644[\u0621-\u06D3]{2,}/;
+
+/**
+ * A short line like «ادامه بده» has no Persian-only letter, but nothing Arabic
+ * either: no Arabic-only letters or digits and no article ال. It is treated
+ * as Persian; anything that could be Arabic is not.
+ */
+function neutral(line) {
+  return !ARABIC_ONLY.test(line) && !ARABIC_ARTICLE.test(line) && !arabicLooking(line);
 }

@@ -1,5 +1,6 @@
 // Rules for CSS, classes, HTML and text added in 0.3.
 import { leaveAlone, preludeChain } from './css-context.js';
+import { MASK } from '../prose.js';
 import { getAttr, tokens } from './util.js';
 
 // ---------------------------------------------------------------- CSS
@@ -238,6 +239,8 @@ export const invisibleCharacters = {
     for (const m of text.matchAll(INVISIBLE)) {
       const c = m[0];
       if (c === '\uFEFF' && m.index === 0) continue;
+      // In code, regex literals and character tables (normalisers, RegExp('[\u2026]')) name the character on purpose.
+      if ((file.kind === 'script' || file.kind === 'code') && file.prose[m.index] === MASK) continue;
       // Inside a Persian word a ZWSP is a mistyped half-space: fa/zwnj-invalid handles it.
       if (c === '\u200B' && ARABIC_LETTER.test(text[m.index - 1] ?? '') && ARABIC_LETTER.test(text[m.index + 1] ?? '')) continue;
       report({

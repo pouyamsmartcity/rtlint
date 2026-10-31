@@ -44,7 +44,7 @@ export function markdown(results, { cwd = process.cwd(), lang = 'en' } = {}) {
   const fixable = messages.filter((m) => m.fix).length;
   if (!messages.length) return fa ? '### ✅ rtlint: مشکلی پیدا نشد\n' : '### ✅ rtlint: no RTL problems found\n';
   let out = fa
-    ? `### rtlint: ${messages.length} مشکل (${errors} خطا، ${warnings} هشدار)، ${fixable} مورد خودکار درست می‌شود\n\n`
+    ? `### rtlint: ${messages.length} مشکل (${errors} خطا، ${warnings} هشدار)، ${fixable} مورد خودکار درست می\u200Cشود\n\n`
     : `### rtlint: ${messages.length} problem${messages.length === 1 ? '' : 's'} (${errors} error${errors === 1 ? '' : 's'}, ${warnings} warning${warnings === 1 ? '' : 's'}), ${fixable} fixable\n\n`;
   out += fa ? '| قانون | تعداد | قابل اصلاح |\n| --- | ---: | ---: |\n' : '| Rule | Count | Fixable |\n| --- | ---: | ---: |\n';
   for (const r of tally(results)) out += `| [\`${r.ruleId}\`](${docs(r.ruleId, lang)}) | ${r.errors + r.warnings} | ${r.fixable} |\n`;
@@ -59,7 +59,7 @@ export function markdown(results, { cwd = process.cwd(), lang = 'en' } = {}) {
     out += '\n';
   }
   out += '</details>\n\n';
-  out += fa ? `با \`npx rtlint --fix\` موارد ✎ خودکار درست می‌شوند. [rtlint ساخته‌ی پویام](${REPO})\n` : `Run \`npx rtlint --fix\` to apply the ✎ fixes. [rtlint by Pouyam](${REPO})\n`;
+  out += fa ? `با \`npx rtlint --fix\` موارد ✎ خودکار درست می\u200Cشوند. [rtlint ساخته\u200Cی پویام](${REPO})\n` : `Run \`npx rtlint --fix\` to apply the ✎ fixes. [rtlint by Pouyam](${REPO})\n`;
   return out;
 }
 
@@ -178,7 +178,7 @@ pre{background:var(--panel);border:1px solid var(--line);border-radius:10px;padd
 @media(max-width:640px){li{grid-template-columns:auto auto 1fr}.rule{grid-column:3}}
 </style></head>
 <body><main>
-<h1>${t.title}</h1><small>rtlint ${html(version)} · ${new Date().toISOString().slice(0, 10)} · <a href="${REPO}">${fa ? 'ساخته‌ی پویام' : 'by Pouyam'}</a></small>
+<h1>${t.title}</h1><small>rtlint ${html(version)} · ${new Date().toISOString().slice(0, 10)} · <a href="${REPO}">${fa ? 'ساخته\u200Cی پویام' : 'by Pouyam'}</a></small>
 <div class="cards">${cards}</div>
 ${messages.length ? `<h2>${t.byRule}</h2><table><tbody>${rules}</tbody></table>${files}<p>${t.fix}</p><pre>npx rtlint --fix${fa ? ' --lang fa' : ''}</pre>` : `<p>✅ ${t.clean}</p>`}
 </main></body></html>

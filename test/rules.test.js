@@ -318,7 +318,7 @@ test('every message has a Persian translation (lang: fa)', async () => {
     ['v3.css', '.a { transition: margin-left 1s; direction: rtl; } :lang(fa) h1 { letter-spacing: 2px; }'],
     ['v3.html', '<html><body><div class="space-x-2"></div><textarea></textarea></body></html>'],
     ['v3.md', 'پژوهش،خوب    است → ۵۰% و ۱.۵ و ۱,۰۰۰ و 12 و "کیفیت"...'],
-    ['v3.js', 'const a = "x' + String.fromCharCode(0x200b) + 'y";'],
+    ['v3.js', 'const a' + String.fromCharCode(0x200b) + 'b = 1;'],
   );
   const config = { lang: 'fa', rules: { '*': 'warn' } };
   const seen = new Set();

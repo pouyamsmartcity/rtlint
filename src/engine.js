@@ -139,7 +139,7 @@ export function lintText(text, { filePath = 'input.txt', config = {}, settings, 
         endColumn: end.column,
       });
       if (resolved.lang === 'fa') {
-        messages[messages.length - 1].message = `دستور rtlint-${d.kind}${d.rule === '*' ? '' : ` برای ${d.rule}`} بی‌استفاده است: این‌جا مشکلی گزارش نشده؛ حذفش کنید.`;
+        messages[messages.length - 1].message = `دستور rtlint-${d.kind}${d.rule === '*' ? '' : ` برای ${d.rule}`} بی\u200Cاستفاده است: این\u200Cجا مشکلی گزارش نشده؛ حذفش کنید.`;
       }
     }
   }

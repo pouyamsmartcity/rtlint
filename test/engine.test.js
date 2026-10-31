@@ -138,3 +138,9 @@ test('cli: --max-warnings and --quiet', async () => {
   await run(['src/a.css', '--quiet'], { cwd: dir, stdout: out, stderr: sink() });
   assert.equal(out.text(), '');
 });
+
+test('schema/config.json is in sync with the rules', async () => {
+  const { buildSchema } = await import('../scripts/build-schema.js');
+  const onDisk = JSON.parse(readFileSync(new URL('../schema/config.json', import.meta.url), 'utf8'));
+  assert.deepEqual(onDisk, buildSchema(), 'run: node scripts/build-schema.js');
+});

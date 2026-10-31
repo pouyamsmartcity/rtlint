@@ -1,0 +1,2321 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/pouyamsmartcity/rtlint/main/schema/config.json",
+  "title": "rtlint configuration",
+  "type": "object",
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "persian": {
+      "enum": [
+        "auto",
+        true,
+        false
+      ],
+      "description": "Persian text detection. Default \"auto\"."
+    },
+    "classes": {
+      "type": "boolean",
+      "description": "Check utility classes (Tailwind/UnoCSS/Bootstrap). Default true."
+    },
+    "classPrefix": {
+      "type": "string",
+      "description": "Tailwind prefix, e.g. \"tw-\"."
+    },
+    "rules": {
+      "type": "object",
+      "properties": {
+        "css/physical-property": {
+          "oneOf": [
+            {
+              "enum": [
+                "off",
+                "warn",
+                "error",
+                0,
+                1,
+                2
+              ]
+            },
+            {
+              "type": "array",
+              "prefixItems": [
+                {
+                  "enum": [
+                    "off",
+                    "warn",
+                    "error",
+                    0,
+                    1,
+                    2
+                  ]
+                },
+                {
+                  "type": "object"
+                }
+              ],
+              "minItems": 1,
+              "maxItems": 2
+            }
+          ],
+          "description": "Physical left/right properties do not mirror in RTL; use logical properties. Default: warn."
+        },
+        "css/physical-value": {
+          "oneOf": [
+            {
+              "enum": [
+                "off",
+                "warn",
+                "error",
+                0,
+                1,
+                2
+              ]
+            },
+            {
+              "type": "array",
+              "prefixItems": [
+                {
+                  "enum": [
+                    "off",
+                    "warn",
+                    "error",
+                    0,
+                    1,
+                    2
+                  ]
+                },
+                {
+                  "type": "object"
+                }
+              ],
+              "minItems": 1,
+              "maxItems": 2
+            }
+          ],
+          "description": "text-align, float and clear with left/right do not mirror in RTL; use start/end. Default: warn."
+        },
+        "css/asymmetric-shorthand": {
+          "oneOf": [
+            {
+              "enum": [
+                "off",
+                "warn",
+                "error",
+                0,
+                1,
+                2
+              ]
+            },
+            {
+              "type": "array",
+              "prefixItems": [
+                {
+                  "enum": [
+                    "off",
+                    "warn",
+                    "error",
+                    0,
+                    1,
+                    2
+                  ]
+                },
+                {
+                  "type": "object"
+                }
+              ],
+              "minItems": 1,
+              "maxItems": 2
+            }
+          ],
+          "description": "A margin/padding/inset/border/radius shorthand with different left and right values will not mirror in RTL. Default: warn."
+        },
+        "css/directional-value": {
+          "oneOf": [
+            {
+              "enum": [
+                "off",
+                "warn",
+                "error",
+                0,
+                1,
+                2
+              ]
+            },
+            {
+              "type": "array",
+              "prefixItems": [
+                {
+                  "enum": [
+                    "off",
+                    "warn",
+                    "error",
+                    0,
+                    1,
+                    2
+                  ]
+                },
+                {
+                  "type": "object"
+                }
+              ],
+              "minItems": 1,
+              "maxItems": 2
+            }
+          ],
+          "description": "Opt-in: horizontal translate, background-position and transform-origin values point one way on screen and usually need an RTL counterpart. Default: off."
+        },
+        "class/physical-utility": {
+          "oneOf": [
+            {
+              "enum": [
+                "off",
+                "warn",
+                "error",
+                0,
+                1,
+                2
+              ]
+            },
+            {
+              "type": "array",
+              "prefixItems": [
+                {
+                  "enum": [
+                    "off",
+                    "warn",
+                    "error",
+                    0,
+                    1,
+                    2
+                  ]
+                },
+                {
+                  "type": "object"
+                }
+              ],
+              "minItems": 1,
+              "maxItems": 2
+            }
+          ],
+          "description": "Tailwind/UnoCSS/Bootstrap utilities such as ml-4, pr-2, left-0, text-left, border-l and rounded-r do not mirror in RTL. Default: warn."
+        },
+        "class/directional-utility": {
+          "oneOf": [
+            {
+              "enum": [
+                "off",
+                "warn",
+                "error",
+                0,
+                1,
+                2
+              ]
+            },
+            {
+              "type": "array",
+              "prefixItems": [
+                {
+                  "enum": [
+                    "off",
+                    "warn",
+                    "error",
+                    0,
+                    1,
+                    2
+                  ]
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "gradients": {
+                      "type": "boolean",
+                      "description": "Also check bg-gradient-to-l/r."
+                    }
+                  },
+                  "additionalProperties": false
+                }
+              ],
+              "minItems": 1,
+              "maxItems": 2
+            }
+          ],
+          "description": "translate-x and left/right transform origins (and, with { gradients: true }, horizontal gradients) need an rtl: counterpart to mirror. Default: warn."
+        },
+        "jsx/physical-style": {
+          "oneOf": [
+            {
+              "enum": [
+                "off",
+                "warn",
+                "error",
+                0,
+                1,
+                2
+              ]
+            },
+            {
+              "type": "array",
+              "prefixItems": [
+                {
+                  "enum": [
+                    "off",
+                    "warn",
+                    "error",
+                    0,
+                    1,
+                    2
+                  ]
+                },
+                {
+                  "type": "object"
+                }
+              ],
+              "minItems": 1,
+              "maxItems": 2
+            }
+          ],
+          "description": "Inline style objects (React, React Native, Solid, Preact, Vue :style) using marginLeft, paddingRight, textAlign: \"left\"… do not mirror in RTL. Default: warn."
+        },
+        "html/dir-attribute": {
+          "oneOf": [
+            {
+              "enum": [
+                "off",
+                "warn",
+                "error",
+                0,
+                1,
+                2
+              ]
+            },
+            {
+              "type": "array",
+              "prefixItems": [
+                {
+                  "enum": [
+                    "off",
+                    "warn",
+                    "error",
+                    0,
+                    1,
+                    2
+                  ]
+                },
+                {
+                  "type": "object"
+                }
+              ],
+              "minItems": 1,
+              "maxItems": 2
+            }
+          ],
+          "description": "<html> with an RTL lang needs dir=\"rtl\"; a dynamic lang needs a dynamic dir. Default: error."
+        },
+        "html/ltr-input": {
+          "oneOf": [
+            {
+              "enum": [
+                "off",
+                "warn",
+                "error",
+                0,
+                1,
+                2
+              ]
+            },
+            {
+              "type": "array",
+              "prefixItems": [
+                {
+                  "enum": [
+                    "off",
+                    "warn",
+                    "error",
+                    0,
+                    1,
+                    2
+                  ]
+                },
+                {
+                  "type": "object"
+                }
+              ],
+              "minItems": 1,
+              "maxItems": 2
+            }
+          ],
+          "description": "Email, URL and phone inputs inherit dir=\"rtl\" and scramble their punctuation; give them dir=\"ltr\". Default: warn."
+        },
+        "icon/directional": {
+          "oneOf": [
+            {
+              "enum": [
+                "off",
+                "warn",
+                "error",
+                0,
+                1,
+                2
+              ]
+            },
+            {
+              "type": "array",
+              "prefixItems": [
+                {
+                  "enum": [
+                    "off",
+                    "warn",
+                    "error",
+                    0,
+                    1,
+                    2
+                  ]
+                },
+                {
+                  "type": "object"
+                }
+              ],
+              "minItems": 1,
+              "maxItems": 2
+            }
+          ],
+          "description": "Left/right chevrons and arrows (back/next) keep pointing the same way in RTL; mirror them. Default: warn."
+        },
+        "fa/arabic-letters": {
+          "oneOf": [
+            {
+              "enum": [
+                "off",
+                "warn",
+                "error",
+                0,
+                1,
+                2
+              ]
+            },
+            {
+              "type": "array",
+              "prefixItems": [
+                {
+                  "enum": [
+                    "off",
+                    "warn",
+                    "error",
+                    0,
+                    1,
+                    2
+                  ]
+                },
+                {
+                  "type": "object"
+                }
+              ],
+              "minItems": 1,
+              "maxItems": 2
+            }
+          ],
+          "description": "Arabic yeh (ي), kaf (ك) and alef maksura (ى) in Persian text break search, sorting and rendering; use ی and ک. Default: error."
+        },
+        "fa/arabic-digits": {
+          "oneOf": [
+            {
+              "enum": [
+                "off",
+                "warn",
+                "error",
+                0,
+                1,
+                2
+              ]
+            },
+            {
+              "type": "array",
+              "prefixItems": [
+                {
+                  "enum": [
+                    "off",
+                    "warn",
+                    "error",
+                    0,
+                    1,
+                    2
+                  ]
+                },
+                {
+                  "type": "object"
+                }
+              ],
+              "minItems": 1,
+              "maxItems": 2
+            }
+          ],
+          "description": "Arabic-Indic digits (٤٥٦) in Persian text; use Persian digits (۴۵۶). Default: warn."
+        },
+        "fa/mixed-digits": {
+          "oneOf": [
+            {
+              "enum": [
+                "off",
+                "warn",
+                "error",
+                0,
+                1,
+                2
+              ]
+            },
+            {
+              "type": "array",
+              "prefixItems": [
+                {
+                  "enum": [
+                    "off",
+                    "warn",
+                    "error",
+                    0,
+                    1,
+                    2
+                  ]
+                },
+                {
+                  "type": "object"
+                }
+              ],
+              "minItems": 1,
+              "maxItems": 2
+            }
+          ],
+          "description": "A number written with a mix of Latin and Persian/Arabic digits (e.g. ۱۲3). Default: warn."
+        },
+        "fa/zwnj-prefix": {
+          "oneOf": [
+            {
+              "enum": [
+                "off",
+                "warn",
+                "error",
+                0,
+                1,
+                2
+              ]
+            },
+            {
+              "type": "array",
+              "prefixItems": [
+                {
+                  "enum": [
+                    "off",
+                    "warn",
+                    "error",
+                    0,
+                    1,
+                    2
+                  ]
+                },
+                {
+                  "type": "object"
+                }
+              ],
+              "minItems": 1,
+              "maxItems": 2
+            }
+          ],
+          "description": "The verb prefixes می/نمی are joined to the verb with a zero-width non-joiner (نیم‌فاصله), not a space: «می‌روم». Default: warn."
+        },
+        "fa/zwnj-joined": {
+          "oneOf": [
+            {
+              "enum": [
+                "off",
+                "warn",
+                "error",
+                0,
+                1,
+                2
+              ]
+            },
+            {
+              "type": "array",
+              "prefixItems": [
+                {
+                  "enum": [
+                    "off",
+                    "warn",
+                    "error",
+                    0,
+                    1,
+                    2
+                  ]
+                },
+                {
+                  "type": "object"
+                }
+              ],
+              "minItems": 1,
+              "maxItems": 2
+            }
+          ],
+          "description": "The verb prefixes می/نمی written glued to the verb («میخواهم») need a zero-width non-joiner: «می‌خواهم». Only known verb forms are touched. Default: warn."
+        },
+        "fa/zwnj-suffix": {
+          "oneOf": [
+            {
+              "enum": [
+                "off",
+                "warn",
+                "error",
+                0,
+                1,
+                2
+              ]
+            },
+            {
+              "type": "array",
+              "prefixItems": [
+                {
+                  "enum": [
+                    "off",
+                    "warn",
+                    "error",
+                    0,
+                    1,
+                    2
+                  ]
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "comparatives": {
+                      "enum": [
+                        true,
+                        false,
+                        "all"
+                      ],
+                      "description": "true (default): ترین always, تر after common adjectives; \"all\": تر after any word; false: neither."
+                    }
+                  },
+                  "additionalProperties": false
+                }
+              ],
+              "minItems": 1,
+              "maxItems": 2
+            }
+          ],
+          "description": "Suffixes such as ها/های/تر/ترین, and ای/ام/اند or the ezafe ی after a final ه, attach with a zero-width non-joiner, not a space: «کتاب‌ها», «خانه‌ی من». Default: warn."
+        },
+        "fa/zwnj-invalid": {
+          "oneOf": [
+            {
+              "enum": [
+                "off",
+                "warn",
+                "error",
+                0,
+                1,
+                2
+              ]
+            },
+            {
+              "type": "array",
+              "prefixItems": [
+                {
+                  "enum": [
+                    "off",
+                    "warn",
+                    "error",
+                    0,
+                    1,
+                    2
+                  ]
+                },
+                {
+                  "type": "object"
+                }
+              ],
+              "minItems": 1,
+              "maxItems": 2
+            }
+          ],
+          "description": "Zero-width non-joiners that are doubled, next to a space or outside a word, and ZWJ/ZWSP used where a ZWNJ was meant. Default: warn."
+        },
+        "fa/punctuation": {
+          "oneOf": [
+            {
+              "enum": [
+                "off",
+                "warn",
+                "error",
+                0,
+                1,
+                2
+              ]
+            },
+            {
+              "type": "array",
+              "prefixItems": [
+                {
+                  "enum": [
+                    "off",
+                    "warn",
+                    "error",
+                    0,
+                    1,
+                    2
+                  ]
+                },
+                {
+                  "type": "object"
+                }
+              ],
+              "minItems": 1,
+              "maxItems": 2
+            }
+          ],
+          "description": "Latin comma, semicolon and question mark between Persian words; use ، ؛ ؟ Default: warn."
+        },
+        "fa/punctuation-spacing": {
+          "oneOf": [
+            {
+              "enum": [
+                "off",
+                "warn",
+                "error",
+                0,
+                1,
+                2
+              ]
+            },
+            {
+              "type": "array",
+              "prefixItems": [
+                {
+                  "enum": [
+                    "off",
+                    "warn",
+                    "error",
+                    0,
+                    1,
+                    2
+                  ]
+                },
+                {
+                  "type": "object"
+                }
+              ],
+              "minItems": 1,
+              "maxItems": 2
+            }
+          ],
+          "description": "No space before ، ؛ ؟ ! . and none just inside « » guillemets. Default: warn."
+        },
+        "fa/kashida": {
+          "oneOf": [
+            {
+              "enum": [
+                "off",
+                "warn",
+                "error",
+                0,
+                1,
+                2
+              ]
+            },
+            {
+              "type": "array",
+              "prefixItems": [
+                {
+                  "enum": [
+                    "off",
+                    "warn",
+                    "error",
+                    0,
+                    1,
+                    2
+                  ]
+                },
+                {
+                  "type": "object"
+                }
+              ],
+              "minItems": 1,
+              "maxItems": 2
+            }
+          ],
+          "description": "Kashida/tatweel (ـ) stretches words visually but breaks search and copy; use CSS text-align: justify instead. Default: warn."
+        },
+        "text/presentation-forms": {
+          "oneOf": [
+            {
+              "enum": [
+                "off",
+                "warn",
+                "error",
+                0,
+                1,
+                2
+              ]
+            },
+            {
+              "type": "array",
+              "prefixItems": [
+                {
+                  "enum": [
+                    "off",
+                    "warn",
+                    "error",
+                    0,
+                    1,
+                    2
+                  ]
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "boolean",
+                      "description": "Also check JS/TS and other code files."
+                    }
+                  },
+                  "additionalProperties": false
+                }
+              ],
+              "minItems": 1,
+              "maxItems": 2
+            }
+          ],
+          "description": "Arabic-script presentation forms (pre-shaped glyphs from PDFs and old software) look right but break search and screen readers; use the normal letters. Default: error."
+        },
+        "security/bidi-control": {
+          "oneOf": [
+            {
+              "enum": [
+                "off",
+                "warn",
+                "error",
+                0,
+                1,
+                2
+              ]
+            },
+            {
+              "type": "array",
+              "prefixItems": [
+                {
+                  "enum": [
+                    "off",
+                    "warn",
+                    "error",
+                    0,
+                    1,
+                    2
+                  ]
+                },
+                {
+                  "type": "object"
+                }
+              ],
+              "minItems": 1,
+              "maxItems": 2
+            }
+          ],
+          "description": "Invisible bidirectional control characters that can hide code (Trojan Source, CVE-2021-42574) or leak direction across a line. Default: error."
+        },
+        "css/*": {
+          "oneOf": [
+            {
+              "enum": [
+                "off",
+                "warn",
+                "error",
+                0,
+                1,
+                2
+              ]
+            },
+            {
+              "type": "array",
+              "prefixItems": [
+                {
+                  "enum": [
+                    "off",
+                    "warn",
+                    "error",
+                    0,
+                    1,
+                    2
+                  ]
+                },
+                {
+                  "type": "object"
+                }
+              ],
+              "minItems": 1,
+              "maxItems": 2
+            }
+          ],
+          "description": "Every css/ rule."
+        },
+        "class/*": {
+          "oneOf": [
+            {
+              "enum": [
+                "off",
+                "warn",
+                "error",
+                0,
+                1,
+                2
+              ]
+            },
+            {
+              "type": "array",
+              "prefixItems": [
+                {
+                  "enum": [
+                    "off",
+                    "warn",
+                    "error",
+                    0,
+                    1,
+                    2
+                  ]
+                },
+                {
+                  "type": "object"
+                }
+              ],
+              "minItems": 1,
+              "maxItems": 2
+            }
+          ],
+          "description": "Every class/ rule."
+        },
+        "jsx/*": {
+          "oneOf": [
+            {
+              "enum": [
+                "off",
+                "warn",
+                "error",
+                0,
+                1,
+                2
+              ]
+            },
+            {
+              "type": "array",
+              "prefixItems": [
+                {
+                  "enum": [
+                    "off",
+                    "warn",
+                    "error",
+                    0,
+                    1,
+                    2
+                  ]
+                },
+                {
+                  "type": "object"
+                }
+              ],
+              "minItems": 1,
+              "maxItems": 2
+            }
+          ],
+          "description": "Every jsx/ rule."
+        },
+        "html/*": {
+          "oneOf": [
+            {
+              "enum": [
+                "off",
+                "warn",
+                "error",
+                0,
+                1,
+                2
+              ]
+            },
+            {
+              "type": "array",
+              "prefixItems": [
+                {
+                  "enum": [
+                    "off",
+                    "warn",
+                    "error",
+                    0,
+                    1,
+                    2
+                  ]
+                },
+                {
+                  "type": "object"
+                }
+              ],
+              "minItems": 1,
+              "maxItems": 2
+            }
+          ],
+          "description": "Every html/ rule."
+        },
+        "icon/*": {
+          "oneOf": [
+            {
+              "enum": [
+                "off",
+                "warn",
+                "error",
+                0,
+                1,
+                2
+              ]
+            },
+            {
+              "type": "array",
+              "prefixItems": [
+                {
+                  "enum": [
+                    "off",
+                    "warn",
+                    "error",
+                    0,
+                    1,
+                    2
+                  ]
+                },
+                {
+                  "type": "object"
+                }
+              ],
+              "minItems": 1,
+              "maxItems": 2
+            }
+          ],
+          "description": "Every icon/ rule."
+        },
+        "fa/*": {
+          "oneOf": [
+            {
+              "enum": [
+                "off",
+                "warn",
+                "error",
+                0,
+                1,
+                2
+              ]
+            },
+            {
+              "type": "array",
+              "prefixItems": [
+                {
+                  "enum": [
+                    "off",
+                    "warn",
+                    "error",
+                    0,
+                    1,
+                    2
+                  ]
+                },
+                {
+                  "type": "object"
+                }
+              ],
+              "minItems": 1,
+              "maxItems": 2
+            }
+          ],
+          "description": "Every fa/ rule."
+        },
+        "text/*": {
+          "oneOf": [
+            {
+              "enum": [
+                "off",
+                "warn",
+                "error",
+                0,
+                1,
+                2
+              ]
+            },
+            {
+              "type": "array",
+              "prefixItems": [
+                {
+                  "enum": [
+                    "off",
+                    "warn",
+                    "error",
+                    0,
+                    1,
+                    2
+                  ]
+                },
+                {
+                  "type": "object"
+                }
+              ],
+              "minItems": 1,
+              "maxItems": 2
+            }
+          ],
+          "description": "Every text/ rule."
+        },
+        "security/*": {
+          "oneOf": [
+            {
+              "enum": [
+                "off",
+                "warn",
+                "error",
+                0,
+                1,
+                2
+              ]
+            },
+            {
+              "type": "array",
+              "prefixItems": [
+                {
+                  "enum": [
+                    "off",
+                    "warn",
+                    "error",
+                    0,
+                    1,
+                    2
+                  ]
+                },
+                {
+                  "type": "object"
+                }
+              ],
+              "minItems": 1,
+              "maxItems": 2
+            }
+          ],
+          "description": "Every security/ rule."
+        },
+        "*": {
+          "oneOf": [
+            {
+              "enum": [
+                "off",
+                "warn",
+                "error",
+                0,
+                1,
+                2
+              ]
+            },
+            {
+              "type": "array",
+              "prefixItems": [
+                {
+                  "enum": [
+                    "off",
+                    "warn",
+                    "error",
+                    0,
+                    1,
+                    2
+                  ]
+                },
+                {
+                  "type": "object"
+                }
+              ],
+              "minItems": 1,
+              "maxItems": 2
+            }
+          ],
+          "description": "Every rule."
+        }
+      },
+      "additionalProperties": false
+    },
+    "ignore": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Globs to skip."
+    },
+    "overrides": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "files"
+        ],
+        "properties": {
+          "files": {
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            ]
+          },
+          "excludedFiles": {
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            ]
+          },
+          "persian": {
+            "enum": [
+              "auto",
+              true,
+              false
+            ],
+            "description": "Persian text detection. Default \"auto\"."
+          },
+          "classes": {
+            "type": "boolean",
+            "description": "Check utility classes (Tailwind/UnoCSS/Bootstrap). Default true."
+          },
+          "classPrefix": {
+            "type": "string",
+            "description": "Tailwind prefix, e.g. \"tw-\"."
+          },
+          "rules": {
+            "type": "object",
+            "properties": {
+              "css/physical-property": {
+                "oneOf": [
+                  {
+                    "enum": [
+                      "off",
+                      "warn",
+                      "error",
+                      0,
+                      1,
+                      2
+                    ]
+                  },
+                  {
+                    "type": "array",
+                    "prefixItems": [
+                      {
+                        "enum": [
+                          "off",
+                          "warn",
+                          "error",
+                          0,
+                          1,
+                          2
+                        ]
+                      },
+                      {
+                        "type": "object"
+                      }
+                    ],
+                    "minItems": 1,
+                    "maxItems": 2
+                  }
+                ],
+                "description": "Physical left/right properties do not mirror in RTL; use logical properties. Default: warn."
+              },
+              "css/physical-value": {
+                "oneOf": [
+                  {
+                    "enum": [
+                      "off",
+                      "warn",
+                      "error",
+                      0,
+                      1,
+                      2
+                    ]
+                  },
+                  {
+                    "type": "array",
+                    "prefixItems": [
+                      {
+                        "enum": [
+                          "off",
+                          "warn",
+                          "error",
+                          0,
+                          1,
+                          2
+                        ]
+                      },
+                      {
+                        "type": "object"
+                      }
+                    ],
+                    "minItems": 1,
+                    "maxItems": 2
+                  }
+                ],
+                "description": "text-align, float and clear with left/right do not mirror in RTL; use start/end. Default: warn."
+              },
+              "css/asymmetric-shorthand": {
+                "oneOf": [
+                  {
+                    "enum": [
+                      "off",
+                      "warn",
+                      "error",
+                      0,
+                      1,
+                      2
+                    ]
+                  },
+                  {
+                    "type": "array",
+                    "prefixItems": [
+                      {
+                        "enum": [
+                          "off",
+                          "warn",
+                          "error",
+                          0,
+                          1,
+                          2
+                        ]
+                      },
+                      {
+                        "type": "object"
+                      }
+                    ],
+                    "minItems": 1,
+                    "maxItems": 2
+                  }
+                ],
+                "description": "A margin/padding/inset/border/radius shorthand with different left and right values will not mirror in RTL. Default: warn."
+              },
+              "css/directional-value": {
+                "oneOf": [
+                  {
+                    "enum": [
+                      "off",
+                      "warn",
+                      "error",
+                      0,
+                      1,
+                      2
+                    ]
+                  },
+                  {
+                    "type": "array",
+                    "prefixItems": [
+                      {
+                        "enum": [
+                          "off",
+                          "warn",
+                          "error",
+                          0,
+                          1,
+                          2
+                        ]
+                      },
+                      {
+                        "type": "object"
+                      }
+                    ],
+                    "minItems": 1,
+                    "maxItems": 2
+                  }
+                ],
+                "description": "Opt-in: horizontal translate, background-position and transform-origin values point one way on screen and usually need an RTL counterpart. Default: off."
+              },
+              "class/physical-utility": {
+                "oneOf": [
+                  {
+                    "enum": [
+                      "off",
+                      "warn",
+                      "error",
+                      0,
+                      1,
+                      2
+                    ]
+                  },
+                  {
+                    "type": "array",
+                    "prefixItems": [
+                      {
+                        "enum": [
+                          "off",
+                          "warn",
+                          "error",
+                          0,
+                          1,
+                          2
+                        ]
+                      },
+                      {
+                        "type": "object"
+                      }
+                    ],
+                    "minItems": 1,
+                    "maxItems": 2
+                  }
+                ],
+                "description": "Tailwind/UnoCSS/Bootstrap utilities such as ml-4, pr-2, left-0, text-left, border-l and rounded-r do not mirror in RTL. Default: warn."
+              },
+              "class/directional-utility": {
+                "oneOf": [
+                  {
+                    "enum": [
+                      "off",
+                      "warn",
+                      "error",
+                      0,
+                      1,
+                      2
+                    ]
+                  },
+                  {
+                    "type": "array",
+                    "prefixItems": [
+                      {
+                        "enum": [
+                          "off",
+                          "warn",
+                          "error",
+                          0,
+                          1,
+                          2
+                        ]
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "gradients": {
+                            "type": "boolean",
+                            "description": "Also check bg-gradient-to-l/r."
+                          }
+                        },
+                        "additionalProperties": false
+                      }
+                    ],
+                    "minItems": 1,
+                    "maxItems": 2
+                  }
+                ],
+                "description": "translate-x and left/right transform origins (and, with { gradients: true }, horizontal gradients) need an rtl: counterpart to mirror. Default: warn."
+              },
+              "jsx/physical-style": {
+                "oneOf": [
+                  {
+                    "enum": [
+                      "off",
+                      "warn",
+                      "error",
+                      0,
+                      1,
+                      2
+                    ]
+                  },
+                  {
+                    "type": "array",
+                    "prefixItems": [
+                      {
+                        "enum": [
+                          "off",
+                          "warn",
+                          "error",
+                          0,
+                          1,
+                          2
+                        ]
+                      },
+                      {
+                        "type": "object"
+                      }
+                    ],
+                    "minItems": 1,
+                    "maxItems": 2
+                  }
+                ],
+                "description": "Inline style objects (React, React Native, Solid, Preact, Vue :style) using marginLeft, paddingRight, textAlign: \"left\"… do not mirror in RTL. Default: warn."
+              },
+              "html/dir-attribute": {
+                "oneOf": [
+                  {
+                    "enum": [
+                      "off",
+                      "warn",
+                      "error",
+                      0,
+                      1,
+                      2
+                    ]
+                  },
+                  {
+                    "type": "array",
+                    "prefixItems": [
+                      {
+                        "enum": [
+                          "off",
+                          "warn",
+                          "error",
+                          0,
+                          1,
+                          2
+                        ]
+                      },
+                      {
+                        "type": "object"
+                      }
+                    ],
+                    "minItems": 1,
+                    "maxItems": 2
+                  }
+                ],
+                "description": "<html> with an RTL lang needs dir=\"rtl\"; a dynamic lang needs a dynamic dir. Default: error."
+              },
+              "html/ltr-input": {
+                "oneOf": [
+                  {
+                    "enum": [
+                      "off",
+                      "warn",
+                      "error",
+                      0,
+                      1,
+                      2
+                    ]
+                  },
+                  {
+                    "type": "array",
+                    "prefixItems": [
+                      {
+                        "enum": [
+                          "off",
+                          "warn",
+                          "error",
+                          0,
+                          1,
+                          2
+                        ]
+                      },
+                      {
+                        "type": "object"
+                      }
+                    ],
+                    "minItems": 1,
+                    "maxItems": 2
+                  }
+                ],
+                "description": "Email, URL and phone inputs inherit dir=\"rtl\" and scramble their punctuation; give them dir=\"ltr\". Default: warn."
+              },
+              "icon/directional": {
+                "oneOf": [
+                  {
+                    "enum": [
+                      "off",
+                      "warn",
+                      "error",
+                      0,
+                      1,
+                      2
+                    ]
+                  },
+                  {
+                    "type": "array",
+                    "prefixItems": [
+                      {
+                        "enum": [
+                          "off",
+                          "warn",
+                          "error",
+                          0,
+                          1,
+                          2
+                        ]
+                      },
+                      {
+                        "type": "object"
+                      }
+                    ],
+                    "minItems": 1,
+                    "maxItems": 2
+                  }
+                ],
+                "description": "Left/right chevrons and arrows (back/next) keep pointing the same way in RTL; mirror them. Default: warn."
+              },
+              "fa/arabic-letters": {
+                "oneOf": [
+                  {
+                    "enum": [
+                      "off",
+                      "warn",
+                      "error",
+                      0,
+                      1,
+                      2
+                    ]
+                  },
+                  {
+                    "type": "array",
+                    "prefixItems": [
+                      {
+                        "enum": [
+                          "off",
+                          "warn",
+                          "error",
+                          0,
+                          1,
+                          2
+                        ]
+                      },
+                      {
+                        "type": "object"
+                      }
+                    ],
+                    "minItems": 1,
+                    "maxItems": 2
+                  }
+                ],
+                "description": "Arabic yeh (ي), kaf (ك) and alef maksura (ى) in Persian text break search, sorting and rendering; use ی and ک. Default: error."
+              },
+              "fa/arabic-digits": {
+                "oneOf": [
+                  {
+                    "enum": [
+                      "off",
+                      "warn",
+                      "error",
+                      0,
+                      1,
+                      2
+                    ]
+                  },
+                  {
+                    "type": "array",
+                    "prefixItems": [
+                      {
+                        "enum": [
+                          "off",
+                          "warn",
+                          "error",
+                          0,
+                          1,
+                          2
+                        ]
+                      },
+                      {
+                        "type": "object"
+                      }
+                    ],
+                    "minItems": 1,
+                    "maxItems": 2
+                  }
+                ],
+                "description": "Arabic-Indic digits (٤٥٦) in Persian text; use Persian digits (۴۵۶). Default: warn."
+              },
+              "fa/mixed-digits": {
+                "oneOf": [
+                  {
+                    "enum": [
+                      "off",
+                      "warn",
+                      "error",
+                      0,
+                      1,
+                      2
+                    ]
+                  },
+                  {
+                    "type": "array",
+                    "prefixItems": [
+                      {
+                        "enum": [
+                          "off",
+                          "warn",
+                          "error",
+                          0,
+                          1,
+                          2
+                        ]
+                      },
+                      {
+                        "type": "object"
+                      }
+                    ],
+                    "minItems": 1,
+                    "maxItems": 2
+                  }
+                ],
+                "description": "A number written with a mix of Latin and Persian/Arabic digits (e.g. ۱۲3). Default: warn."
+              },
+              "fa/zwnj-prefix": {
+                "oneOf": [
+                  {
+                    "enum": [
+                      "off",
+                      "warn",
+                      "error",
+                      0,
+                      1,
+                      2
+                    ]
+                  },
+                  {
+                    "type": "array",
+                    "prefixItems": [
+                      {
+                        "enum": [
+                          "off",
+                          "warn",
+                          "error",
+                          0,
+                          1,
+                          2
+                        ]
+                      },
+                      {
+                        "type": "object"
+                      }
+                    ],
+                    "minItems": 1,
+                    "maxItems": 2
+                  }
+                ],
+                "description": "The verb prefixes می/نمی are joined to the verb with a zero-width non-joiner (نیم‌فاصله), not a space: «می‌روم». Default: warn."
+              },
+              "fa/zwnj-joined": {
+                "oneOf": [
+                  {
+                    "enum": [
+                      "off",
+                      "warn",
+                      "error",
+                      0,
+                      1,
+                      2
+                    ]
+                  },
+                  {
+                    "type": "array",
+                    "prefixItems": [
+                      {
+                        "enum": [
+                          "off",
+                          "warn",
+                          "error",
+                          0,
+                          1,
+                          2
+                        ]
+                      },
+                      {
+                        "type": "object"
+                      }
+                    ],
+                    "minItems": 1,
+                    "maxItems": 2
+                  }
+                ],
+                "description": "The verb prefixes می/نمی written glued to the verb («میخواهم») need a zero-width non-joiner: «می‌خواهم». Only known verb forms are touched. Default: warn."
+              },
+              "fa/zwnj-suffix": {
+                "oneOf": [
+                  {
+                    "enum": [
+                      "off",
+                      "warn",
+                      "error",
+                      0,
+                      1,
+                      2
+                    ]
+                  },
+                  {
+                    "type": "array",
+                    "prefixItems": [
+                      {
+                        "enum": [
+                          "off",
+                          "warn",
+                          "error",
+                          0,
+                          1,
+                          2
+                        ]
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "comparatives": {
+                            "enum": [
+                              true,
+                              false,
+                              "all"
+                            ],
+                            "description": "true (default): ترین always, تر after common adjectives; \"all\": تر after any word; false: neither."
+                          }
+                        },
+                        "additionalProperties": false
+                      }
+                    ],
+                    "minItems": 1,
+                    "maxItems": 2
+                  }
+                ],
+                "description": "Suffixes such as ها/های/تر/ترین, and ای/ام/اند or the ezafe ی after a final ه, attach with a zero-width non-joiner, not a space: «کتاب‌ها», «خانه‌ی من». Default: warn."
+              },
+              "fa/zwnj-invalid": {
+                "oneOf": [
+                  {
+                    "enum": [
+                      "off",
+                      "warn",
+                      "error",
+                      0,
+                      1,
+                      2
+                    ]
+                  },
+                  {
+                    "type": "array",
+                    "prefixItems": [
+                      {
+                        "enum": [
+                          "off",
+                          "warn",
+                          "error",
+                          0,
+                          1,
+                          2
+                        ]
+                      },
+                      {
+                        "type": "object"
+                      }
+                    ],
+                    "minItems": 1,
+                    "maxItems": 2
+                  }
+                ],
+                "description": "Zero-width non-joiners that are doubled, next to a space or outside a word, and ZWJ/ZWSP used where a ZWNJ was meant. Default: warn."
+              },
+              "fa/punctuation": {
+                "oneOf": [
+                  {
+                    "enum": [
+                      "off",
+                      "warn",
+                      "error",
+                      0,
+                      1,
+                      2
+                    ]
+                  },
+                  {
+                    "type": "array",
+                    "prefixItems": [
+                      {
+                        "enum": [
+                          "off",
+                          "warn",
+                          "error",
+                          0,
+                          1,
+                          2
+                        ]
+                      },
+                      {
+                        "type": "object"
+                      }
+                    ],
+                    "minItems": 1,
+                    "maxItems": 2
+                  }
+                ],
+                "description": "Latin comma, semicolon and question mark between Persian words; use ، ؛ ؟ Default: warn."
+              },
+              "fa/punctuation-spacing": {
+                "oneOf": [
+                  {
+                    "enum": [
+                      "off",
+                      "warn",
+                      "error",
+                      0,
+                      1,
+                      2
+                    ]
+                  },
+                  {
+                    "type": "array",
+                    "prefixItems": [
+                      {
+                        "enum": [
+                          "off",
+                          "warn",
+                          "error",
+                          0,
+                          1,
+                          2
+                        ]
+                      },
+                      {
+                        "type": "object"
+                      }
+                    ],
+                    "minItems": 1,
+                    "maxItems": 2
+                  }
+                ],
+                "description": "No space before ، ؛ ؟ ! . and none just inside « » guillemets. Default: warn."
+              },
+              "fa/kashida": {
+                "oneOf": [
+                  {
+                    "enum": [
+                      "off",
+                      "warn",
+                      "error",
+                      0,
+                      1,
+                      2
+                    ]
+                  },
+                  {
+                    "type": "array",
+                    "prefixItems": [
+                      {
+                        "enum": [
+                          "off",
+                          "warn",
+                          "error",
+                          0,
+                          1,
+                          2
+                        ]
+                      },
+                      {
+                        "type": "object"
+                      }
+                    ],
+                    "minItems": 1,
+                    "maxItems": 2
+                  }
+                ],
+                "description": "Kashida/tatweel (ـ) stretches words visually but breaks search and copy; use CSS text-align: justify instead. Default: warn."
+              },
+              "text/presentation-forms": {
+                "oneOf": [
+                  {
+                    "enum": [
+                      "off",
+                      "warn",
+                      "error",
+                      0,
+                      1,
+                      2
+                    ]
+                  },
+                  {
+                    "type": "array",
+                    "prefixItems": [
+                      {
+                        "enum": [
+                          "off",
+                          "warn",
+                          "error",
+                          0,
+                          1,
+                          2
+                        ]
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "code": {
+                            "type": "boolean",
+                            "description": "Also check JS/TS and other code files."
+                          }
+                        },
+                        "additionalProperties": false
+                      }
+                    ],
+                    "minItems": 1,
+                    "maxItems": 2
+                  }
+                ],
+                "description": "Arabic-script presentation forms (pre-shaped glyphs from PDFs and old software) look right but break search and screen readers; use the normal letters. Default: error."
+              },
+              "security/bidi-control": {
+                "oneOf": [
+                  {
+                    "enum": [
+                      "off",
+                      "warn",
+                      "error",
+                      0,
+                      1,
+                      2
+                    ]
+                  },
+                  {
+                    "type": "array",
+                    "prefixItems": [
+                      {
+                        "enum": [
+                          "off",
+                          "warn",
+                          "error",
+                          0,
+                          1,
+                          2
+                        ]
+                      },
+                      {
+                        "type": "object"
+                      }
+                    ],
+                    "minItems": 1,
+                    "maxItems": 2
+                  }
+                ],
+                "description": "Invisible bidirectional control characters that can hide code (Trojan Source, CVE-2021-42574) or leak direction across a line. Default: error."
+              },
+              "css/*": {
+                "oneOf": [
+                  {
+                    "enum": [
+                      "off",
+                      "warn",
+                      "error",
+                      0,
+                      1,
+                      2
+                    ]
+                  },
+                  {
+                    "type": "array",
+                    "prefixItems": [
+                      {
+                        "enum": [
+                          "off",
+                          "warn",
+                          "error",
+                          0,
+                          1,
+                          2
+                        ]
+                      },
+                      {
+                        "type": "object"
+                      }
+                    ],
+                    "minItems": 1,
+                    "maxItems": 2
+                  }
+                ],
+                "description": "Every css/ rule."
+              },
+              "class/*": {
+                "oneOf": [
+                  {
+                    "enum": [
+                      "off",
+                      "warn",
+                      "error",
+                      0,
+                      1,
+                      2
+                    ]
+                  },
+                  {
+                    "type": "array",
+                    "prefixItems": [
+                      {
+                        "enum": [
+                          "off",
+                          "warn",
+                          "error",
+                          0,
+                          1,
+                          2
+                        ]
+                      },
+                      {
+                        "type": "object"
+                      }
+                    ],
+                    "minItems": 1,
+                    "maxItems": 2
+                  }
+                ],
+                "description": "Every class/ rule."
+              },
+              "jsx/*": {
+                "oneOf": [
+                  {
+                    "enum": [
+                      "off",
+                      "warn",
+                      "error",
+                      0,
+                      1,
+                      2
+                    ]
+                  },
+                  {
+                    "type": "array",
+                    "prefixItems": [
+                      {
+                        "enum": [
+                          "off",
+                          "warn",
+                          "error",
+                          0,
+                          1,
+                          2
+                        ]
+                      },
+                      {
+                        "type": "object"
+                      }
+                    ],
+                    "minItems": 1,
+                    "maxItems": 2
+                  }
+                ],
+                "description": "Every jsx/ rule."
+              },
+              "html/*": {
+                "oneOf": [
+                  {
+                    "enum": [
+                      "off",
+                      "warn",
+                      "error",
+                      0,
+                      1,
+                      2
+                    ]
+                  },
+                  {
+                    "type": "array",
+                    "prefixItems": [
+                      {
+                        "enum": [
+                          "off",
+                          "warn",
+                          "error",
+                          0,
+                          1,
+                          2
+                        ]
+                      },
+                      {
+                        "type": "object"
+                      }
+                    ],
+                    "minItems": 1,
+                    "maxItems": 2
+                  }
+                ],
+                "description": "Every html/ rule."
+              },
+              "icon/*": {
+                "oneOf": [
+                  {
+                    "enum": [
+                      "off",
+                      "warn",
+                      "error",
+                      0,
+                      1,
+                      2
+                    ]
+                  },
+                  {
+                    "type": "array",
+                    "prefixItems": [
+                      {
+                        "enum": [
+                          "off",
+                          "warn",
+                          "error",
+                          0,
+                          1,
+                          2
+                        ]
+                      },
+                      {
+                        "type": "object"
+                      }
+                    ],
+                    "minItems": 1,
+                    "maxItems": 2
+                  }
+                ],
+                "description": "Every icon/ rule."
+              },
+              "fa/*": {
+                "oneOf": [
+                  {
+                    "enum": [
+                      "off",
+                      "warn",
+                      "error",
+                      0,
+                      1,
+                      2
+                    ]
+                  },
+                  {
+                    "type": "array",
+                    "prefixItems": [
+                      {
+                        "enum": [
+                          "off",
+                          "warn",
+                          "error",
+                          0,
+                          1,
+                          2
+                        ]
+                      },
+                      {
+                        "type": "object"
+                      }
+                    ],
+                    "minItems": 1,
+                    "maxItems": 2
+                  }
+                ],
+                "description": "Every fa/ rule."
+              },
+              "text/*": {
+                "oneOf": [
+                  {
+                    "enum": [
+                      "off",
+                      "warn",
+                      "error",
+                      0,
+                      1,
+                      2
+                    ]
+                  },
+                  {
+                    "type": "array",
+                    "prefixItems": [
+                      {
+                        "enum": [
+                          "off",
+                          "warn",
+                          "error",
+                          0,
+                          1,
+                          2
+                        ]
+                      },
+                      {
+                        "type": "object"
+                      }
+                    ],
+                    "minItems": 1,
+                    "maxItems": 2
+                  }
+                ],
+                "description": "Every text/ rule."
+              },
+              "security/*": {
+                "oneOf": [
+                  {
+                    "enum": [
+                      "off",
+                      "warn",
+                      "error",
+                      0,
+                      1,
+                      2
+                    ]
+                  },
+                  {
+                    "type": "array",
+                    "prefixItems": [
+                      {
+                        "enum": [
+                          "off",
+                          "warn",
+                          "error",
+                          0,
+                          1,
+                          2
+                        ]
+                      },
+                      {
+                        "type": "object"
+                      }
+                    ],
+                    "minItems": 1,
+                    "maxItems": 2
+                  }
+                ],
+                "description": "Every security/ rule."
+              },
+              "*": {
+                "oneOf": [
+                  {
+                    "enum": [
+                      "off",
+                      "warn",
+                      "error",
+                      0,
+                      1,
+                      2
+                    ]
+                  },
+                  {
+                    "type": "array",
+                    "prefixItems": [
+                      {
+                        "enum": [
+                          "off",
+                          "warn",
+                          "error",
+                          0,
+                          1,
+                          2
+                        ]
+                      },
+                      {
+                        "type": "object"
+                      }
+                    ],
+                    "minItems": 1,
+                    "maxItems": 2
+                  }
+                ],
+                "description": "Every rule."
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

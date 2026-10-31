@@ -1,6 +1,45 @@
 import { codePoint, LETTER, toPersianDigits, WORD, ZWNJ } from '../unicode.js';
 import { eachPersianMatch } from './util.js';
 
+/**
+ * A lone letter, or letters inside a regex class or alternation, in code are a
+ * reference to the character (normalisers such as replaceAll('ي', 'ی')), not
+ * Persian text.
+ */
+function isCharacterReference(file, index, word) {
+  if (word.length === 1) return true;
+  if (file.kind !== 'script' && file.kind !== 'code') return false;
+  const before = file.text[index - 1] ?? '';
+  const after = file.text[index + word.length] ?? '';
+  return /[[|]/.test(before) || /[\]|]/.test(after);
+}
+
+const QUOTED = /«[^«»]*»|﴿[^﴿﴾]*﴾|"[^"]*"|“[^”]*”/g;
+const PERSIAN_ONLY = /[پچژگیک]/;
+
+/**
+ * True when `offset` of a Persian line falls inside a quotation that is
+ * Arabic: a ﴿Quran﴾ span, or a «quote» with no Persian-only letter that reads
+ * as Arabic (the article ال, vocalisation, إ ى ء ة). Quoted Arabic keeps its
+ * own spelling.
+ */
+let quoteCache = { line: null, spans: [] };
+
+function inArabicQuote(line, offset) {
+  // Rules call this for many words of the same line; find its quotes once.
+  if (quoteCache.line !== line) quoteCache = { line, spans: [...line.matchAll(QUOTED)] };
+  for (const q of quoteCache.spans) {
+    if (offset < q.index || offset >= q.index + q[0].length) continue;
+    if (q[0].startsWith('﴿')) return true;
+    const inner = q[0].slice(1, -1);
+    if (PERSIAN_ONLY.test(inner)) return false;
+    const words = inner.match(/[\u0621-\u064A\u0671-\u06D3]+/g) ?? [];
+    const articles = words.filter((w) => w.startsWith('ال')).length;
+    return (words.length > 0 && articles / words.length >= 0.2) || /[\u064B-\u0652]{2}|[إى\u0621ة]/.test(inner);
+  }
+  return false;
+}
+
 const ARABIC_FORMS = { '\u064A': 'ی', '\u0643': 'ک', '\u0649': 'ی' };
 const WORD_RE = new RegExp(`[${WORD}\\u0640\\u200C]+`, 'g');
 
@@ -16,6 +55,7 @@ export const arabicLetters = {
     eachPersianMatch(file, WORD_RE, (m, index) => {
       const word = m[0];
       if (!/[\u064A\u0643\u0649]/.test(word)) return;
+      if (isCharacterReference(file, index, word) || inArabicQuote(m.input, m.index)) return;
       const fixed = word.replace(/[\u064A\u0643\u0649]/g, (c) => ARABIC_FORMS[c]);
       const found = [...new Set(word.match(/[\u064A\u0643\u0649]/g))]
         .map((c) => `"${c}" (${codePoint(c)})`)
@@ -39,6 +79,7 @@ export const arabicDigits = {
   },
   check(file, report) {
     eachPersianMatch(file, /[\u0660-\u0669]+/g, (m, index) => {
+      if (inArabicQuote(m.input, m.index)) return;
       const fixed = toPersianDigits(m[0]);
       report({
         index,
@@ -103,12 +144,26 @@ export const zwnjPrefix = {
 };
 
 const PLURAL = 'هایشان|هایتان|هایمان|هایی|هایم|هایت|هایش|های|ها';
-const COMPARATIVE = 'ترین|تر';
-const AFTER_HEH = 'ایی|ای|ام|ات|اش|ایم|اید|اند';
+// «تر» alone also means "wet" (میوه تر، لباس تر), so by default it is only
+// joined after common adjectives; «ترین» is always a superlative.
+const ADJECTIVES = [
+  'بزرگ', 'کوچک', 'بیش', 'کم', 'به', 'بد', 'خوب', 'سریع', 'زیبا', 'مهم', 'ساده', 'آسان', 'سخت', 'دشوار',
+  'دور', 'نزدیک', 'بالا', 'پایین', 'قوی', 'ضعیف', 'ارزان', 'گران', 'جدید', 'تازه', 'قدیمی', 'بلند', 'کوتاه',
+  'سنگین', 'سبک', 'گرم', 'سرد', 'تند', 'کند', 'زیاد', 'مناسب', 'روشن', 'تاریک', 'دقیق', 'کامل', 'مطمئن',
+  'امن', 'راحت', 'جذاب', 'جالب', 'عمیق', 'وسیع', 'محکم', 'شاد', 'مفید', 'پیشرفته', 'سالم', 'هوشمند',
+  'پرطرفدار', 'کارآمد', 'آرام', 'شلوغ', 'خلوت', 'پهن', 'باریک', 'چاق', 'لاغر', 'جوان', 'پیر',
+];
+// rtlint-disable-next-line fa/* -- example or regex, not prose
+// The last alternative is the ezafe: «خانه ی من» → «خانه‌ی من».
+const AFTER_HEH = 'ایی|ای|ام|ات|اش|ایم|اید|اند|ی';
 
 function suffixRegexes(comparatives) {
-  const plain = comparatives ? `${PLURAL}|${COMPARATIVE}` : PLURAL;
+  const plain = comparatives === 'all' ? `${PLURAL}|ترین|تر` : comparatives ? `${PLURAL}|ترین` : PLURAL;
+  const adjectives = comparatives === true
+    ? [new RegExp(`(?<=(?:^|[^${WORD}\\u200C])(?:${ADJECTIVES.join('|')}))( +)(تر)(?![${WORD}\\u200C])`, 'g')]
+    : [];
   return [
+    ...adjectives,
     new RegExp(`(?<=[${WORD}])( +)(${plain})(?![${WORD}\\u200C])`, 'g'),
     // rtlint-disable-next-line fa/*
     // "خانه ای", "رفته اند": only after a word of three letters or more ending in ه,
@@ -121,12 +176,12 @@ export const zwnjSuffix = {
   id: 'fa/zwnj-suffix',
   meta: {
     description:
-      'Suffixes such as ها/های/تر/ترین and ای/ام/اند after a final ه attach with a zero-width non-joiner, not a space: «کتاب\u200Cها».',
+      'Suffixes such as ها/های/تر/ترین, and ای/ام/اند or the ezafe ی after a final ه, attach with a zero-width non-joiner, not a space: «کتاب\u200Cها», «خانه\u200Cی من».',
     fixable: true,
     level: 'warn',
   },
   check(file, report, options) {
-    for (const re of suffixRegexes(options.comparatives !== false)) {
+    for (const re of suffixRegexes(options.comparatives ?? true)) {
       eachPersianMatch(file, re, (m, index) => {
         report({
           index,
@@ -139,7 +194,9 @@ export const zwnjSuffix = {
   },
 };
 
-const WORD_CHAR = new RegExp(`[${WORD}]`);
+// Any letter or mark, in any script: a ZWNJ between "sanitize" and a Persian
+// suffix, or around a tatweel in «طلایی\u200Cـ\u200Cمشکی», is deliberate.
+const WORD_CHAR = /[\p{L}\p{M}]/u;
 
 export const zwnjInvalid = {
   id: 'fa/zwnj-invalid',
@@ -189,17 +246,23 @@ export const punctuation = {
     level: 'warn',
   },
   check(file, report) {
+    // Commas separate fields in CSV and items in YAML/TOML flow lists.
+    if (file.ext === 'csv' || file.ext === 'tsv') return;
+    const flow = file.ext === 'yaml' || file.ext === 'yml' || file.ext === 'toml';
     const rules = [
-      [new RegExp(`${BEFORE},${AFTER_WORD}`, 'g'), '،'],
-      [new RegExp(`${BEFORE};${AFTER_WORD}`, 'g'), '؛'],
-      [new RegExp(`${BEFORE}\\?(?=\\s*(?:[${LETTER}«"'»)\\]]|$))`, 'g'), '؟'],
+      [new RegExp(`${BEFORE}[ \\t]*,${AFTER_WORD}`, 'g'), '،'],
+      [new RegExp(`${BEFORE}[ \\t]*;${AFTER_WORD}`, 'g'), '؛'],
+      [new RegExp(`${BEFORE}[ \\t]*\\?(?=\\s*(?:[${LETTER}«"'»)\\]]|$))`, 'g'), '؟'],
     ];
     for (const [re, persian] of rules) {
       eachPersianMatch(file, re, (m, index) => {
+        // YAML/TOML flow lists (`tags: [a, b]`), also in Markdown front matter.
+        const listLine = flow ? /[[{]/.test(m.input) : /^\s*[\w-]+\s*:\s*[[{]/.test(m.input);
+        if (persian === '،' && listLine) return;
         report({
           index,
-          length: 1,
-          message: `Latin "${m[0]}" in Persian text; use "${persian}".`,
+          length: m[0].length,
+          message: `Latin "${m[0].trim()}" in Persian text; use "${persian}".`,
           fix: { text: persian },
         });
       });

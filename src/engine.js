@@ -25,20 +25,42 @@ function applyRules(target, entries, where) {
   }
 }
 
-const SCALARS = ['persian', 'classes', 'classPrefix'];
+const PERSIAN_MODES = { auto: 'auto', true: true, on: true, false: false, off: false };
+
+function applyScalars(settings, from, where) {
+  if ('persian' in from) {
+    const mode = PERSIAN_MODES[String(from.persian)];
+    if (mode === undefined) throw new ConfigError(`${where}persian must be "auto", true or false, got ${JSON.stringify(from.persian)}`);
+    settings.persian = mode;
+  }
+  if ('classes' in from) {
+    if (typeof from.classes !== 'boolean') throw new ConfigError(`${where}classes must be true or false`);
+    settings.classes = from.classes;
+  }
+  if ('classPrefix' in from) {
+    if (typeof from.classPrefix !== 'string') throw new ConfigError(`${where}classPrefix must be a string`);
+    settings.classPrefix = from.classPrefix;
+  }
+}
 
 /** Resolves rule levels and options for one file from a config object. */
 export function resolveSettings(config = {}, relPath = '') {
   const settings = { persian: 'auto', classes: true, classPrefix: '', rules: {} };
   for (const r of rules) settings.rules[r.id] = { level: r.meta.level, options: {} };
-  for (const key of SCALARS) if (key in config) settings[key] = config[key];
+  applyScalars(settings, config, '');
   applyRules(settings.rules, config.rules, 'rules');
   for (const [i, o] of (config.overrides ?? []).entries()) {
     if (!o.files) throw new ConfigError(`overrides[${i}] needs a "files" glob`);
     if (!matchAny(relPath, o.files) || matchAny(relPath, o.excludedFiles ?? [])) continue;
-    for (const key of SCALARS) if (key in o) settings[key] = o[key];
+    applyScalars(settings, o, `overrides[${i}].`);
     applyRules(settings.rules, o.rules, `overrides[${i}].rules`);
   }
+  return settings;
+}
+
+/** Applies rule levels on top of resolved settings (used for CLI flags, which win over the config). */
+export function applyRuleOverrides(settings, entries) {
+  applyRules(settings.rules, entries, '--rule');
   return settings;
 }
 

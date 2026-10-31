@@ -225,9 +225,11 @@ See [CONTRIBUTING.md](CONTRIBUTING.md). `npm test` runs the suite on Node's buil
 ## Credits
 
 Built by the team behind [**Pouyam**](https://www.pouyam.com), a bilingual Persian/English social and
-gaming platform, after we found these bugs in our own code. The first real-world run, on Pouyam's own
-1,800-file SvelteKit codebase, took two seconds. It found Arabic letters hiding in Persian copy,
-email fields that scrambled in RTL and hundreds of utilities that never mirrored.
+gaming platform, after we found these bugs in our own code. On Pouyam's own 1,800-file SvelteKit
+codebase a full run takes about two seconds. It found email fields that scrambled in RTL, a country
+name stored as PDF glyphs that search could not find, back/next icons that never flipped and hundreds
+of utilities that never mirrored. On the half-megabyte of Persian translations and the Arabic ones
+next to them, it reports nothing, which is what a careful translator's work should get.
 
 Written with [Claude Code](https://claude.com/claude-code).
 

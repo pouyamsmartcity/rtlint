@@ -16,7 +16,7 @@ export function buildSchema() {
     },
     'fa/zwnj-suffix': {
       type: 'object',
-      properties: { comparatives: { type: 'boolean', description: 'Join تر/ترین (default true).' } },
+      properties: { comparatives: { enum: [true, false, 'all'], description: 'true (default): ترین always, تر after common adjectives; "all": تر after any word; false: neither.' } },
       additionalProperties: false,
     },
     'text/presentation-forms': {

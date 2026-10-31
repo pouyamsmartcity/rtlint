@@ -276,7 +276,7 @@
               "maxItems": 2
             }
           ],
-          "description": "Inline style objects (React, React Native, Solid, Preact) using marginLeft, paddingRight, textAlign: \"left\"… do not mirror in RTL. Default: warn."
+          "description": "Inline style objects (React, React Native, Solid, Preact, Vue :style) using marginLeft, paddingRight, textAlign: \"left\"… do not mirror in RTL. Default: warn."
         },
         "html/dir-attribute": {
           "oneOf": [
@@ -587,8 +587,12 @@
                   "type": "object",
                   "properties": {
                     "comparatives": {
-                      "type": "boolean",
-                      "description": "Join تر/ترین (default true)."
+                      "enum": [
+                        true,
+                        false,
+                        "all"
+                      ],
+                      "description": "true (default): ترین always, تر after common adjectives; \"all\": تر after any word; false: neither."
                     }
                   },
                   "additionalProperties": false
@@ -1445,7 +1449,7 @@
                     "maxItems": 2
                   }
                 ],
-                "description": "Inline style objects (React, React Native, Solid, Preact) using marginLeft, paddingRight, textAlign: \"left\"… do not mirror in RTL. Default: warn."
+                "description": "Inline style objects (React, React Native, Solid, Preact, Vue :style) using marginLeft, paddingRight, textAlign: \"left\"… do not mirror in RTL. Default: warn."
               },
               "html/dir-attribute": {
                 "oneOf": [
@@ -1756,8 +1760,12 @@
                         "type": "object",
                         "properties": {
                           "comparatives": {
-                            "type": "boolean",
-                            "description": "Join تر/ترین (default true)."
+                            "enum": [
+                              true,
+                              false,
+                              "all"
+                            ],
+                            "description": "true (default): ترین always, تر after common adjectives; \"all\": تر after any word; false: neither."
                           }
                         },
                         "additionalProperties": false

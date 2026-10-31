@@ -29,8 +29,12 @@ const PIECES = [
   ch(0x0649), ch(0x0629), ch(0x0660, 0x0661), '۱۲', '3', ZWNJ, ZWNJ + ZWNJ, ch(0x200d), ch(0x0640),
   ch(0x202e), ch(0x2066), ch(0x2069), ch(0x202c), ch(0xfeff), '😀', 'rtlint-disable-next-line',
   'rtlint-disable fa/*', 'rtlint-enable',
+  // Shapes from the adversarial review.
+  '[dir="rtl"] .x {', ':dir(rtl)', '@page {', '#{$gap}', '@{gap}', '$m: (', 'isRtl ? ', "'ml-2'",
+  'interface P {', 'marginLeft: number;', '/re[/]/', '﴿', '﴾', '«', 'https://x.ir/a,b', '`code`',
+  'tags: [', 'ال', 'ﻣﻘﺪ', ch(0xfe76), 'class:ml-2', 'style:left',
 ];
-const FILES = ['a.css', 'a.scss', 'a.html', 'a.vue', 'a.svelte', 'a.jsx', 'a.tsx', 'a.js', 'a.md', 'fa.json', 'a.py'];
+const FILES = ['a.css', 'a.scss', 'a.html', 'a.vue', 'a.svelte', 'a.jsx', 'a.tsx', 'a.js', 'a.md', 'fa.json', 'a.py', 'a.yml', 'a.csv'];
 
 function sample(rand, length) {
   let s = '';

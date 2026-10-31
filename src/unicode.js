@@ -20,11 +20,11 @@ export const PERSIAN_SIGNAL = /[\u067E\u0686\u0698\u06AF\u06A9\u06CC\u06F0-\u06F
 export const PERSIAN_STRONG = /[\u067E\u0686\u0698\u06AF]/g;
 
 /**
- * Letters that mark a line as Arabic (taa marbuta), Urdu, Kurdish, Pashto or
- * Uyghur rather than Persian. A line containing any of them is left alone.
+ * Letters that mark a line as Arabic (taa marbuta), Urdu, Kurdish, Pashto,
+ * Sindhi or Uyghur rather than Persian. A line containing any of them is left alone.
  */
 export const NOT_PERSIAN =
-  /[\u0629\u0679\u0688\u0691\u06BA\u06BE\u06C1\u06D2\u06D3\u0695\u06B5\u06C6\u06CE\u06D5\u067C\u0681\u0685\u0689\u0693\u0696\u069A\u06BC\u06CD\u06D0\u06C7\u06C8\u06CB]/;
+  /[\u0629\u0679\u0688\u0691\u06BA\u06BE\u06C1\u06D2\u06D3\u0695\u06B5\u06C6\u06CE\u06D5\u067C\u0681\u0685\u0689\u0693\u0696\u069A\u06BC\u06CD\u06D0\u06C7\u06C8\u06CB\u06AB\u067A\u067B\u067D\u067F\u0680\u0683\u0684\u0687\u068A\u068C\u068D\u068F\u0699\u06A6\u06AA\u06B1\u06B3\u06BB]/;
 
 export const HAS_ARABIC_SCRIPT = new RegExp(`[${LETTER}]`);
 

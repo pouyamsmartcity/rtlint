@@ -1,4 +1,4 @@
-import { tokens } from './util.js';
+import { directionConditional, tokens } from './util.js';
 
 // Utility-class mapping for Tailwind CSS (>= 3.3; float/clear >= 3.4), UnoCSS,
 // Windi and Bootstrap 4 -> 5. The two vocabularies do not collide: Tailwind
@@ -53,8 +53,8 @@ const EXACT = {
 const BREAKPOINT_SIDE = /^(text|float|dropdown-menu)-(sm|md|lg|xl|xxl)-(left|right)$/;
 const SIDE = { left: 'start', right: 'end' };
 
-const TRIM_START = /^[{("'`\[,]+/;
-const TRIM_END = /[})"'`,;:?]+$/;
+const TRIM_START = /^[{("'`,]+/;
+const TRIM_END = /[}"'`,;:?]+$/;
 
 /** Splits "md:hover:!-ml-2" into variants "md:hover:" and the utility "!-ml-2". */
 export function splitVariants(token) {
@@ -102,12 +102,16 @@ export function logicalClass(token, prefix = '') {
   return variants + important + negative + prefix + mapped + importantEnd;
 }
 
+const count = (s, c) => s.split(c).length - 1;
+
 /** Class tokens of a region with surrounding quotes/braces trimmed. */
 function classTokens(text, region) {
   const out = [];
   for (const t of tokens(text, region)) {
     const lead = t.text.match(TRIM_START)?.[0].length ?? 0;
-    const core = t.text.slice(lead).replace(TRIM_END, '');
+    let core = t.text.slice(lead).replace(TRIM_END, '');
+    // Keep the ")" of ml-(--gap); drop ones that close a surrounding call.
+    while (core.endsWith(')') && count(core, ')') > count(core, '(')) core = core.slice(0, -1).replace(TRIM_END, '');
     if (core) out.push({ text: core, index: t.index + lead });
   }
   return out;
@@ -163,6 +167,7 @@ export const physicalUtility = {
       for (const t of list) {
         const logical = logicalClass(t.text, prefix);
         if (!logical) continue;
+        if (directionConditional(text, t.index, t.text.length)) continue;
         if (translates && INSET_UTILITY.test(bare(t.text, prefix)?.utility ?? '')) {
           report({
             index: t.index,

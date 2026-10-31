@@ -1,4 +1,5 @@
-import { relative } from 'node:path';
+import { isAbsolute, relative, resolve } from 'node:path';
+import { pathToFileURL } from 'node:url';
 import { listRules } from '../engine.js';
 
 const REPO = 'https://github.com/pouyamsmartcity/rtlint';
@@ -92,6 +93,17 @@ export function github(results, { cwd = process.cwd() } = {}) {
   return out;
 }
 
+/**
+ * A SARIF artifact URI: relative and percent-encoded per segment inside the
+ * working directory (so "#" or "%" in a name stay part of the path), an
+ * absolute file:// URL outside it.
+ */
+function sarifUri(filePath, cwd) {
+  const relPath = relative(cwd, filePath);
+  if (!relPath || relPath.startsWith('..') || isAbsolute(relPath)) return pathToFileURL(resolve(cwd, filePath)).href;
+  return posix(relPath).split('/').map(encodeURIComponent).join('/');
+}
+
 /** SARIF 2.1.0 for GitHub code scanning and other security dashboards. */
 export function sarif(results, { cwd = process.cwd(), version = '0.0.0' } = {}) {
   const rules = listRules();
@@ -124,7 +136,7 @@ export function sarif(results, { cwd = process.cwd(), version = '0.0.0' } = {}) 
             locations: [
               {
                 physicalLocation: {
-                  artifactLocation: { uri: encodeURI(rel(r.filePath, cwd)) },
+                  artifactLocation: { uri: sarifUri(r.filePath, cwd) },
                   region: {
                     startLine: m.line,
                     startColumn: m.column,

@@ -1,6 +1,7 @@
 import { parseDirectives, ruleMatches } from './directives.js';
 import { createFile, position } from './file.js';
 import { matchAny } from './glob.js';
+import { DESCRIPTIONS_FA, LANGS } from './i18n.js';
 import { ruleMap, rules } from './rules/index.js';
 
 export class ConfigError extends Error {}
@@ -33,6 +34,10 @@ function applyScalars(settings, from, where) {
     if (mode === undefined) throw new ConfigError(`${where}persian must be "auto", true or false, got ${JSON.stringify(from.persian)}`);
     settings.persian = mode;
   }
+  if ('lang' in from) {
+    if (!LANGS.includes(from.lang)) throw new ConfigError(`${where}lang must be one of ${LANGS.join(', ')}`);
+    settings.lang = from.lang;
+  }
   if ('classes' in from) {
     if (typeof from.classes !== 'boolean') throw new ConfigError(`${where}classes must be true or false`);
     settings.classes = from.classes;
@@ -45,7 +50,7 @@ function applyScalars(settings, from, where) {
 
 /** Resolves rule levels and options for one file from a config object. */
 export function resolveSettings(config = {}, relPath = '') {
-  const settings = { persian: 'auto', classes: true, classPrefix: '', rules: {} };
+  const settings = { persian: 'auto', classes: true, classPrefix: '', lang: 'en', rules: {} };
   for (const r of rules) settings.rules[r.id] = { level: r.meta.level, options: {} };
   applyScalars(settings, config, '');
   applyRules(settings.rules, config.rules, 'rules');
@@ -106,7 +111,7 @@ export function lintText(text, { filePath = 'input.txt', config = {}, settings }
         const message = {
           ruleId: rule.id,
           severity,
-          message: p.message,
+          message: resolved.lang === 'fa' && p.fa ? p.fa : p.message,
           line: start.line,
           column: start.column,
           endLine: end.line,
@@ -173,7 +178,7 @@ export function fixText(text, options = {}) {
 }
 
 export function listRules() {
-  return rules.map((r) => ({ id: r.id, ...r.meta }));
+  return rules.map((r) => ({ id: r.id, ...r.meta, descriptionFa: DESCRIPTIONS_FA[r.id] }));
 }
 
 export function getRule(id) {

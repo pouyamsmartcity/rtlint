@@ -24,6 +24,7 @@ Options:
   --no-config             Ignore config files
   --ignore-pattern <g>    Extra glob to ignore (repeatable)
   --persian <auto|on|off> Persian text detection
+  --lang <en|fa>          Language of messages (fa = Persian / فارسی)
   --stdin                 Lint text from stdin (with --fix: print fixed text)
   --stdin-filename <p>    File name for --stdin (decides the file type)
   --list-rules            Show every rule
@@ -36,7 +37,7 @@ Docs: https://github.com/pouyamsmartcity/rtlint`;
 
 function parseArgs(argv) {
   const opts = { paths: [], rules: {}, ignore: [], format: 'stylish', color: undefined };
-  const takes = new Set(['-f', '--format', '-o', '--output-file', '--max-warnings', '--rule', '-c', '--config', '--ignore-pattern', '--stdin-filename', '--persian']);
+  const takes = new Set(['-f', '--format', '-o', '--output-file', '--max-warnings', '--rule', '-c', '--config', '--ignore-pattern', '--stdin-filename', '--persian', '--lang']);
   for (let i = 0; i < argv.length; i++) {
     let arg = argv[i];
     let value;
@@ -68,6 +69,10 @@ function parseArgs(argv) {
       case '-c': case '--config': opts.config = value; break;
       case '--no-config': opts.noConfig = true; break;
       case '--ignore-pattern': opts.ignore.push(value); break;
+      case '--lang':
+        if (!['en', 'fa'].includes(value)) throw new ConfigError('--lang must be en or fa');
+        opts.lang = value;
+        break;
       case '--persian':
         opts.persian = { on: true, true: true, off: false, false: false, auto: 'auto' }[value];
         if (opts.persian === undefined) throw new ConfigError('--persian must be auto, on or off');
@@ -100,11 +105,11 @@ function readStdin(stdin) {
   });
 }
 
-function listRulesText() {
+function listRulesText(lang) {
   const rules = listRules();
   const w = Math.max(...rules.map((r) => r.id.length));
   return rules
-    .map((r) => `${r.id.padEnd(w)}  ${r.level.padEnd(5)}  ${r.fixable ? 'fix' : '   '}  ${r.description}`)
+    .map((r) => `${r.id.padEnd(w)}  ${r.level.padEnd(5)}  ${r.fixable ? 'fix' : '   '}  ${lang === 'fa' ? r.descriptionFa : r.description}`)
     .join('\n');
 }
 
@@ -117,7 +122,7 @@ export async function run(argv, io = {}) {
     const opts = parseArgs(argv);
     if (opts.help) { stdout.write(HELP + '\n'); return 0; }
     if (opts.version) { stdout.write(VERSION + '\n'); return 0; }
-    if (opts.listRules) { stdout.write(listRulesText() + '\n'); return 0; }
+    if (opts.listRules) { stdout.write(listRulesText(opts.lang) + '\n'); return 0; }
 
     const found = opts.noConfig ? { config: {}, dir: cwd } : opts.config ? loadConfig(opts.config) : findConfig(cwd);
     const config = found.config;
@@ -125,6 +130,7 @@ export async function run(argv, io = {}) {
     const settingsFor = (filePath) => {
       const settings = applyRuleOverrides(resolveSettings(config, filePath), opts.rules);
       if (opts.persian !== undefined) settings.persian = opts.persian;
+      if (opts.lang) settings.lang = opts.lang;
       return settings;
     };
     settingsFor(''); // validate early so a typo fails before any file is touched
@@ -180,7 +186,8 @@ export async function run(argv, io = {}) {
       }));
     }
     const color = opts.color ?? (!opts.output && stdout.isTTY && !process.env.NO_COLOR);
-    const report = formatters[opts.format](shown, { cwd, color, version: VERSION });
+    const lang = opts.lang ?? config.lang ?? 'en';
+    const report = formatters[opts.format](shown, { cwd, color, version: VERSION, lang });
     if (opts.output) writeFileSync(opts.output, report);
     else if (report) stdout.write(report);
 

@@ -23,6 +23,13 @@
       "type": "string",
       "description": "Tailwind prefix, e.g. \"tw-\"."
     },
+    "lang": {
+      "enum": [
+        "en",
+        "fa"
+      ],
+      "description": "Language of messages: en (default) or fa (Persian)."
+    },
     "rules": {
       "type": "object",
       "properties": {
@@ -1195,6 +1202,13 @@
           "classPrefix": {
             "type": "string",
             "description": "Tailwind prefix, e.g. \"tw-\"."
+          },
+          "lang": {
+            "enum": [
+              "en",
+              "fa"
+            ],
+            "description": "Language of messages: en (default) or fa (Persian)."
           },
           "rules": {
             "type": "object",

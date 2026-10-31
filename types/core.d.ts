@@ -9,6 +9,8 @@ export interface Config {
   classes?: boolean;
   /** Tailwind prefix, e.g. "tw-". */
   classPrefix?: string;
+  /** Language of messages: "en" (default) or "fa" (Persian). */
+  lang?: 'en' | 'fa';
   /** Rule ids, category wildcards ("fa/*") or "*". */
   rules?: Record<string, RuleEntry>;
   /** Globs to skip (CLI only). */
@@ -61,6 +63,7 @@ export interface FixResult extends LintResult {
 
 export interface Settings {
   persian: 'auto' | boolean;
+  lang: 'en' | 'fa';
   classes: boolean;
   classPrefix: string;
   rules: Record<string, { level: 'off' | 'warn' | 'error'; options: Record<string, unknown> }>;
@@ -82,6 +85,8 @@ export interface FixOptions extends LintOptions {
 export interface RuleInfo {
   id: string;
   description: string;
+  /** The same description in Persian. */
+  descriptionFa: string;
   fixable: boolean;
   level: 'off' | 'warn' | 'error';
 }

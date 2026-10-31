@@ -72,6 +72,7 @@ export const physicalProperty = {
           index,
           length: name.length,
           message: `"${name}: ${m[4].trim()}" with translate(-50%) is a centering trick; switching to "${logical}" alone breaks it in RTL. Center with inset-inline + margin-inline: auto, or mirror the translate too.`,
+          fa: `«${name}: ${m[4].trim()}» همراه translate(-50%) یک ترفند وسط\u200Cچین است؛ اگر فقط آن را به «${logical}» تغییر دهید، در راست\u200Cبه\u200Cچپ از وسط خارج می\u200Cشود. با inset-inline و margin-inline: auto وسط\u200Cچین کنید، یا translate را هم آینه کنید.`,
         });
         continue;
       }
@@ -79,6 +80,7 @@ export const physicalProperty = {
         index,
         length: name.length,
         message: `"${name}" is physical and will not mirror in RTL; use "${logical}".`,
+        fa: `«${name}» فیزیکی است و در صفحه\u200Cی راست\u200Cبه\u200Cچپ برعکس نمی\u200Cشود؛ «${logical}» بنویسید.`,
         fix: { text: logical },
       });
     }
@@ -89,6 +91,7 @@ export const physicalProperty = {
           index,
           length: m[1].length,
           message: `"style:${m[1]}" is physical and will not mirror in RTL; use "style:${PHYSICAL[m[1]]}".`,
+          fa: `«style:${m[1]}» فیزیکی است و در راست\u200Cبه\u200Cچپ برعکس نمی\u200Cشود؛ «style:${PHYSICAL[m[1]]}» بنویسید.`,
           fix: { text: PHYSICAL[m[1]] },
         });
       }
@@ -122,6 +125,7 @@ export const physicalValue = {
         index,
         length: m[4].length,
         message: `"${m[2]}: ${m[4]}" will not mirror in RTL; use "${m[2]}: ${logical}".`,
+        fa: `«${m[2]}: ${m[4]}» در راست\u200Cبه\u200Cچپ برعکس نمی\u200Cشود؛ «${m[2]}: ${logical}» بنویسید.`,
         fix: { text: logical },
       });
     }
@@ -192,6 +196,7 @@ export const asymmetricShorthand = {
           index,
           length,
           message: `"border-radius: ${value}" rounds left and right corners differently and will not mirror in RTL; use the logical corner properties.`,
+          fa: `«border-radius: ${value}» گوشه\u200Cهای چپ و راست را متفاوت گرد می\u200Cکند و در راست\u200Cبه\u200Cچپ برعکس نمی\u200Cشود؛ از ویژگی\u200Cهای منطقی گوشه\u200Cها استفاده کنید.`,
           fix:
             canFix && !hidden
               ? {
@@ -212,6 +217,7 @@ export const asymmetricShorthand = {
         index,
         length,
         message: `"${prop}: ${value}" has different left (${left}) and right (${right}) values and will not mirror in RTL; use ${block} / ${inline}.`,
+        fa: `«${prop}: ${value}» برای چپ (${left}) و راست (${right}) مقدار متفاوت دارد و در راست\u200Cبه\u200Cچپ برعکس نمی\u200Cشود؛ ${block} و ${inline} بنویسید.`,
         fix: canFix
           ? { text: `${block}: ${blockValue}${important}; ${inline}: ${left} ${right}${important}` }
           : undefined,
@@ -256,6 +262,7 @@ export const directionalValue = {
         index: m.index + m[1].length,
         length: m[2].length + m[3].length + m[4].trimEnd().length,
         message: `"${m[2]}: ${m[4].trim()}" moves or anchors things horizontally (${part}); add a [dir="rtl"] counterpart if it should follow the reading direction.`,
+        fa: `«${m[2]}: ${m[4].trim()}» چیزی را افقی جابه\u200Cجا یا لنگر می\u200Cکند (${part})؛ اگر باید با جهت متن عوض شود، یک نسخه\u200Cی [dir="rtl"] هم بنویسید.`,
       });
     }
   },

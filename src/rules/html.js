@@ -44,6 +44,7 @@ export const dirAttribute = {
             index: m.index,
             length: 5,
             message: '<html> sets lang dynamically but has no dir; RTL locales will render left-to-right. Derive dir from the locale.',
+            fa: '<html> زبان را پویا می\u200Cگیرد ولی dir ندارد؛ زبان\u200Cهای راست\u200Cبه\u200Cچپ، چپ\u200Cبه\u200Cراست نمایش داده می\u200Cشوند. dir را هم از روی زبان تعیین کنید.',
           });
         }
         continue;
@@ -54,6 +55,7 @@ export const dirAttribute = {
           index: m.index,
           length: 5,
           message: `<html lang="${lang.value}"> is a right-to-left language but has no dir="rtl".`,
+          fa: `<html lang="${lang.value}"> زبانی راست\u200Cبه\u200Cچپ است ولی dir="rtl" ندارد.`,
           fix: { range: [attrsStart, attrsStart], text: ' dir="rtl"' },
         });
       } else if (rtl && dir && !dir.dynamic && dir.value.toLowerCase() === 'ltr') {
@@ -62,6 +64,7 @@ export const dirAttribute = {
           index: start,
           length: 3,
           message: `<html lang="${lang.value}"> is a right-to-left language but dir="ltr".`,
+          fa: `<html lang="${lang.value}"> زبانی راست\u200Cبه\u200Cچپ است ولی dir="ltr" دارد.`,
           fix: { range: [start, start + 3], text: 'rtl' },
         });
       } else if (!rtl && dir && !dir.dynamic && dir.value.toLowerCase() === 'rtl') {
@@ -69,6 +72,7 @@ export const dirAttribute = {
           index: attrsStart + dir.valueStart,
           length: 3,
           message: `<html lang="${lang.value}"> is a left-to-right language but dir="rtl"; is lang wrong?`,
+          fa: `<html lang="${lang.value}"> زبانی چپ\u200Cبه\u200Cراست است ولی dir="rtl" دارد؛ lang درست است؟`,
         });
       }
     }
@@ -97,6 +101,7 @@ export const ltrInput = {
         index: m.index,
         length: 6,
         message: `<input type="${type.value}"> inherits the page direction; in RTL "user@example.com" and "+98 912…" render scrambled. Add dir="ltr" (or dir="auto").`,
+        fa: `<input type="${type.value}"> جهت صفحه را می\u200Cگیرد و در صفحه\u200Cی فارسی «user@example.com» و «+98 912…» به\u200Cهم\u200Cریخته نمایش داده می\u200Cشوند. dir="ltr" (یا dir="auto") اضافه کنید.`,
         fix: { range: [at, at], text: ' dir="ltr"' },
       });
     }

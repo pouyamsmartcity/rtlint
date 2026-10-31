@@ -1,0 +1,77 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1240" height="634" viewBox="0 0 1240 634" role="img" aria-label="rtlint output on a demo Svelte project">
+  <rect width="1240" height="634" rx="12" fill="#14111f"/>
+  <circle cx="24" cy="20" r="6" fill="#ff5f57"/><circle cx="44" cy="20" r="6" fill="#febc2e"/><circle cx="64" cy="20" r="6" fill="#28c840"/>
+  <g font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, Vazirmatn, Tahoma, monospace" font-size="13.5">
+    <text x="24" direction="ltr" y="58" fill="#8f8aa8">$ </text>
+    <text x="40" direction="ltr" y="58" fill="#e6e4f2">npx rtlint src --lang fa</text>
+    <text x="24" direction="ltr" y="102" fill="#c7b8ff" text-decoration="underline">src/Card.svelte</text>
+    <text x="40" direction="ltr" y="124" fill="#8f8aa8">6:42</text>
+    <text x="96" direction="ltr" y="124" fill="#f2c14b">هشدار</text>
+    <text x="964" direction="rtl" unicode-bidi="embed" y="124" fill="#e6e4f2">«pl-4» فیزیکی است و در صفحه‌ی راست‌به‌چپ برعکس نمی‌شود؛ «ps-4» بنویسید.</text>
+    <text x="984" direction="ltr" y="124" fill="#8f8aa8">class/physical-utility ✎</text>
+    <text x="40" direction="ltr" y="146" fill="#8f8aa8">6:47</text>
+    <text x="96" direction="ltr" y="146" fill="#f2c14b">هشدار</text>
+    <text x="964" direction="rtl" unicode-bidi="embed" y="146" fill="#e6e4f2">«text-left» فیزیکی است و در صفحه‌ی راست‌به‌چپ برعکس نمی‌شود؛ «text-start» بنویسید.</text>
+    <text x="984" direction="ltr" y="146" fill="#8f8aa8">class/physical-utility ✎</text>
+    <text x="40" direction="ltr" y="168" fill="#8f8aa8">7:15</text>
+    <text x="96" direction="ltr" y="168" fill="#f2c14b">هشدار</text>
+    <text x="964" direction="rtl" unicode-bidi="embed" y="168" fill="#e6e4f2">«rounded-l-lg» فیزیکی است و در صفحه‌ی راست‌به‌چپ برعکس نمی‌شود؛ «rounded-s-lg» بنویسید.</text>
+    <text x="984" direction="ltr" y="168" fill="#8f8aa8">class/physical-utility ✎</text>
+    <text x="40" direction="ltr" y="190" fill="#8f8aa8">8:4</text>
+    <text x="96" direction="ltr" y="190" fill="#f2c14b">هشدار</text>
+    <text x="964" direction="rtl" unicode-bidi="embed" y="190" fill="#e6e4f2">&lt;ChevronRight&gt; آیکونی جهت‌دار است. در صفحه‌ی راست‌به‌چپ جهتش برعکس می‌شود؛ آینه‌اش کنید (مثلاً class="r…</text>
+    <text x="984" direction="ltr" y="190" fill="#8f8aa8">icon/directional</text>
+    <text x="40" direction="ltr" y="212" fill="#8f8aa8">8:24</text>
+    <text x="96" direction="ltr" y="212" fill="#f2c14b">هشدار</text>
+    <text x="964" direction="rtl" unicode-bidi="embed" y="212" fill="#e6e4f2">«ml-auto» فیزیکی است و در صفحه‌ی راست‌به‌چپ برعکس نمی‌شود؛ «ms-auto» بنویسید.</text>
+    <text x="984" direction="ltr" y="212" fill="#8f8aa8">class/physical-utility ✎</text>
+    <text x="40" direction="ltr" y="234" fill="#8f8aa8">8:32</text>
+    <text x="96" direction="ltr" y="234" fill="#f2c14b">هشدار</text>
+    <text x="964" direction="rtl" unicode-bidi="embed" y="234" fill="#e6e4f2">«group-hover:translate-x-1» چیزی را افقی جابه‌جا می‌کند و در راست‌به‌چپ جهتش اشتباه می‌شود؛ «rtl:group-…</text>
+    <text x="984" direction="ltr" y="234" fill="#8f8aa8">class/directional-utility</text>
+    <text x="40" direction="ltr" y="256" fill="#8f8aa8">9:3</text>
+    <text x="96" direction="ltr" y="256" fill="#f2c14b">هشدار</text>
+    <text x="964" direction="rtl" unicode-bidi="embed" y="256" fill="#e6e4f2">&lt;input type="email"&gt; جهت صفحه را می‌گیرد و در صفحه‌ی فارسی «user@example.com» و «+98 912…» به‌هم‌ریخته …</text>
+    <text x="984" direction="ltr" y="256" fill="#8f8aa8">html/ltr-input ✎</text>
+    <text x="40" direction="ltr" y="278" fill="#8f8aa8">14:5</text>
+    <text x="96" direction="ltr" y="278" fill="#f2c14b">هشدار</text>
+    <text x="964" direction="rtl" unicode-bidi="embed" y="278" fill="#e6e4f2">«margin-left» فیزیکی است و در صفحه‌ی راست‌به‌چپ برعکس نمی‌شود؛ «margin-inline-start» بنویسید.</text>
+    <text x="984" direction="ltr" y="278" fill="#8f8aa8">css/physical-property ✎</text>
+    <text x="40" direction="ltr" y="300" fill="#8f8aa8">15:5</text>
+    <text x="96" direction="ltr" y="300" fill="#f2c14b">هشدار</text>
+    <text x="964" direction="rtl" unicode-bidi="embed" y="300" fill="#e6e4f2">«padding: 0 26px 0 20px» برای چپ (20px) و راست (26px) مقدار متفاوت دارد و در راست‌به‌چپ برعکس نمی‌شود؛ …</text>
+    <text x="984" direction="ltr" y="300" fill="#8f8aa8">css/asymmetric-shorthand ✎</text>
+    <text x="40" direction="ltr" y="322" fill="#8f8aa8">18:5</text>
+    <text x="96" direction="ltr" y="322" fill="#f2c14b">هشدار</text>
+    <text x="964" direction="rtl" unicode-bidi="embed" y="322" fill="#e6e4f2">«left: 50%» همراه translate(-50%) یک ترفند وسط‌چین است؛ اگر فقط آن را به «inset-inline-start» تغییر دهی…</text>
+    <text x="984" direction="ltr" y="322" fill="#8f8aa8">css/physical-property</text>
+    <text x="24" direction="ltr" y="366" fill="#c7b8ff" text-decoration="underline">src/app.html</text>
+    <text x="40" direction="ltr" y="388" fill="#8f8aa8">2:1</text>
+    <text x="96" direction="ltr" y="388" fill="#ff6b93">خطا</text>
+    <text x="964" direction="rtl" unicode-bidi="embed" y="388" fill="#e6e4f2">&lt;html&gt; زبان را پویا می‌گیرد ولی dir ندارد؛ زبان‌های راست‌به‌چپ، چپ‌به‌راست نمایش داده می‌شوند. dir را ه…</text>
+    <text x="984" direction="ltr" y="388" fill="#8f8aa8">html/dir-attribute</text>
+    <text x="24" direction="ltr" y="432" fill="#c7b8ff" text-decoration="underline">src/lib/i18n/fa.json</text>
+    <text x="40" direction="ltr" y="454" fill="#8f8aa8">3:19</text>
+    <text x="96" direction="ltr" y="454" fill="#ff6b93">خطا</text>
+    <text x="964" direction="rtl" unicode-bidi="embed" y="454" fill="#e6e4f2">در «عادي» «ي» عربی (U+064A) آمده؛ «عادی» با حروف فارسی بنویسید.</text>
+    <text x="984" direction="ltr" y="454" fill="#8f8aa8">fa/arabic-letters ✎</text>
+    <text x="40" direction="ltr" y="476" fill="#8f8aa8">4:22</text>
+    <text x="96" direction="ltr" y="476" fill="#ff6b93">خطا</text>
+    <text x="964" direction="rtl" unicode-bidi="embed" y="476" fill="#e6e4f2">در «ويژه» «ي» عربی (U+064A) آمده؛ «ویژه» با حروف فارسی بنویسید.</text>
+    <text x="984" direction="ltr" y="476" fill="#8f8aa8">fa/arabic-letters ✎</text>
+    <text x="40" direction="ltr" y="498" fill="#8f8aa8">6:14</text>
+    <text x="96" direction="ltr" y="498" fill="#ff6b93">خطا</text>
+    <text x="964" direction="rtl" unicode-bidi="embed" y="498" fill="#e6e4f2">در «مي» «ي» عربی (U+064A) آمده؛ «می» با حروف فارسی بنویسید.</text>
+    <text x="984" direction="ltr" y="498" fill="#8f8aa8">fa/arabic-letters ✎</text>
+    <text x="40" direction="ltr" y="520" fill="#8f8aa8">6:16</text>
+    <text x="96" direction="ltr" y="520" fill="#f2c14b">هشدار</text>
+    <text x="964" direction="rtl" unicode-bidi="embed" y="520" fill="#e6e4f2">به‌جای فاصله نیم‌فاصله بگذارید: «مي خواهم» ← «مي‌خواهم».</text>
+    <text x="984" direction="ltr" y="520" fill="#8f8aa8">fa/zwnj-prefix ✎</text>
+    <text x="40" direction="ltr" y="542" fill="#8f8aa8">7:13</text>
+    <text x="96" direction="ltr" y="542" fill="#f2c14b">هشدار</text>
+    <text x="964" direction="rtl" unicode-bidi="embed" y="542" fill="#e6e4f2">رقم عربی «١٢» در متن فارسی؛ رقم فارسی «۱۲» بنویسید.</text>
+    <text x="984" direction="ltr" y="542" fill="#8f8aa8">fa/arabic-digits ✎</text>
+    <text x="1216" direction="rtl" unicode-bidi="embed" y="586" fill="#ff6b93" font-weight="700">✖ 16 مشکل (4 خطا، 12 هشدار)</text>
+    <text x="1200" direction="rtl" unicode-bidi="embed" y="608" fill="#8f8aa8">12 مورد با --fix خودکار درست می‌شود ✎</text>
+  </g>
+</svg>

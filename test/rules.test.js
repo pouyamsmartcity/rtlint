@@ -297,3 +297,36 @@ test('icon/directional: an unrelated isRtl nearby does not hide icons', () => {
   assert.deepEqual(ids("{dir === 'rtl' && <ArrowLeft />}", 'a.jsx'), []);
   assert.deepEqual(ids('{isRtl ? (<ChevronLeft />) : (<ChevronRight />)}', 'a.jsx'), []);
 });
+
+test('every message has a Persian translation (lang: fa)', async () => {
+  const { listRules } = await import('../src/core.js');
+  const samples = [
+    ['a.css', '.a { margin-left: 1px; text-align: left; padding: 0 1px 0 2px; border-radius: 4px 0 0 4px; left: 50%; transform: translateX(-50%); }'],
+    ['a.css', '.b { transform: translateX(4px); }'],
+    ['a.svelte', '<div style:left="1px" class="ml-2 left-1/2 -translate-x-1/2 translate-x-2"></div><ChevronRight /><i class="fa fa-arrow-left"></i><Icon icon="lucide:arrow-right" /><span class="material-icons">arrow_forward</span>'],
+    ['a.jsx', 'const a = <div style={{ marginLeft: 1, textAlign: "left" }} />;'],
+    ['a.html', '<html lang="fa"><input type="email">'],
+    ['b.html', '<html lang="ar" dir="ltr">'],
+    ['c.html', '<html lang="en" dir="rtl">'],
+    ['d.tsx', '<html lang={locale}>'],
+    ['a.md', 'پژوهش: من مي خواهم كتاب ها را بخوانم, دنیا ١٢ و ۱۲3 میخواهم سلام ، « خوب » تـــهران خانه‌‌ها می‍روم ﻻ'],
+    ['a.md', 'متن ‮معکوس ⁧باز ‬'],
+    ['a.js', 'const x = "‮";'],
+  ];
+  const config = { lang: 'fa', rules: { '*': 'warn' } };
+  const seen = new Set();
+  for (const [filePath, text] of samples) {
+    for (const m of lintText(text, { filePath, config }).messages) {
+      seen.add(m.ruleId);
+      assert.match(m.message, /[؀-ۿ]/, `${m.ruleId} has no Persian message: ${m.message}`);
+    }
+  }
+  const missing = listRules().map((r) => r.id).filter((id) => !seen.has(id));
+  assert.deepEqual(missing, [], 'every rule is exercised by this test');
+  for (const r of listRules()) assert.match(r.descriptionFa ?? '', /[؀-ۿ]/, `${r.id} needs a Persian description`);
+});
+
+test('fa/zwnj-invalid: a half-space next to Markdown emphasis is kept', () => {
+  const Z = String.fromCharCode(0x200c);
+  assert.deepEqual(ids(`ویژگی‌ها **فیزیکی**${Z}اند و _منطقی_${Z}اند`, 'a.md'), []);
+});

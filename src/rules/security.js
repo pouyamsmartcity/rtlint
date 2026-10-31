@@ -64,6 +64,7 @@ export const bidiControl = {
             index,
             length: 1,
             message: `Invisible ${label(c)} in source code can make it read differently than it runs (Trojan Source, CVE-2021-42574). Remove it or write it as an escape such as \\u${c.charCodeAt(0).toString(16)}.`,
+            fa: `${label(c)} نامرئی در کد می\u200Cتواند کد را طوری نشان دهد که با اجرای واقعی\u200Cاش فرق کند (Trojan Source، CVE-2021-42574). حذفش کنید یا به شکل escape بنویسید.`,
           });
           continue;
         }
@@ -72,6 +73,7 @@ export const bidiControl = {
             index,
             length: 1,
             message: `Invisible ${label(c)} reverses the visual order of the text that follows; it is almost never needed in real text. Use an isolate (U+2067…U+2069) or a mark (U+200F).`,
+            fa: `${label(c)} نامرئی ترتیب نمایش متن بعدی را برعکس می\u200Cکند و در متن واقعی تقریباً هیچ\u200Cوقت لازم نیست. از isolate (U+2067…U+2069) یا نشانه\u200Cی U+200F استفاده کنید.`,
           });
         }
         if (EMBEDDINGS.has(c) || ISOLATES.has(c)) {
@@ -80,7 +82,7 @@ export const bidiControl = {
           const wanted = c === '\u202C' ? EMBEDDINGS : ISOLATES;
           const k = open.findLastIndex((o) => wanted.has(o.c));
           if (k < 0) {
-            report({ index, length: 1, message: `Stray ${label(c)} with nothing to close.` });
+            report({ index, length: 1, message: `Stray ${label(c)} with nothing to close.`, fa: `${label(c)} اضافه است و چیزی را نمی\u200Cبندد.` });
           } else open.splice(k, 1);
         }
       }
@@ -89,6 +91,7 @@ export const bidiControl = {
           index: o.index,
           length: 1,
           message: `${label(o.c)} is never closed on this line, so its direction leaks into whatever is rendered next. Close it with ${EMBEDDINGS.has(o.c) ? 'U+202C' : 'U+2069'}.`,
+          fa: `${label(o.c)} در این خط بسته نشده و جهتش به متن بعدی نشت می\u200Cکند. با ${EMBEDDINGS.has(o.c) ? 'U+202C' : 'U+2069'} ببندیدش.`,
         });
       }
     }

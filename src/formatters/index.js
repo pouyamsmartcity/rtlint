@@ -1,6 +1,7 @@
 import { isAbsolute, relative, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { listRules } from '../engine.js';
+import { checkstyle, gitlab, htmlReport, junit, markdown, summary } from './extra.js';
 
 const REPO = 'https://github.com/pouyamsmartcity/rtlint';
 export const ruleDocs = (id) => `${REPO}/blob/main/docs/rules.md#${id.replace('/', '')}`;
@@ -162,4 +163,16 @@ export function sarif(results, { cwd = process.cwd(), version = '0.0.0' } = {}) 
   return JSON.stringify(doc, null, 2) + '\n';
 }
 
-export const formatters = { stylish, compact, json, github, sarif };
+export const formatters = {
+  stylish,
+  compact,
+  json,
+  github,
+  sarif,
+  html: htmlReport,
+  markdown,
+  junit,
+  checkstyle,
+  gitlab,
+  summary,
+};

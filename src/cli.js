@@ -1,4 +1,4 @@
-import { existsSync, readFileSync, statSync, watch as watchFs, writeFileSync } from 'node:fs';
+import { existsSync, readFileSync, realpathSync, statSync, watch as watchFs, writeFileSync } from 'node:fs';
 import { relative, resolve, sep } from 'node:path';
 import { applyBaseline, createBaseline, readBaseline, writeBaseline } from './baseline.js';
 import { LintCache } from './cache.js';
@@ -271,8 +271,10 @@ export async function run(argv, io = {}) {
       if (opts.changed || opts.staged) {
         const fromGit = opts.staged ? stagedFiles(cwd) : changedFiles(cwd, opts.changed);
         // Keep only lintable, non-ignored files (and those inside the given paths).
-        const allowed = new Set(collectFiles(opts.paths.length ? opts.paths : ['.'], { cwd, ignore }));
-        files = fromGit.filter((f) => allowed.has(f) && SUPPORTED.has(extOf(f)));
+        // Compare real paths: git reports /private/var/… where the walker sees /var/… (macOS symlinks).
+        const real = (p) => { try { return realpathSync.native(p); } catch { return p; } };
+        const allowed = new Map(collectFiles(opts.paths.length ? opts.paths : ['.'], { cwd, ignore }).map((f) => [real(f), f]));
+        files = fromGit.map(real).filter((f) => allowed.has(f) && SUPPORTED.has(extOf(f))).map((f) => allowed.get(f));
       } else {
         files = collectFiles(opts.paths.length ? opts.paths : ['.'], { cwd, ignore });
       }

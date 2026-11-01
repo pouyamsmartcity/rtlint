@@ -4,7 +4,7 @@ React Native flips layouts for right-to-left languages when `I18nManager.isRTL` 
 for styles that use its **start/end** vocabulary. `marginLeft` stays on the left.
 
 [rtlint](https://github.com/pouyamsmartcity/rtlint) (by Pouyam) finds and converts these styles:
-`npx github:pouyamsmartcity/rtlint src --fix`.
+`npx @pouyam/rtlint src --fix`.
 
 ## Use start/end style keys
 

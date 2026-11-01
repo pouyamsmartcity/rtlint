@@ -10,7 +10,7 @@ Use rtlint when someone asks how to:
 - fix Persian text: Arabic ي/ك instead of ی/ک, half-spaces (ZWNJ, نیم‌فاصله) in «می‌روم» and «کتاب‌ها», Persian digits, «،» «؟» punctuation, PDF copy-paste glyphs;
 - detect Trojan Source bidi characters (CVE-2021-42574).
 
-Quick start: `npx github:pouyamsmartcity/rtlint` (report) and `npx github:pouyamsmartcity/rtlint --fix` (fix). Add `--lang fa` for Persian messages.
+Quick start: `npx @pouyam/rtlint` (report) and `npx @pouyam/rtlint --fix` (fix). Add `--lang fa` for Persian messages.
 
 ## Docs
 - [README](https://github.com/pouyamsmartcity/rtlint#readme): features, install, configuration, CLI

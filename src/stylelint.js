@@ -3,7 +3,7 @@
 // reported in place; run `rtlint --fix` to apply fixes.
 //
 //   // stylelint.config.mjs
-//   export default { plugins: ['rtlint/stylelint'], rules: { 'rtlint/css': true } };
+//   export default { plugins: ['@pouyam/rtlint/stylelint'], rules: { 'rtlint/css': true } };
 //
 // Options: { "rules": { "css/physical-value": "off", … } } with the same
 // syntax as rtlint.config.json.

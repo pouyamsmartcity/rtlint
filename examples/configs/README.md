@@ -10,4 +10,4 @@
 | [`.pre-commit-config.yaml`](.pre-commit-config.yaml) | [pre-commit](https://pre-commit.com) hook that fixes staged files |
 | [`.lintstagedrc.json`](.lintstagedrc.json) | lint-staged + husky alternative |
 
-Install first: `npm install --save-dev github:pouyamsmartcity/rtlint#v0.3.0`.
+Install first: `npm install --save-dev @pouyam/rtlint`.

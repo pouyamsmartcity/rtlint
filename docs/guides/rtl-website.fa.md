@@ -36,7 +36,7 @@
 <div dir="ltr">
 
 ```bash
-npx github:pouyamsmartcity/rtlint --lang fa --fix
+npx @pouyam/rtlint --lang fa --fix
 ```
 
 </div>

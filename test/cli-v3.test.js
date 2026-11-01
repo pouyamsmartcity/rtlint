@@ -47,7 +47,7 @@ test('init detects the project and writes a config and an npm script', async () 
   assert.equal(config.lang, 'fa');
   assert.equal(config.rules['class/space-reverse'], 'warn');
   assert.match(config.$schema, /schema\/config\.json$/);
-  assert.equal(JSON.parse(readFileSync(join(dir, 'package.json'), 'utf8')).scripts['lint:rtl'], 'rtlint');
+  assert.equal(JSON.parse(readFileSync(join(dir, 'package.json'), 'utf8')).scripts['lint:rtl'], 'npx @pouyam/rtlint');
   assert.equal((await cli(['init'], dir)).code, 2, 'does not overwrite without --force');
   assert.equal((await cli(['init', '--force', '--lang', 'en'], dir)).code, 0);
 });

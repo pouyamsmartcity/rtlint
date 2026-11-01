@@ -305,7 +305,7 @@ const { messages } = lintText('.a { margin-left: 4px }', { filePath: 'a.css' });
 const { output } = fixText('این يك كتاب است', { filePath: 'post.md' }); // "این یک کتاب است"
 ```
 
-`rtlint/core` has no Node.js imports and runs in the browser (`import { fixText } from
+`@pouyam/rtlint/core` has no Node.js imports and runs in the browser (`import { fixText } from
 'https://cdn.jsdelivr.net/npm/@pouyam/rtlint@0.3/src/core.js'`). The
 [playground](https://pouyamsmartcity.github.io/rtlint/playground/) uses it. For files on disk,
 `lintFiles(['src'], { fix: true, lang: 'fa' })` does what the CLI does.

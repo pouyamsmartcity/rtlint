@@ -38,9 +38,9 @@ jobs:
         run: gh release view "$GITHUB_REF_NAME" >/dev/null 2>&1 || gh release create "$GITHUB_REF_NAME" --title "rtlint $GITHUB_REF_NAME" --notes-file notes.md --verify-tag
       - name: Publish to npm (trusted publishing)
         run: |
-          version="$(node -p "require('./package.json').version")"
-          if npm view "rtlint@$version" version >/dev/null 2>&1; then
-            echo "::notice::rtlint@$version is already on npm."
+          spec="$(node -p "const p = require('./package.json'); p.name + '@' + p.version")"
+          if npm view "$spec" version >/dev/null 2>&1; then
+            echo "::notice::$spec is already on npm."
             exit 0
           fi
           npm publish --access public

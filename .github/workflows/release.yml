@@ -1,9 +1,13 @@
 name: Release
 
 # Push a tag like v0.3.1 to create a GitHub release from CHANGELOG.md and
-# publish to npm. Publishing uses npm Trusted Publishing (OIDC): npm trusts
-# this workflow in this repository, so no npm token exists anywhere, and every
-# version gets a signed provenance statement automatically.
+# stage the version on npm. Publishing uses npm Trusted Publishing (OIDC): npm
+# trusts this workflow in this repository, so no npm token exists anywhere,
+# and every version gets a signed provenance statement automatically.
+#
+# The trusted publisher may only *stage* a version. A maintainer then makes it
+# public with their security key (npmjs.com, or `npm stage approve <id>`), so a
+# compromised workflow cannot ship a release on its own.
 on:
   push:
     tags: ['v[0-9]+.[0-9]+.[0-9]+']
@@ -36,11 +40,13 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: gh release view "$GITHUB_REF_NAME" >/dev/null 2>&1 || gh release create "$GITHUB_REF_NAME" --title "rtlint $GITHUB_REF_NAME" --notes-file notes.md --verify-tag
-      - name: Publish to npm (trusted publishing)
+      - name: Stage on npm (trusted publishing)
         run: |
           spec="$(node -p "const p = require('./package.json'); p.name + '@' + p.version")"
           if npm view "$spec" version >/dev/null 2>&1; then
             echo "::notice::$spec is already on npm."
             exit 0
           fi
-          npm publish --access public
+          # Node 24 ships npm 11; staged publishing needs npm 12.
+          npx --yes npm@12.2.1 stage publish --access public
+          echo "::notice::$spec is staged. Approve it on npmjs.com with a security key to publish it."

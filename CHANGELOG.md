@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.3.2
+
+- Security: four patterns were quadratic on long runs of spaces or backticks (ReDoS): a CSS shorthand value, `!important`, a space before `»`, and Markdown code spans. A crafted file with 50,000 spaces took up to 34 s; it now takes milliseconds. A sweep over 18 file types and 70 repeated inputs guards against new ones.
+- Docs: the README and `llms.txt` show the scoped import paths (`@pouyam/rtlint/core`, `/eslint`, `/stylelint`, `/vite`).
+- Releases are staged on npm by GitHub Actions (Trusted Publishing, provenance) and go public only after a maintainer approves them with a security key.
+
 ## 0.3.1
 
 - Published on npm as **`@pouyam/rtlint`**: `npx @pouyam/rtlint`, `npm install --save-dev @pouyam/rtlint`. npm does not allow the unscoped name `rtlint` (too close to eslint and tslint). The command is still `rtlint`.

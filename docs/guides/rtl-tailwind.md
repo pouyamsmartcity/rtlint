@@ -66,7 +66,7 @@ rtlint's `class/directional-utility`, `icon/directional` and `class/space-revers
 
 ```yaml
 - uses: actions/checkout@v7
-- uses: pouyamsmartcity/rtlint@main
+- uses: pouyamsmartcity/rtlint@v0
   with:
     paths: src
     changed-only: true

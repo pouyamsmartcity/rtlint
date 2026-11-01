@@ -1,0 +1,16 @@
+{
+  "$schema": "https://raw.githubusercontent.com/pouyamsmartcity/rtlint/main/schema/config.json",
+  "lang": "fa",
+  "rules": {
+    "fa/percent-sign": "warn",
+    "fa/thousands-separator": "warn",
+    "fa/latin-digits": "warn",
+    "html/user-content-dir": "warn",
+    "class/space-reverse": "warn"
+  },
+  "ignore": ["legacy/**", "public/vendor/**"],
+  "overrides": [
+    { "files": ["src/components/charts/**"], "rules": { "css/*": "off", "class/*": "off" } },
+    { "files": ["src/locales/ar/**"], "persian": false }
+  ]
+}

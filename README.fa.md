@@ -71,6 +71,16 @@ npx github:pouyamsmartcity/rtlint --lang fa --fix
 
 فقط اصلاح‌هایی انجام می‌شوند که با اطمینان امن‌اند. اگر پروژه در git است، با `git diff` می‌توانید همه‌ی تغییرها را ببینید و اگر چیزی را نخواستید برگردانید.
 
+**نصب دائمی در پروژه** (برای افزونه‌های ESLint، Stylelint و Vite لازم است):
+
+<div dir="ltr">
+
+```bash
+npm install --save-dev github:pouyamsmartcity/rtlint#v0.3.0
+```
+
+</div>
+
 > فقط یک فایل یا پوشه را بررسی کنید: `npx github:pouyamsmartcity/rtlint src/components --lang fa`
 
 **ساخت خودکار تنظیمات:** دستور `npx github:pouyamsmartcity/rtlint init` پروژه را می‌شناسد (Tailwind، Bootstrap، React، ترجمه‌های فارسی و …) و فایل تنظیمات مناسب را می‌سازد.
@@ -203,7 +213,7 @@ export default [
 
 ```yaml
 - uses: actions/checkout@v7
-- uses: pouyamsmartcity/rtlint@main
+- uses: pouyamsmartcity/rtlint@v0
   with:
     paths: src
     args: --lang fa
@@ -234,6 +244,10 @@ npx rtlint --watch                            # با هر ذخیره دوبار�
 ### گزارش برای تیم و CI
 
 با `-f html --lang fa` یک گزارش فارسی و راست‌به‌چپ می‌سازد که می‌شود برای تیم فرستاد. `-f markdown` برای نظر در Pull Request است، و `junit`، `checkstyle` و `gitlab` برای Jenkins، GitLab و بقیه‌ی سیستم‌های CI. با `--stats` جدول خلاصه‌ی مشکل‌ها بر اساس قانون را هم می‌بینید.
+
+### نمونه‌ی آماده
+
+تنظیمات آماده برای ESLint، Stylelint، Vite، GitHub Actions و pre-commit را از پوشه‌ی [`examples/configs`](examples/configs) کپی کنید.
 
 ### Vite و pre-commit
 

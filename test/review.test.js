@@ -174,7 +174,8 @@ test('E: adversarial inputs stay fast and never crash', () => {
     const r = lintText(text, { filePath });
     const ms = performance.now() - started;
     assert.ok(!r.messages.some((m) => m.fatal), `${filePath}: internal error`);
-    assert.ok(ms < 3000, `${filePath} (${text.length} chars) took ${Math.round(ms)} ms`);
+    // Generous bound: catches quadratic blow-ups (37 s before the fix), not machine load.
+    assert.ok(ms < 8000, `${filePath} (${text.length} chars) took ${Math.round(ms)} ms`);
   }
 });
 

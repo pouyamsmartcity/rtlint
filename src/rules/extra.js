@@ -184,7 +184,7 @@ export const userContentDir = {
   check(file, report) {
     const src = markupSource(file);
     if (!src) return;
-    const re = /<(input|textarea|div|p|span|section)\b((?:[^<>"'{]|"[^"]*"|'[^']*'|\{(?:[^{}]|\{[^{}]*\})*\})*)>/gi;
+    const re = /<(input|textarea|div|p|span|section)\b((?:[^<>"'{]|"[^"]*"|'[^']*'|\{(?:[^{}]|\{(?:[^{}]|\{[^{}]*\})*\})*\})*)>/gi;
     for (const m of src.matchAll(re)) {
       const tag = m[1].toLowerCase();
       const attrs = m[2];

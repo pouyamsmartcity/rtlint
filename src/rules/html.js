@@ -92,7 +92,7 @@ export const ltrInput = {
   check(file, report) {
     const src = markupSource(file);
     if (!src) return;
-    for (const m of src.matchAll(/<input\b((?:[^<>"'{]|"[^"]*"|'[^']*'|\{(?:[^{}]|\{[^{}]*\})*\})*)>/gi)) {
+    for (const m of src.matchAll(/<input\b((?:[^<>"'{]|"[^"]*"|'[^']*'|\{(?:[^{}]|\{(?:[^{}]|\{[^{}]*\})*\})*\})*)>/gi)) {
       const type = getAttr(m[1], 'type');
       if (!type || type.dynamic || !LTR_TYPES.has(type.value.toLowerCase())) continue;
       if (getAttr(m[1], 'dir')) continue;

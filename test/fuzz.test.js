@@ -130,6 +130,14 @@ test('the linear rewrites keep their meaning', () => {
   // Code spans: a run of N backticks closes only at a run of exactly N.
   assert.equal(fixText('``يك`` `a` يك پژوهش', { filePath: 'a.md' }).output, '``يك`` `a` یک پژوهش');
   assert.equal(fixText('``a` يك ` پژوهش', { filePath: 'a.md' }).output, '``a` يك ` پژوهش');
+  // Tags whose attributes nest braces three deep, or hold "a > b" in quotes, are still read.
+  const ids = (text, filePath) => lintText(text, { filePath }).messages.map((m) => m.ruleId);
+  const handler = '<input\n  type="url"\n  onkeydown={(e) => {\n    if (e.key === "Enter") {\n      go();\n    }\n  }}\n/>';
+  assert.ok(ids(handler, 'a.svelte').includes('html/ltr-input'));
+  assert.ok(ids(handler, 'a.jsx').includes('html/ltr-input'));
+  assert.ok(ids('<input type="email" placeholder="a > b">', 'a.html').includes('html/ltr-input'));
+  assert.ok(ids('<ChevronRight className={cn("a", { b: c })} />', 'a.jsx').includes('icon/directional'));
+  assert.ok(ids('<div className={cn("p-2", clsx("ml-2"))} />', 'a.jsx').includes('class/physical-utility'));
   const rules = (src) => parseGitignore(src).map((r) => r.re.source);
   assert.deepEqual(rules('dist   \n'), rules('dist\n'));
   assert.notDeepEqual(rules('a\\ \n'), rules('a\n'));

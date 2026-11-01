@@ -92,7 +92,7 @@ test('fuzz: long and adversarial inputs finish quickly', () => {
   }
 });
 
-test('fuzz: long whitespace runs stay linear (ReDoS)', () => {
+test('fuzz: long runs and unclosed openers stay linear (ReDoS)', () => {
   // Each of these took 7-34 s with 50,000 spaces before the patterns were fixed.
   const sp = ' '.repeat(50000);
   const cases = [
@@ -102,6 +102,14 @@ test('fuzz: long whitespace runs stay linear (ReDoS)', () => {
     ['a.md', 'سلام' + '`'.repeat(50000) + '»'],
     ['a.md', '``a`'.repeat(12500)],
     ['a.css', 'a{margin:1px' + '('.repeat(50000) + 'x}'],
+    // Unclosed tags and class helpers: each opener used to scan to the end of the file.
+    ['a.html', '<input '.repeat(7000)],
+    ['a.html', '<html '.repeat(8000)],
+    ['a.html', '<script'.repeat(7000)],
+    ['a.jsx', '<A '.repeat(15000)],
+    ['a.jsx', '<input {'.repeat(6000)],
+    ['a.ts', '«' + '<input "'.repeat(6000)],
+    ['a.ts', 'cn("'.repeat(12000)],
   ];
   for (const [filePath, text] of cases) {
     const started = performance.now();

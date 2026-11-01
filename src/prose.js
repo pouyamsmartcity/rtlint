@@ -163,7 +163,7 @@ export function proseText(file) {
     const lower = text.toLowerCase();
     let pieces = '';
     let pos = 0;
-    for (const m of text.matchAll(/<script\b[^>]*>/gi)) {
+    for (const m of text.matchAll(/<script\b[^<>]*>/gi)) {
       const start = m.index + m[0].length;
       if (start < pos) continue;
       const close = lower.indexOf('</script', start);

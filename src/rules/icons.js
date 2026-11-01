@@ -1,7 +1,7 @@
 // Icons that point left/right mean "back"/"forward"; in RTL they must mirror.
 // Up/down and diagonal arrows (external-link ↗) are deliberately left alone.
 
-const COMPONENT = /<([A-Z][\w.]*)\b((?:[^>"'{]|"[^"]*"|'[^']*'|\{(?:[^{}]|\{[^{}]*\})*\})*)>/g;
+const COMPONENT = /<([A-Z][\w.]*)\b((?:[^<>"'{]|"[^"]*"|'[^']*'|\{(?:[^{}]|\{[^{}]*\})*\})*)>/g;
 const ICON_NAME =
   /(?:Chevrons?|Arrows?|Caret|Angles?|Navigate|KeyboardArrow|ArrowNarrow|ArrowSmall|ArrowLong|Triangle)(?:Left|Right|Back|Forward|Next|Before|Previous)(?:Icon|Outline|Filled|Rounded|Sharp|Ios|IosNew)*$|^(?:[A-Z][a-z]{0,2})?(?:ArrowBack|ArrowForward|NavigateNext|NavigateBefore)\w*$/;
 const VERTICAL = /Up|Down|Top|Bottom/;

@@ -76,7 +76,7 @@ export function maskScripts(text) {
   const lower = text.toLowerCase();
   let out = '';
   let pos = 0;
-  for (const m of text.matchAll(/<script\b[^>]*>/gi)) {
+  for (const m of text.matchAll(/<script\b[^<>]*>/gi)) {
     const start = m.index + m[0].length;
     if (start < pos) continue;
     const close = lower.indexOf('</script', start);
@@ -345,7 +345,7 @@ export function cssRegions(file) {
   if (kind === 'markup') {
     const src = file.markupView;
     const lower = src.toLowerCase();
-    for (const m of src.matchAll(/<style\b([^>]*)>/gi)) {
+    for (const m of src.matchAll(/<style\b([^<>]*)>/gi)) {
       const start = m.index + m[0].length;
       const close = lower.indexOf('</style', start);
       const range = [start, close < 0 ? src.length : close];
@@ -449,9 +449,14 @@ export function classRegions(file) {
       regions.push([start, start + m[1].length]);
     }
   }
+  // A helper nested in one already scanned (cn(a, clsx(b))) adds nothing: the
+  // outer range has its strings. Skipping it keeps "cn(cn(cn(…" linear.
+  let scannedTo = -1;
   for (const m of src.matchAll(CLASS_HELPER)) {
+    if (m.index < scannedTo) continue;
     const open = m.index + m[0].length - 1;
-    regions.push(...stringRanges(src, open + 1, matchClose(src, open, '(', ')')));
+    scannedTo = matchClose(src, open, '(', ')');
+    regions.push(...stringRanges(src, open + 1, scannedTo));
   }
   for (const m of src.matchAll(/\btw\s*`/g)) {
     regions.push(...scanTemplate(src, m.index + m[0].length - 1).pieces);

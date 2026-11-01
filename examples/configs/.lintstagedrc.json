@@ -1,0 +1,3 @@
+{
+  "*.{css,scss,html,vue,svelte,jsx,tsx,md,json}": "rtlint --fix --lang fa"
+}

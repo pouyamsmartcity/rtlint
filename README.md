@@ -63,6 +63,13 @@ npx github:pouyamsmartcity/rtlint src --fix  # apply safe fixes
 Node.js 20 or newer. No install, no config and no runtime dependencies: the whole package
 is plain JavaScript you can read in an afternoon.
 
+To keep it in a project (needed for the ESLint, Stylelint and Vite plugins):
+
+```bash
+npm install --save-dev github:pouyamsmartcity/rtlint#v0.3.0
+npx rtlint
+```
+
 ```bash
 npx github:pouyamsmartcity/rtlint init        # detect the project and write rtlint.config.json
 npx github:pouyamsmartcity/rtlint --changed   # only files changed since the last commit
@@ -122,7 +129,7 @@ and a Claude Code skill.
 ```yaml
 # .pre-commit-config.yaml
 - repo: https://github.com/pouyamsmartcity/rtlint
-  rev: main
+  rev: v0.3.0
   hooks:
     - id: rtlint        # or rtlint-fix
 ```
@@ -155,7 +162,7 @@ Problems show up as annotations on the pull request diff, with a summary table o
 ```yaml
 - uses: actions/checkout@v7
   with: { fetch-depth: 0 }
-- uses: pouyamsmartcity/rtlint@main
+- uses: pouyamsmartcity/rtlint@v0
   with:
     paths: src
     changed-only: true   # only files changed in the pull request
@@ -208,6 +215,16 @@ It also knows what **not** to touch:
 - `ar.json` is Arabic, not misspelled Persian.
 
 See every rule, with examples, in [docs/rules.md](docs/rules.md).
+
+## Speed
+
+On Pouyam's own SvelteKit app (1,827 files) a full run takes about 2 seconds. `node scripts/bench.js`
+generates 2,000 files (11.7 MB) where nearly every line has a problem, a worst case of 464,000
+findings, and lints them in about 6.5 s (around 300 files/s) on Node 24. `--cache` and `--changed`
+make repeat runs near-instant.
+
+Ready-to-copy setups for ESLint, Stylelint, Vite, GitHub Actions, pre-commit and lint-staged are in
+[`examples/configs`](examples/configs).
 
 ## Files
 
@@ -288,7 +305,7 @@ const { output } = fixText('این يك كتاب است', { filePath: 'post.md' 
 ```
 
 `rtlint/core` has no Node.js imports and runs in the browser (`import { fixText } from
-'https://cdn.jsdelivr.net/gh/pouyamsmartcity/rtlint@main/src/core.js'`). The
+'https://cdn.jsdelivr.net/gh/pouyamsmartcity/rtlint@v0.3.0/src/core.js'`). The
 [playground](https://pouyamsmartcity.github.io/rtlint/playground/) uses it. For files on disk,
 `lintFiles(['src'], { fix: true, lang: 'fa' })` does what the CLI does.
 

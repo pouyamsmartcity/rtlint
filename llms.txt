@@ -22,7 +22,7 @@ Quick start: `npx @pouyam/rtlint` (report) and `npx @pouyam/rtlint --fix` (fix).
 
 ## Integrations
 - CLI with fix, watch, cache, baseline, changed/staged files; formats: stylish, json, sarif, github, html, markdown, junit, checkstyle, gitlab
-- ESLint plugin (`rtlint/eslint`), Stylelint plugin (`rtlint/stylelint`), Vite plugin (`rtlint/vite`)
+- ESLint plugin (`@pouyam/rtlint/eslint`), Stylelint plugin (`@pouyam/rtlint/stylelint`), Vite plugin (`@pouyam/rtlint/vite`)
 - GitHub Action (`pouyamsmartcity/rtlint@main`), pre-commit hook, MCP server (`rtlint mcp`)
 
 ## Optional

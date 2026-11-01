@@ -1,6 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { fixText, lintText } from '../src/core.js';
+import { parseGitignore } from '../src/files.js';
 
 // Deterministic PRNG so a failure is reproducible from its seed.
 function rng(seed) {
@@ -89,6 +90,40 @@ test('fuzz: long and adversarial inputs finish quickly', () => {
     const ms = performance.now() - started;
     assert.ok(ms < 4000, `${filePath} with ${text.length} chars took ${Math.round(ms)} ms`);
   }
+});
+
+test('fuzz: long whitespace runs stay linear (ReDoS)', () => {
+  // Each of these took 7-34 s with 50,000 spaces before the patterns were fixed.
+  const sp = ' '.repeat(50000);
+  const cases = [
+    ['a.css', 'a{margin:1px' + sp + 'x 2px}'],
+    ['a.css', 'a{margin:1px 2px' + sp + 'x!important}'],
+    ['a.md', '«سلام' + sp + 'x»'],
+    ['a.md', 'سلام' + '`'.repeat(50000) + '»'],
+    ['a.md', '``a`'.repeat(12500)],
+  ];
+  for (const [filePath, text] of cases) {
+    const started = performance.now();
+    fixText(text, { filePath });
+    const ms = performance.now() - started;
+    assert.ok(ms < 1500, `${filePath} took ${Math.round(ms)} ms`);
+  }
+  const started = performance.now();
+  parseGitignore('a' + sp + 'x\n');
+  assert.ok(performance.now() - started < 1500, '.gitignore line with a long space run');
+});
+
+test('the linear rewrites keep their meaning', () => {
+  assert.equal(fixText('a { margin: 0 1px 0 2px !important; }', { filePath: 'a.css' }).output, 'a { margin-block: 0 !important; margin-inline: 2px 1px !important; }');
+  assert.equal(fixText('a { margin: 0 1px 0 2px  !IMPORTANT ; }', { filePath: 'a.css' }).output.includes('!important'), true);
+  assert.equal(fixText('«سلام »', { filePath: 'a.md' }).output, '«سلام»');
+  assert.equal(fixText('« سلام  »', { filePath: 'a.md' }).output, '«سلام»');
+  // Code spans: a run of N backticks closes only at a run of exactly N.
+  assert.equal(fixText('``يك`` `a` يك پژوهش', { filePath: 'a.md' }).output, '``يك`` `a` یک پژوهش');
+  assert.equal(fixText('``a` يك ` پژوهش', { filePath: 'a.md' }).output, '``a` يك ` پژوهش');
+  const rules = (src) => parseGitignore(src).map((r) => r.re.source);
+  assert.deepEqual(rules('dist   \n'), rules('dist\n'));
+  assert.notDeepEqual(rules('a\\ \n'), rules('a\n'));
 });
 
 test('CRLF and BOM keep positions and fixes correct', () => {

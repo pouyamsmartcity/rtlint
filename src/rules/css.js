@@ -174,13 +174,15 @@ export const asymmetricShorthand = {
       // Sass/Less interpolation (#{$x}, @{x}) is cut short by the value pattern; skip it.
       const after = view[m.index + m[0].length];
       if (after === '{' || /[#@]$/.test(m[4].trimEnd()) || /[#@]\{/.test(m[4])) continue;
-      const raw = m[4].replace(/\s+$/, '');
+      const raw = m[4].trimEnd();
       const inIndented = indented.some(([s, e]) => declStart >= s && declStart < e);
       // A fix rewrites the raw text, so a comment inside the value would be lost.
       const rawText = file.text.slice(declStart, declStart + m[2].length + m[3].length + raw.length);
       const canFix = !INDENTED.has(file.ext) && !inIndented && !rawText.includes('/*');
-      const important = /\s*!important$/i.test(raw) ? ' !important' : '';
-      const value = raw.replace(/\s*!important$/i, '').replace(/\s+/g, ' ');
+      // String methods, not /\s*!important$/: that pattern is quadratic on long whitespace runs.
+      const hasImportant = raw.slice(-10).toLowerCase() === '!important';
+      const important = hasImportant ? ' !important' : '';
+      const value = (hasImportant ? raw.slice(0, -10).trimEnd() : raw).replace(/\s+/g, ' ');
       if (/[,/]/.test(value.replace(/\([^)]*\)/g, ''))) continue;
       if (SAFE_AREA.test(value)) continue;
       const parts = splitCssValue(value);

@@ -308,7 +308,9 @@ export const spacing = {
         fix: { text: '' },
       });
     });
-    eachPersianMatch(file, /«([ \t]+)|([ \t]+)»/g, (m, index) => {
+    // (?<![ \t]) tries a run of spaces only from its first space: without it a
+    // long run before » backtracks quadratically.
+    eachPersianMatch(file, /«([ \t]+)|(?<![ \t])([ \t]+)»/g, (m, index) => {
       const opening = m[1] !== undefined;
       const spaces = opening ? m[1] : m[2];
       report({

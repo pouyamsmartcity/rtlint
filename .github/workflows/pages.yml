@@ -35,7 +35,7 @@ jobs:
           printf 'User-agent: *\nAllow: /\nSitemap: %s/sitemap.xml\n' "$site" > _site/robots.txt
           printf '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><url><loc>%s/playground/</loc><changefreq>weekly</changefreq></url></urlset>\n' "$site" > _site/sitemap.xml
       - uses: actions/configure-pages@v5
-      - uses: actions/upload-pages-artifact@v3
+      - uses: actions/upload-pages-artifact@v5
         with:
           path: _site
       - id: deployment

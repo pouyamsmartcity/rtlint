@@ -23,7 +23,7 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Build site
         run: |
           site=https://pouyamsmartcity.github.io/rtlint
@@ -34,9 +34,9 @@ jobs:
           printf '<!doctype html><html lang="fa" dir="rtl"><meta charset="utf-8"><title>rtlint by Pouyam</title><link rel="canonical" href="%s/playground/"><meta http-equiv="refresh" content="0; url=playground/"><a href="playground/">rtlint playground</a></html>' "$site" > _site/index.html
           printf 'User-agent: *\nAllow: /\nSitemap: %s/sitemap.xml\n' "$site" > _site/robots.txt
           printf '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><url><loc>%s/playground/</loc><changefreq>weekly</changefreq></url></urlset>\n' "$site" > _site/sitemap.xml
-      - uses: actions/configure-pages@v5
-      - uses: actions/upload-pages-artifact@v3
+      - uses: actions/configure-pages@v6
+      - uses: actions/upload-pages-artifact@v5
         with:
           path: _site
       - id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5

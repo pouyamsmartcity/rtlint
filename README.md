@@ -9,6 +9,7 @@ A zero-dependency linter for logical CSS, Tailwind/Bootstrap utilities, React an
 HTML direction, back/next icons, Persian typography and Trojan Source bidi attacks, with safe `--fix`.
 CLI, ESLint, Stylelint, Vite, GitHub Action, pre-commit and an MCP server for AI assistants.
 
+[![npm](https://img.shields.io/npm/v/@pouyam/rtlint.svg)](https://www.npmjs.com/package/@pouyam/rtlint)
 [![CI](https://github.com/pouyamsmartcity/rtlint/actions/workflows/ci.yml/badge.svg)](https://github.com/pouyamsmartcity/rtlint/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 ![Dependencies: 0](https://img.shields.io/badge/dependencies-0-brightgreen.svg)
@@ -56,8 +57,8 @@ Tools for this already exist, but each one covers a single layer. A real RTL bug
 ## Quick start
 
 ```bash
-npx github:pouyamsmartcity/rtlint            # lint the current directory
-npx github:pouyamsmartcity/rtlint src --fix  # apply safe fixes
+npx @pouyam/rtlint            # lint the current directory
+npx @pouyam/rtlint src --fix  # apply safe fixes
 ```
 
 Node.js 20 or newer. No install, no config and no runtime dependencies: the whole package
@@ -66,23 +67,23 @@ is plain JavaScript you can read in an afternoon.
 To keep it in a project (needed for the ESLint, Stylelint and Vite plugins):
 
 ```bash
-npm install --save-dev github:pouyamsmartcity/rtlint#v0.3.0
-npx rtlint
+npm install --save-dev @pouyam/rtlint
+npx @pouyam/rtlint
 ```
 
 ```bash
-npx github:pouyamsmartcity/rtlint init        # detect the project and write rtlint.config.json
-npx github:pouyamsmartcity/rtlint --changed   # only files changed since the last commit
-npx github:pouyamsmartcity/rtlint explain fa/zwnj-suffix   # what a rule does, with examples
+npx @pouyam/rtlint init        # detect the project and write rtlint.config.json
+npx @pouyam/rtlint --changed   # only files changed since the last commit
+npx @pouyam/rtlint explain fa/zwnj-suffix   # what a rule does, with examples
 ```
 
 ### Adopting it in a large codebase
 
 ```bash
-npx rtlint --update-baseline        # record today's problems in rtlint-baseline.json
-npx rtlint --baseline rtlint-baseline.json   # from now on, only new problems fail CI
-npx rtlint --cache --staged         # fast pre-commit check of staged files
-npx rtlint --fix-only fa/*          # fix one family of rules at a time
+npx @pouyam/rtlint --update-baseline        # record today's problems in rtlint-baseline.json
+npx @pouyam/rtlint --baseline rtlint-baseline.json   # from now on, only new problems fail CI
+npx @pouyam/rtlint --cache --staged         # fast pre-commit check of staged files
+npx @pouyam/rtlint --fix-only fa/*          # fix one family of rules at a time
 ```
 
 Baselines match problems by rule and line content, not line number, so editing other parts of a
@@ -92,7 +93,7 @@ file does not bring old problems back.
 
 ```js
 // eslint.config.js
-import rtlint from 'rtlint/eslint';
+import rtlint from '@pouyam/rtlint/eslint';
 
 export default [
   rtlint.configs.recommended,
@@ -108,7 +109,7 @@ ESLint setup parses.
 
 ```js
 // vite.config.js
-import rtlint from 'rtlint/vite';
+import rtlint from '@pouyam/rtlint/vite';
 export default { plugins: [rtlint({ lang: 'fa', failOnError: true })] };
 ```
 
@@ -117,7 +118,7 @@ Problems appear in the dev-server terminal as you save; with `failOnError`, `vit
 ### AI assistants (MCP)
 
 ```bash
-claude mcp add rtlint -- npx -y github:pouyamsmartcity/rtlint mcp
+claude mcp add rtlint -- npx -y @pouyam/rtlint mcp
 ```
 
 Claude, Cursor, VS Code and other MCP clients can then lint and fix RTL code themselves.
@@ -139,7 +140,7 @@ and a Claude Code skill.
 ```js
 // stylelint.config.mjs
 export default {
-  plugins: ['rtlint/stylelint'],
+  plugins: ['@pouyam/rtlint/stylelint'],
   rules: { 'rtlint/css': true }, // or { rules: { 'css/physical-value': 'off' } }
 };
 ```
@@ -298,21 +299,21 @@ Exit codes: `0` clean, `1` problems found, `2` usage or config error.
 ## API
 
 ```js
-import { lintText, fixText } from 'rtlint';
+import { lintText, fixText } from '@pouyam/rtlint';
 
 const { messages } = lintText('.a { margin-left: 4px }', { filePath: 'a.css' });
 const { output } = fixText('این يك كتاب است', { filePath: 'post.md' }); // "این یک کتاب است"
 ```
 
 `rtlint/core` has no Node.js imports and runs in the browser (`import { fixText } from
-'https://cdn.jsdelivr.net/gh/pouyamsmartcity/rtlint@v0.3.0/src/core.js'`). The
+'https://cdn.jsdelivr.net/npm/@pouyam/rtlint@0.3/src/core.js'`). The
 [playground](https://pouyamsmartcity.github.io/rtlint/playground/) uses it. For files on disk,
 `lintFiles(['src'], { fix: true, lang: 'fa' })` does what the CLI does.
 
 ## FAQ
 
 **How do I support RTL in Tailwind CSS?** Use logical utilities (`ms-4`, `pe-2`, `start-0`,
-`text-end`, `rounded-s-lg`) and `rtl:` variants for things that move. `npx rtlint --fix` converts
+`text-end`, `rounded-s-lg`) and `rtl:` variants for things that move. `npx @pouyam/rtlint --fix` converts
 an existing codebase. See the [Tailwind RTL guide](docs/guides/rtl-tailwind.md).
 
 **How do I convert `margin-left` to logical CSS?** `margin-left` → `margin-inline-start`, `left` →
@@ -320,7 +321,7 @@ an existing codebase. See the [Tailwind RTL guide](docs/guides/rtl-tailwind.md).
 lists all of them, and rtlint rewrites them for you, shorthands included.
 
 **How do I fix Persian half-spaces (ZWNJ, نیم‌فاصله) and Arabic ي/ك in my app?** Run
-`npx rtlint messages --lang fa --fix` on your translations. See
+`npx @pouyam/rtlint messages --lang fa --fix` on your translations. See
 [Persian typography in code](docs/guides/persian-typography-in-code.md).
 
 **Does it work with React Native?** Yes: `marginLeft` becomes `marginStart`, and so on. See the

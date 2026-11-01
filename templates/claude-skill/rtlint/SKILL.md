@@ -12,9 +12,9 @@ and Trojan Source bidi characters.
 
 ## Workflow
 
-1. After editing UI code or Persian text, run: `npx rtlint <changed files> --lang fa`
-2. Apply safe fixes: `npx rtlint <files> --fix`
-3. Fix what is left by hand (icons, centering tricks, translate-x); `npx rtlint explain <rule>` explains a rule.
+1. After editing UI code or Persian text, run: `npx @pouyam/rtlint <changed files> --lang fa`
+2. Apply safe fixes: `npx @pouyam/rtlint <files> --fix`
+3. Fix what is left by hand (icons, centering tricks, translate-x); `npx @pouyam/rtlint explain <rule>` explains a rule.
 4. Do not "fix" code that already handles direction (`[dir="rtl"]` blocks, `isRtl ? … : …`).
 
-Use `--lang fa` when the user writes in Persian. Prefer the MCP server (`npx -y rtlint mcp`) when available.
+Use `--lang fa` when the user writes in Persian. Prefer the MCP server (`npx -y @pouyam/rtlint mcp`) when available.

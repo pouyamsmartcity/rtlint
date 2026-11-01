@@ -1,7 +1,7 @@
 // Vite plugin: reports RTL and Persian typography problems while you develop.
 //
 //   // vite.config.js
-//   import rtlint from 'rtlint/vite';
+//   import rtlint from '@pouyam/rtlint/vite';
 //   export default { plugins: [rtlint({ lang: 'fa' })] };
 //
 // Options: { lang: 'en' | 'fa', failOnError: false, include: RegExp, exclude: RegExp }

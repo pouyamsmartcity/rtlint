@@ -51,5 +51,5 @@ Inside JavaScript, Python, Dart and other code, rtlint reads only comments, JSX 
 literals that contain a space. Character tables such as `replaceAll('ي', 'ی')` are left alone.
 
 ```bash
-npx github:pouyamsmartcity/rtlint messages/fa.json --lang fa --fix
+npx @pouyam/rtlint messages/fa.json --lang fa --fix
 ```

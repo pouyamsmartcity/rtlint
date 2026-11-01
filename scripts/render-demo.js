@@ -17,7 +17,7 @@ const clip = (s, n) => (s.length > n ? s.slice(0, n - 1) + '…' : s);
 
 // Each row is a list of cells placed at fixed x positions, so proportional
 // Persian glyphs cannot push the rule column out of line.
-const rows = [{ y: 0, cells: [[0, '$ ', 'dim'], [16, fa ? 'npx rtlint src --lang fa' : 'npx rtlint src', 'fg']] }, null];
+const rows = [{ y: 0, cells: [[0, '$ ', 'dim'], [16, fa ? 'npx @pouyam/rtlint src --lang fa' : 'npx @pouyam/rtlint src', 'fg']] }, null];
 let errors = 0;
 let warnings = 0;
 let fixable = 0;

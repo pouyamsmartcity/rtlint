@@ -5,7 +5,7 @@ In English, start is left. In Persian, Arabic and Hebrew it is right. With logic
 stylesheet works for both, and you never write a `[dir="rtl"]` override again.
 
 [rtlint](https://github.com/pouyamsmartcity/rtlint) (by Pouyam) converts physical CSS to logical CSS
-automatically and safely: `npx github:pouyamsmartcity/rtlint --fix`.
+automatically and safely: `npx @pouyam/rtlint --fix`.
 
 ## Spacing and borders
 

@@ -76,7 +76,7 @@ export function init(cwd, { force = false, lang } = {}) {
   if (pkg) {
     pkg.scripts ??= {};
     if (!pkg.scripts['lint:rtl']) {
-      pkg.scripts['lint:rtl'] = 'rtlint';
+      pkg.scripts['lint:rtl'] = 'npx @pouyam/rtlint';
       const indent = readFileSync(pkgPath, 'utf8').match(/^[ \t]+/m)?.[0] ?? '  ';
       writeFileSync(pkgPath, JSON.stringify(pkg, null, indent) + '\n');
       out.push(fa ? '✓ اسکریپت "lint:rtl" به package.json اضافه شد.' : '✓ Added a "lint:rtl" script to package.json');
@@ -84,9 +84,9 @@ export function init(cwd, { force = false, lang } = {}) {
   }
   out.push('');
   out.push(fa ? 'قدم بعدی:' : 'Next:');
-  out.push(fa ? '  npx rtlint            گزارش مشکل\u200Cها' : '  npx rtlint            report problems');
-  out.push(fa ? '  npx rtlint --fix      اصلاح خودکار' : '  npx rtlint --fix      apply safe fixes');
-  out.push(fa ? '  npx rtlint explain <قانون>   توضیح یک قانون' : '  npx rtlint explain <rule>   explain a rule');
+  out.push(fa ? '  npx @pouyam/rtlint            گزارش مشکل\u200Cها' : '  npx @pouyam/rtlint            report problems');
+  out.push(fa ? '  npx @pouyam/rtlint --fix      اصلاح خودکار' : '  npx @pouyam/rtlint --fix      apply safe fixes');
+  out.push(fa ? '  npx @pouyam/rtlint explain <قانون>   توضیح یک قانون' : '  npx @pouyam/rtlint explain <rule>   explain a rule');
   return out;
 }
 

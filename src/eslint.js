@@ -1,7 +1,7 @@
 // ESLint plugin (flat config, ESLint 9+). Every rtlint rule becomes an ESLint
 // rule named rtlint/<category>-<name>, e.g. rtlint/class-physical-utility.
 //
-//   import rtlint from 'rtlint/eslint';
+//   import rtlint from '@pouyam/rtlint/eslint';
 //   export default [rtlint.configs.recommended];
 //
 // Works for any file ESLint parses (JS/TS/JSX, and Vue/Svelte/Astro through
@@ -51,7 +51,7 @@ function toEslintRule(meta) {
 const rules = Object.fromEntries(listRules().map((meta) => [eslintName(meta.id), toEslintRule(meta)]));
 
 const plugin = {
-  meta: { name: 'rtlint', version: pkg.version },
+  meta: { name: '@pouyam/rtlint', version: pkg.version },
   rules,
   configs: {},
 };

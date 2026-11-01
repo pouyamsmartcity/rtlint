@@ -1,5 +1,5 @@
 // eslint.config.js
-import rtlint from 'rtlint/eslint';
+import rtlint from '@pouyam/rtlint/eslint';
 
 export default [
   rtlint.configs.recommended,

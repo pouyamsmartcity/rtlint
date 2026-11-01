@@ -6,6 +6,7 @@
 
 **باگ‌های راست‌به‌چپ و اشتباه‌های نگارش فارسی را در کد پیدا می‌کند و بیشترشان را خودش درست می‌کند.**
 
+[![npm](https://img.shields.io/npm/v/@pouyam/rtlint.svg)](https://www.npmjs.com/package/@pouyam/rtlint)
 [![CI](https://github.com/pouyamsmartcity/rtlint/actions/workflows/ci.yml/badge.svg)](https://github.com/pouyamsmartcity/rtlint/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 ![Dependencies: 0](https://img.shields.io/badge/dependencies-0-brightgreen.svg)
@@ -50,7 +51,7 @@ rtlint آن را به `margin-inline-end: 12px` تبدیل می‌کند. این
 <div dir="ltr">
 
 ```bash
-npx github:pouyamsmartcity/rtlint --lang fa
+npx @pouyam/rtlint --lang fa
 ```
 
 </div>
@@ -64,7 +65,7 @@ npx github:pouyamsmartcity/rtlint --lang fa
 <div dir="ltr">
 
 ```bash
-npx github:pouyamsmartcity/rtlint --lang fa --fix
+npx @pouyam/rtlint --lang fa --fix
 ```
 
 </div>
@@ -76,16 +77,16 @@ npx github:pouyamsmartcity/rtlint --lang fa --fix
 <div dir="ltr">
 
 ```bash
-npm install --save-dev github:pouyamsmartcity/rtlint#v0.3.0
+npm install --save-dev @pouyam/rtlint
 ```
 
 </div>
 
-> فقط یک فایل یا پوشه را بررسی کنید: `npx github:pouyamsmartcity/rtlint src/components --lang fa`
+> فقط یک فایل یا پوشه را بررسی کنید: `npx @pouyam/rtlint src/components --lang fa`
 
-**ساخت خودکار تنظیمات:** دستور `npx github:pouyamsmartcity/rtlint init` پروژه را می‌شناسد (Tailwind، Bootstrap، React، ترجمه‌های فارسی و …) و فایل تنظیمات مناسب را می‌سازد.
+**ساخت خودکار تنظیمات:** دستور `npx @pouyam/rtlint init` پروژه را می‌شناسد (Tailwind، Bootstrap، React، ترجمه‌های فارسی و …) و فایل تنظیمات مناسب را می‌سازد.
 
-**توضیح هر قانون:** `npx github:pouyamsmartcity/rtlint explain fa/zwnj-suffix --lang fa` همان‌جا در ترمینال توضیح و مثال می‌دهد.
+**توضیح هر قانون:** `npx @pouyam/rtlint explain fa/zwnj-suffix --lang fa` همان‌جا در ترمینال توضیح و مثال می‌دهد.
 
 ---
 
@@ -195,7 +196,7 @@ npm install --save-dev github:pouyamsmartcity/rtlint#v0.3.0
 
 ```js
 // eslint.config.js
-import rtlint from 'rtlint/eslint';
+import rtlint from '@pouyam/rtlint/eslint';
 
 export default [
   rtlint.configs.recommended,
@@ -205,7 +206,7 @@ export default [
 
 </div>
 
-این‌طوری مشکل‌ها با پیام فارسی مستقیم در VS Code و هر ویرایشگری که ESLint دارد نشان داده می‌شوند. افزونه‌ی Stylelint هم دارد: `plugins: ['rtlint/stylelint']`.
+این‌طوری مشکل‌ها با پیام فارسی مستقیم در VS Code و هر ویرایشگری که ESLint دارد نشان داده می‌شوند. افزونه‌ی Stylelint هم دارد: `plugins: ['@pouyam/rtlint/stylelint']`.
 
 ### GitHub Actions
 
@@ -230,13 +231,13 @@ export default [
 <div dir="ltr">
 
 ```bash
-npx rtlint --update-baseline                  # مشکل‌های فعلی ثبت می‌شوند
-npx rtlint --baseline rtlint-baseline.json    # از این به بعد فقط مشکل‌های تازه گزارش می‌شوند
-npx rtlint --changed                          # فقط فایل‌های تغییرکرده
-npx rtlint --staged                           # فقط فایل‌های آماده‌ی commit
-npx rtlint --fix-only fa/*                    # فقط قانون‌های فارسی را اصلاح کن
-npx rtlint --cache                            # فایل‌های بدون تغییر را دوباره بررسی نکن
-npx rtlint --watch                            # با هر ذخیره دوباره بررسی کن
+npx @pouyam/rtlint --update-baseline                  # مشکل‌های فعلی ثبت می‌شوند
+npx @pouyam/rtlint --baseline rtlint-baseline.json    # از این به بعد فقط مشکل‌های تازه گزارش می‌شوند
+npx @pouyam/rtlint --changed                          # فقط فایل‌های تغییرکرده
+npx @pouyam/rtlint --staged                           # فقط فایل‌های آماده‌ی commit
+npx @pouyam/rtlint --fix-only fa/*                    # فقط قانون‌های فارسی را اصلاح کن
+npx @pouyam/rtlint --cache                            # فایل‌های بدون تغییر را دوباره بررسی نکن
+npx @pouyam/rtlint --watch                            # با هر ذخیره دوباره بررسی کن
 ```
 
 </div>
@@ -255,7 +256,7 @@ npx rtlint --watch                            # با هر ذخیره دوبار�
 
 ```js
 // vite.config.js
-import rtlint from 'rtlint/vite';
+import rtlint from '@pouyam/rtlint/vite';
 export default { plugins: [rtlint({ lang: 'fa' })] };
 ```
 
@@ -270,7 +271,7 @@ rtlint یک سرور MCP دارد؛ یعنی دستیار هوش مصنوعی ش
 <div dir="ltr">
 
 ```bash
-claude mcp add rtlint -- npx -y github:pouyamsmartcity/rtlint mcp
+claude mcp add rtlint -- npx -y @pouyam/rtlint mcp
 ```
 
 </div>

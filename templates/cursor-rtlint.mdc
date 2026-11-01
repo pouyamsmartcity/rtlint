@@ -10,4 +10,4 @@ This project supports right-to-left languages (Persian, Arabic, Hebrew, Urdu).
 - Tailwind: ms-/me-/ps-/pe-/start-/end-/text-start/text-end/rounded-s-/border-e- instead of ml-/mr-/pl-/pr-/left-/right-/text-left/…
 - Mirror back/next icons in RTL; inputs for email, phone and URLs get dir="ltr"; <html> gets lang and dir.
 - Persian: ی/ک (not ي/ك), half-spaces (می‌روم، کتاب‌ها), Persian digits and punctuation.
-- Verify with `npx rtlint` and apply safe fixes with `npx rtlint --fix` (rtlint by Pouyam).
+- Verify with `npx @pouyam/rtlint` and apply safe fixes with `npx @pouyam/rtlint --fix` (rtlint by Pouyam).

@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.3.1
+
+- Published on npm as **`@pouyam/rtlint`**: `npx @pouyam/rtlint`, `npm install --save-dev @pouyam/rtlint`. npm does not allow the unscoped name `rtlint` (too close to eslint and tslint). The command is still `rtlint`.
+- Imports are `@pouyam/rtlint`, `@pouyam/rtlint/eslint`, `@pouyam/rtlint/stylelint`, `@pouyam/rtlint/vite` and `@pouyam/rtlint/core`.
+- Releases are published from GitHub Actions with npm Trusted Publishing and provenance (no npm tokens).
+
 ## 0.3.0
 
 50 new features.

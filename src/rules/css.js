@@ -148,6 +148,22 @@ const SHORTHAND_DECL =
 
 const INDENTED = new Set(['sass', 'styl', 'stylus']);
 
+/**
+ * value.replace(/\([^)]*\)/g, '') without its quadratic cost on many "(" and
+ * no ")": once one "(" has no ")" after it, none of the later ones do either.
+ */
+function withoutParens(value) {
+  let out = '';
+  let i = 0;
+  for (;;) {
+    const open = value.indexOf('(', i);
+    const close = open === -1 ? -1 : value.indexOf(')', open);
+    if (close === -1) return out + value.slice(i);
+    out += value.slice(i, open);
+    i = close + 1;
+  }
+}
+
 /** Expands 1-4 border-radius values to [top-left, top-right, bottom-right, bottom-left]. */
 function radiusCorners(v) {
   if (v.length === 1) return [v[0], v[0], v[0], v[0]];
@@ -183,7 +199,7 @@ export const asymmetricShorthand = {
       const hasImportant = raw.slice(-10).toLowerCase() === '!important';
       const important = hasImportant ? ' !important' : '';
       const value = (hasImportant ? raw.slice(0, -10).trimEnd() : raw).replace(/\s+/g, ' ');
-      if (/[,/]/.test(value.replace(/\([^)]*\)/g, ''))) continue;
+      if (/[,/]/.test(withoutParens(value))) continue;
       if (SAFE_AREA.test(value)) continue;
       const parts = splitCssValue(value);
       const index = declStart;

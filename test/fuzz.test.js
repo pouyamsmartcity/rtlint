@@ -101,6 +101,7 @@ test('fuzz: long whitespace runs stay linear (ReDoS)', () => {
     ['a.md', '«سلام' + sp + 'x»'],
     ['a.md', 'سلام' + '`'.repeat(50000) + '»'],
     ['a.md', '``a`'.repeat(12500)],
+    ['a.css', 'a{margin:1px' + '('.repeat(50000) + 'x}'],
   ];
   for (const [filePath, text] of cases) {
     const started = performance.now();

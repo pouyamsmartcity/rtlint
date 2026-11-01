@@ -113,8 +113,41 @@ function maskMarkdown(text) {
   for (const m of text.matchAll(/^( {0,3})(`{3,}|~{3,})[^\n]*\n[\s\S]*?(?:^\1?\2[ \t]*$|(?![\s\S]))/gm)) {
     hide(out, m.index, m.index + m[0].length);
   }
-  for (const m of text.matchAll(/(`+)(?!`)[^\n]*?[^`]\1(?!`)|``/g)) hide(out, m.index, m.index + m[0].length);
+  maskCodeSpans(text, out);
   return out.join('');
+}
+
+/**
+ * Inline code: a run of N backticks up to the next run of exactly N on the
+ * same line. Unpaired runs of two or more (empty ``) are hidden too. A scan,
+ * not a regex: /(`+)(?!`)…\1/ retries from every backtick of a long run.
+ */
+function maskCodeSpans(text, out) {
+  const runs = [...text.matchAll(/`+|\n/g)];
+  for (let start = 0; start < runs.length; ) {
+    let end = start;
+    while (end < runs.length && runs[end][0] !== '\n') end++;
+    // partner[k]: the next run on this line with the same length, or -1.
+    const partner = new Array(end - start).fill(-1);
+    const seen = new Map();
+    for (let k = end - 1; k >= start; k--) {
+      const len = runs[k][0].length;
+      partner[k - start] = seen.get(len) ?? -1;
+      seen.set(len, k);
+    }
+    for (let k = start; k < end; ) {
+      const run = runs[k];
+      const close = partner[k - start];
+      if (close !== -1) {
+        hide(out, run.index, runs[close].index + runs[close][0].length);
+        k = close + 1;
+      } else {
+        if (run[0].length > 1) hide(out, run.index, run.index + run[0].length);
+        k++;
+      }
+    }
+    start = end + 1;
+  }
 }
 
 const MARKDOWN = new Set(['md', 'mdx', 'markdown']);
@@ -130,7 +163,7 @@ export function proseText(file) {
     const lower = text.toLowerCase();
     let pieces = '';
     let pos = 0;
-    for (const m of text.matchAll(/<script\b[^>]*>/gi)) {
+    for (const m of text.matchAll(/<script\b[^<>]*>/gi)) {
       const start = m.index + m[0].length;
       if (start < pos) continue;
       const close = lower.indexOf('</script', start);

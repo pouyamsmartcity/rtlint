@@ -25,7 +25,12 @@ const isGlob = (p) => /[*?{[]/.test(p);
 export function parseGitignore(source) {
   const rules = [];
   for (let line of source.split(/\r?\n/)) {
-    line = line.replace(/(?<!\\)\s+$/, '');
+    // Trailing whitespace goes unless escaped ("a\ " keeps its space). A loop,
+    // because /(?<!\\)\s+$/ is quadratic on long runs of spaces.
+    let end = line.length;
+    while (end > 0 && /\s/.test(line[end - 1])) end--;
+    if (end < line.length && line[end - 1] === '\\') end++;
+    line = line.slice(0, end);
     if (!line || line.startsWith('#')) continue;
     let negate = false;
     if (line.startsWith('!')) {

@@ -42,7 +42,7 @@ export const bidiControl = {
     if (file.kind === 'markup') {
       const src = file.markupView;
       const lower = src.toLowerCase();
-      for (const m of src.matchAll(/<(script|style)\b[^>]*>/gi)) {
+      for (const m of src.matchAll(/<(script|style)\b[^<>]*>/gi)) {
         const close = lower.indexOf(`</${m[1].toLowerCase()}`, m.index);
         codeBlocks.push([m.index, close < 0 ? src.length : close]);
       }

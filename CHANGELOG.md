@@ -2,7 +2,11 @@
 
 ## 0.3.2
 
-- Security: five patterns were quadratic on long runs of spaces, backticks or `(` (ReDoS): a CSS shorthand value, `!important`, parentheses in a CSS value, a space before `»`, and Markdown code spans. A crafted file with 50,000 spaces took up to 34 s; it now takes milliseconds. A sweep over 18 file types and 70 repeated inputs guards against new ones.
+- Security (ReDoS): a crafted file could make a scan quadratic. Fixed:
+  - long runs of spaces, backticks or `(` in a CSS shorthand value, before `!important`, before `»`, and in Markdown code spans (50,000 spaces took up to 34 s);
+  - thousands of unclosed `<input`, `<html`, `<script`, `<style`, `<Component` tags and nested `cn(` / `clsx(` calls (each scanned to the end of the file).
+
+  Every case now takes milliseconds. Sweeps over 18 file types × 120 repeated inputs found no others.
 - Docs: the README and `llms.txt` show the scoped import paths (`@pouyam/rtlint/core`, `/eslint`, `/stylelint`, `/vite`).
 - Releases are staged on npm by GitHub Actions (Trusted Publishing, provenance) and go public only after a maintainer approves them with a security key.
 

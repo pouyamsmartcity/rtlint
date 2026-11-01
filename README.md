@@ -153,7 +153,7 @@ Add `"$schema": "https://raw.githubusercontent.com/pouyamsmartcity/rtlint/main/s
 Problems show up as annotations on the pull request diff, with a summary table on the run page:
 
 ```yaml
-- uses: actions/checkout@v4
+- uses: actions/checkout@v7
   with: { fetch-depth: 0 }
 - uses: pouyamsmartcity/rtlint@main
   with:

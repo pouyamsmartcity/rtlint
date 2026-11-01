@@ -202,7 +202,7 @@ export default [
 <div dir="ltr">
 
 ```yaml
-- uses: actions/checkout@v4
+- uses: actions/checkout@v7
 - uses: pouyamsmartcity/rtlint@main
   with:
     paths: src

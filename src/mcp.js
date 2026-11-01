@@ -2,7 +2,7 @@
 // agents, …) lint and fix right-to-left and Persian typography problems with
 // rtlint. Speaks JSON-RPC 2.0 over stdio, one message per line.
 //
-//   { "mcpServers": { "rtlint": { "command": "npx", "args": ["-y", "rtlint", "mcp"] } } }
+//   { "mcpServers": { "rtlint": { "command": "npx", "args": ["-y", "@pouyam/rtlint", "mcp"] } } }
 import { existsSync, readFileSync, statSync } from 'node:fs';
 import { isAbsolute, relative, resolve } from 'node:path';
 import { createInterface } from 'node:readline';

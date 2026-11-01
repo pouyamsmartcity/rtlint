@@ -35,7 +35,7 @@ reading direction, so one class works in both LTR and RTL:
 Convert a whole codebase in one command (variants, `!important` and negative values are kept):
 
 ```bash
-npx github:pouyamsmartcity/rtlint src --fix
+npx @pouyam/rtlint src --fix
 ```
 
 It also covers `clsx()`, `cn()`, `cva()`, `twMerge()`, `@apply`, Vue `:class` and Svelte `class:`.

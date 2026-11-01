@@ -1,6 +1,6 @@
 {
-  "name": "rtlint",
-  "version": "0.3.0",
+  "name": "@pouyam/rtlint",
+  "version": "0.3.1",
   "description": "rtlint by Pouyam: find and fix right-to-left (RTL) layout bugs and Persian typography in CSS, Tailwind, React, React Native, Vue, Svelte, HTML and text. Zero dependencies, safe --fix, ESLint/Stylelint/Vite plugins and an MCP server for AI assistants.",
   "keywords": [
     "arabic",
@@ -99,6 +99,10 @@
   ],
   "engines": {
     "node": ">=20.10"
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
   },
   "scripts": {
     "test": "node --test",

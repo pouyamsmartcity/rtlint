@@ -1,7 +1,7 @@
-import { fixText, lintText, type Config, run } from 'rtlint';
-import { lintText as coreLint } from 'rtlint/core';
-import plugin from 'rtlint/eslint';
-import stylelintPlugin from 'rtlint/stylelint';
+import { fixText, lintText, type Config, run } from '@pouyam/rtlint';
+import { lintText as coreLint } from '@pouyam/rtlint/core';
+import plugin from '@pouyam/rtlint/eslint';
+import stylelintPlugin from '@pouyam/rtlint/stylelint';
 
 const config: Config = { rules: { 'fa/*': 'off', 'class/directional-utility': ['warn', { gradients: true }] } };
 const r = lintText('a{margin-left:0}', { filePath: 'a.css', config });
@@ -11,9 +11,9 @@ coreLint('x');
 const exit: Promise<number> = run(['--version']);
 const rules = plugin.configs.recommended.rules;
 void [n, out, exit, rules, stylelintPlugin];
-import { lintFiles, formatters } from 'rtlint';
-import vitePlugin from 'rtlint/vite';
-import { TOOLS } from 'rtlint/mcp';
+import { lintFiles, formatters } from '@pouyam/rtlint';
+import vitePlugin from '@pouyam/rtlint/vite';
+import { TOOLS } from '@pouyam/rtlint/mcp';
 const files: Promise<unknown[]> = lintFiles(['src'], { lang: 'fa', fix: false });
 const html: string = formatters.html([], { lang: 'fa' });
 const vite = vitePlugin({ lang: 'fa', failOnError: true });

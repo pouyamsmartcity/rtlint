@@ -9,7 +9,8 @@
 <meta name="author" content="Pouyam">
 <link rel="canonical" href="https://pouyamsmartcity.github.io/rtlint/playground/">
 <link rel="alternate" hreflang="fa" href="https://pouyamsmartcity.github.io/rtlint/playground/">
-<link rel="alternate" hreflang="en" href="https://pouyamsmartcity.github.io/rtlint/playground/#lang=en">
+<link rel="alternate" hreflang="en" href="https://pouyamsmartcity.github.io/rtlint/en/">
+<link rel="alternate" hreflang="x-default" href="https://pouyamsmartcity.github.io/rtlint/en/">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="rtlint by Pouyam">
 <meta property="og:title" content="rtlint: باگ‌یاب راست‌به‌چپ و نگارش فارسی (RTL linter)">
@@ -469,9 +470,10 @@ const $ = (id) => document.getElementById(id);
 const input = $('input');
 const filename = $('filename');
 const DOCS = 'https://github.com/pouyamsmartcity/rtlint/blob/main/docs/rules.md#';
-let lang = 'fa';
+let lang = document.documentElement.lang === 'en' ? 'en' : 'fa';
 // Persian first: this page is mainly for Persian speakers.
-try { lang = localStorage.getItem('rtlint-lang') ?? 'fa'; } catch {}
+// The English page (/en/) always opens in English; the Persian page keeps the visitor's last choice.
+if (lang === 'fa') try { lang = localStorage.getItem('rtlint-lang') ?? 'fa'; } catch {}
 
 function escapeHtml(s) {
   return s.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
@@ -607,7 +609,7 @@ function applyLang() {
   const root = document.documentElement;
   root.lang = lang;
   root.dir = lang === 'fa' ? 'rtl' : 'ltr';
-  document.title = lang === 'fa' ? 'rtlint | باگ‌یاب راست‌به‌چپ و فارسی' : 'rtlint playground';
+  document.title = lang === 'fa' ? 'rtlint | باگ‌یاب راست‌به‌چپ و فارسی' : 'rtlint: RTL linter and Persian typography checker, online';
   for (const el of document.querySelectorAll('[data-i18n]')) el.textContent = T[lang][el.dataset.i18n] ?? el.textContent;
   for (const el of document.querySelectorAll('[data-i18n-html]')) el.innerHTML = T[lang][el.dataset.i18nHtml] ?? el.innerHTML;
   for (const el of document.querySelectorAll('[data-i18n-placeholder]')) el.placeholder = T[lang][el.dataset.i18nPlaceholder] ?? '';
@@ -747,7 +749,8 @@ async function start() {
       // A broken link falls back to the default sample.
     }
   }
-  loadSample('fa');
+  if (lang === 'en') $('sample').value = 'css';
+  loadSample(lang === 'en' ? 'css' : 'fa');
   applyLang();
 }
 start();

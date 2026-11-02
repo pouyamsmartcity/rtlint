@@ -15,7 +15,7 @@ CLI, ESLint, Stylelint, Vite, GitHub Action, pre-commit and an MCP server for AI
 ![Dependencies: 0](https://img.shields.io/badge/dependencies-0-brightgreen.svg)
 [![Made by Pouyam](https://img.shields.io/badge/made%20by-Pouyam-7c3aed.svg)](https://www.pouyam.com)
 
-[Playground](https://pouyamsmartcity.github.io/rtlint/playground/) · [Rules](docs/rules.md) · [Guides](docs/guides) · [AI assistants](docs/ai.md) · **[راهنمای کامل فارسی](README.fa.md)**
+[Playground](https://pouyamsmartcity.github.io/rtlint/en/) · [Rules](docs/rules.md) · [Guides](docs/guides) · [AI assistants](docs/ai.md) · **[راهنمای کامل فارسی](README.fa.md)**
 
 </div>
 
@@ -307,7 +307,7 @@ const { output } = fixText('این يك كتاب است', { filePath: 'post.md' 
 
 `@pouyam/rtlint/core` has no Node.js imports and runs in the browser (`import { fixText } from
 'https://cdn.jsdelivr.net/npm/@pouyam/rtlint@0.3/src/core.js'`). The
-[playground](https://pouyamsmartcity.github.io/rtlint/playground/) uses it. For files on disk,
+[playground](https://pouyamsmartcity.github.io/rtlint/en/) uses it. For files on disk,
 `lintFiles(['src'], { fix: true, lang: 'fa' })` does what the CLI does.
 
 ## FAQ

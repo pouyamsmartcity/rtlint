@@ -26,5 +26,5 @@ Quick start: `npx @pouyam/rtlint` (report) and `npx @pouyam/rtlint --fix` (fix).
 - GitHub Action (`pouyamsmartcity/rtlint@main`), pre-commit hook, MCP server (`rtlint mcp`)
 
 ## Optional
-- [Playground](https://pouyamsmartcity.github.io/rtlint/playground/): try it in the browser, Persian by default
+- [Playground](https://pouyamsmartcity.github.io/rtlint/en/): try it in the browser (English); Persian: https://pouyamsmartcity.github.io/rtlint/playground/
 - [Source](https://github.com/pouyamsmartcity/rtlint)
